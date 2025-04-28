@@ -7,9 +7,9 @@
 
 typedef struct {
     int id;
-    int tipologia;    // 0 = Autoveicolo      1 = Motociclo
+    char categoria[20]; // 0: Utilitaria | 1: SUV | 2: Sportiva | 3: Elettrico | 4: Moto
     char modello[30];
-    char targa[7];
+    char targa[8];
     char posizione[50]; 
     bool disponibile; // 0 = non disponibile | 1 = disponibile
 } veicolo;
