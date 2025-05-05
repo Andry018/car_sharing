@@ -32,10 +32,6 @@ void pulisciListaVeicoli(void) {
     }
 }
 
-list creaLista()
-{
-    return NULL; // crea lista che punta a null
-}
 
 int caricaUltimoID()
 {
@@ -47,9 +43,9 @@ int caricaUltimoID()
     
     int max_id = 0;
     veicolo v;
-    while (fscanf(fp, "%d %d %s %s %s %d\n", 
+    while (fscanf(fp, "%d %s %s %s %s %d\n", 
                   &v.id, 
-                  &v.tipologia, 
+                  v.categoria, 
                   v.modello, 
                   v.targa, 
                   v.posizione, 
@@ -75,15 +71,44 @@ veicolo creaVeicolo()
 
     id++;
     v.id = id;
-
-    printf("Inserisci tipologia del veicolo: (0 = Autoveicolo | 1 = Motociclo) ");
-    scanf("%d", &v.tipologia);
+    int scelta;
+    printf("Inserisci categoria del veicolo: \n (0 = Utilitaria | 1 = SUV | 2 = Sportiva | 3 = Elettrico | 4 = Moto) ");
+    scanf("%d", &scelta);
+    switch (scelta) {
+        case 0:
+            strcpy(v.categoria, "Utilitaria");
+            break;
+        case 1:
+            strcpy(v.categoria, "SUV");
+            break;
+        case 2:
+            strcpy(v.categoria, "Sportiva");
+            break;
+        case 3:
+            strcpy(v.categoria, "Elettrico");
+            break;
+        case 4:
+            strcpy(v.categoria, "Moto");
+            break;
+        default:
+            printf("Categoria non valida.\n");
+            return creaVeicolo();
+    }
+    getchar(); //libera buffer
     printf("Inserisci modello del veicolo: ");
-    scanf("%s", v.modello);
+    if (fgets(v.modello, 30, stdin) == NULL) {
+        printf("Errore nella lettura del modello.\n");
+        strcpy(v.modello, "Sconosciuto");
+    }
+    v.modello[strcspn(v.modello, "\n")] = 0; // TERMINATORE
     printf("Inserisci targa del veicolo: ");
-    scanf("%s", v.targa);
+    if (scanf("%7s", v.targa) != 1) {
+        printf("Errore nella lettura della targa.\n");
+        strcpy(v.targa, "XXXXXXX");
+    }
+    v.targa[7] = '\0';    // terminatore
     strcpy(v.posizione, "Deposito");
-    v.disponibile = true;
+    v.disponibile = 1;
 
     return v;
 }
@@ -91,20 +116,30 @@ veicolo creaVeicolo()
 list aggiungiVeicolo(list l)
 {
     list nuovo = (list)malloc(sizeof(struct node));
+    if (nuovo == NULL) {
+        printf("Errore nell'allocazione della memoria.\n");
+        return l;
+    }
     veicolo v = creaVeicolo();
     nuovo->veicoli = v;
     nuovo->next = l;
-    return nuovo; // aggiunge il nuovo veicolo alla lista;
+    return nuovo;
 }
 
 list rimuoviVeicolo(list l)
 {
+    if (l == NULL) {
+        printf("La lista dei veicoli è vuota.\n");
+        return l;
+    }
+
     list p = l;
     list prev = NULL;
     printf("Inserisci l'id del veicolo da eliminare: ");
     int id;
     scanf("%d", &id);
 
+    bool trovato = false;
     while (p != NULL)
     {
         if (p->veicoli.id == id)
@@ -118,25 +153,32 @@ list rimuoviVeicolo(list l)
                 prev->next = p->next;
             }
             free(p);
-            printf("Veicolo con ID %d rimosso.\n", id);
-            return l;
+            printf("Veicolo con ID %d rimosso con successo.\n", id);
+            trovato = true;
+            break;
         }
         prev = p;
         p = p->next;
     }
 
-    printf("Veicolo con ID %d non trovato.\n", id);
+    if (!trovato) {
+        printf("ERRORE: Veicolo con ID %d non trovato nella lista.\n", id);
+    }
     return l;
 }
 
 void stampaVeicolo(veicolo v)
 {
     printf("ID: %d\n", v.id);
-    printf("Tipologia: %d\n", v.tipologia);
+    printf("Categoria: %s\n", v.categoria);
     printf("Modello: %s \n", v.modello);
     printf("Targa: %s\n", v.targa);
     printf("Posizione: %s\n", v.posizione);
-    printf("Disponibile: %s\n", v.disponibile ? "true" : "false");
+    if (v.disponibile == 1) {
+        printf("Disponibile: Si\n");
+    } else {
+        printf("Disponibile: No\n");
+    }
 }
 
 void salvaVeicoloFile(list l)
@@ -149,9 +191,9 @@ void salvaVeicoloFile(list l)
     }
     while (l != NULL)
     {
-        fprintf(fp, "%d %d %s %s %s %d\n",
+        fprintf(fp, "%d %s %s %s %s %d\n",
                 l->veicoli.id,
-                l->veicoli.tipologia,
+                l->veicoli.categoria,
                 l->veicoli.modello,
                 l->veicoli.targa,
                 l->veicoli.posizione,
@@ -172,9 +214,9 @@ list caricaVeicoloFile(list l)
     }
     
     veicolo v;
-    while (fscanf(fp, "%d %d %s %s %s %d\n", 
+    while (fscanf(fp, "%d %s %s %s %s %d\n", 
                   &v.id, 
-                  &v.tipologia, 
+                  v.categoria, 
                   v.modello, 
                   v.targa, 
                   v.posizione, 
