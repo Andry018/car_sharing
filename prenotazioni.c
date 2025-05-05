@@ -30,9 +30,9 @@ typedef struct {
 } CodaPrenotazioni;
 
 // Funzioni di utilità per l'heap
-#define PARENT(i) ((i - 1) / 2)
-#define LEFT_CHILD(i) (2 * i + 1)
-#define RIGHT_CHILD(i) (2 * i + 2)
+#define GENITORE(i) ((i - 1) / 2)
+#define FIGLIO_SINISTRO(i) (2 * i + 1)
+#define FIGLIO_DESTRO(i) (2 * i + 2)
 
 // Funzione per inizializzare una nuova coda
 CodaPrenotazioni* inizializza_coda() {
@@ -62,17 +62,17 @@ void scambia_prenotazioni(Prenotazione* a, Prenotazione* b) {
 
 // Funzione per fare bubble up nell'heap
 void bubble_up(CodaPrenotazioni* coda, int index) {
-    while (index > 0 && coda->heap[PARENT(index)].priorita > coda->heap[index].priorita) {
-        scambia_prenotazioni(&coda->heap[PARENT(index)], &coda->heap[index]);
-        index = PARENT(index);
+    while (index > 0 && coda->heap[GENITORE(index)].priorita > coda->heap[index].priorita) {
+        scambia_prenotazioni(&coda->heap[GENITORE(index)], &coda->heap[index]);
+        index = GENITORE(index);
     }
 }
 
 // Funzione per fare bubble down nell'heap
 void bubble_down(CodaPrenotazioni* coda, int index) {
     int min_index = index;
-    int left = LEFT_CHILD(index);
-    int right = RIGHT_CHILD(index);
+    int left = FIGLIO_SINISTRO(index);
+    int right = FIGLIO_DESTRO(index);
     
     if (left < coda->dimensione && coda->heap[left].priorita < coda->heap[min_index].priorita) {
         min_index = left;

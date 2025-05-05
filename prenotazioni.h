@@ -29,9 +29,9 @@ typedef struct {
 } CodaPrenotazioni;
 
 // Funzioni di utilità per l'heap
-#define PARENT(i) ((i - 1) / 2)
-#define LEFT_CHILD(i) (2 * i + 1)
-#define RIGHT_CHILD(i) (2 * i + 2)
+#define GENITORE(i) ((i - 1) / 2)
+#define FIGLIO_SINISTRO(i) (2 * i + 1)
+#define FIGLIO_DESTRO(i) (2 * i + 2)
 
 // Funzione per inizializzare una nuova coda
 CodaPrenotazioni* inizializza_coda();
