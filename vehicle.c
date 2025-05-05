@@ -32,10 +32,6 @@ void pulisciListaVeicoli(void) {
     }
 }
 
-list creaLista()
-{
-    return NULL; // crea lista che punta a null
-}
 
 int caricaUltimoID()
 {
@@ -75,9 +71,9 @@ veicolo creaVeicolo()
 
     id++;
     v.id = id;
-   int scelta;
-   printf("Inserisci categoria del veicolo: \n (0 = Utilitaria | 1 = SUV | 2 = Sportiva | 3 = Elettrico | 4 = Moto) ");
-   scanf("%d", &scelta);
+    int scelta;
+    printf("Inserisci categoria del veicolo: \n (0 = Utilitaria | 1 = SUV | 2 = Sportiva | 3 = Elettrico | 4 = Moto) ");
+    scanf("%d", &scelta);
     switch (scelta) {
         case 0:
             strcpy(v.categoria, "Utilitaria");
@@ -100,13 +96,19 @@ veicolo creaVeicolo()
     }
     getchar(); //libera buffer
     printf("Inserisci modello del veicolo: ");
-    fgets(v.modello, 30, stdin);
+    if (fgets(v.modello, 30, stdin) == NULL) {
+        printf("Errore nella lettura del modello.\n");
+        strcpy(v.modello, "Sconosciuto");
+    }
     v.modello[strcspn(v.modello, "\n")] = 0; // TERMINATORE
     printf("Inserisci targa del veicolo: ");
-    scanf("%7s", v.targa);  // Limita a 7 caratteri + terminatore
-    v.targa[8] = '\0';    // terminatore
+    if (scanf("%7s", v.targa) != 1) {
+        printf("Errore nella lettura della targa.\n");
+        strcpy(v.targa, "XXXXXXX");
+    }
+    v.targa[7] = '\0';    // terminatore
     strcpy(v.posizione, "Deposito");
-    v.disponibile = true;
+    v.disponibile = 1;
 
     return v;
 }
@@ -114,10 +116,14 @@ veicolo creaVeicolo()
 list aggiungiVeicolo(list l)
 {
     list nuovo = (list)malloc(sizeof(struct node));
+    if (nuovo == NULL) {
+        printf("Errore nell'allocazione della memoria.\n");
+        return l;
+    }
     veicolo v = creaVeicolo();
     nuovo->veicoli = v;
     nuovo->next = l;
-    return nuovo; // aggiunge il nuovo veicolo alla lista;
+    return nuovo;
 }
 
 list rimuoviVeicolo(list l)
@@ -168,7 +174,11 @@ void stampaVeicolo(veicolo v)
     printf("Modello: %s \n", v.modello);
     printf("Targa: %s\n", v.targa);
     printf("Posizione: %s\n", v.posizione);
-    printf("Disponibile: %s\n", v.disponibile ? "true" : "false");
+    if (v.disponibile == 1) {
+        printf("Disponibile: Si\n");
+    } else {
+        printf("Disponibile: No\n");
+    }
 }
 
 void salvaVeicoloFile(list l)

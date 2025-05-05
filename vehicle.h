@@ -11,7 +11,7 @@ typedef struct {
     char modello[30];
     char targa[8];
     char posizione[50]; 
-    bool disponibile; // 0 = non disponibile | 1 = disponibile
+    int disponibile; // 0 = non disponibile | 1 = disponibile
 } veicolo;
 
 typedef struct node {
@@ -27,7 +27,7 @@ void caricaListaVeicoli(void);
 void pulisciListaVeicoli(void);
 
 // Funzioni di gestione veicoli
-list creaLista(void);
+
 veicolo creaVeicolo(void);
 list aggiungiVeicolo(list);
 list rimuoviVeicolo(list);

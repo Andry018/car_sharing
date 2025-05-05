@@ -128,7 +128,7 @@ int main() {
     int scelta;
     
     // Carica i veicoli all'avvio
-    caricaListaVeicoli();
+   caricaListaVeicoli();
 
     while (1) {
         system("cls");
