@@ -4,43 +4,103 @@
 #include <stdbool.h>
 #include "vehicle.h"
 
-struct node
-{
-    veicolo veicoli;
-    struct node *next;
-};
+// Variabile privata
+static list listaVeicoli = NULL;
+
+// Funzioni di accesso
+list getListaVeicoli(void) {
+    return listaVeicoli;
+}
+
+void setListaVeicoli(list nuovaLista) {
+    listaVeicoli = nuovaLista;
+}
+
+void salvaListaVeicoli(void) {
+    salvaVeicoloFile(listaVeicoli);
+}
+
+void caricaListaVeicoli(void) {
+    listaVeicoli = caricaVeicoloFile(listaVeicoli);
+}
+
+void pulisciListaVeicoli(void) {
+    while(listaVeicoli != NULL) {
+        list temp = listaVeicoli;
+        listaVeicoli = listaVeicoli->next;
+        free(temp);
+    }
+}
+
 list creaLista()
 {
-    list l = NULL;
+    return NULL; // crea lista che punta a null
+}
+
+int caricaUltimoID()
+{
+    FILE *fp = fopen("veicoli.txt", "r");
+    if (fp == NULL)
+    {
+        return 0;
+    }
+    
+    int max_id = 0;
+    veicolo v;
+    while (fscanf(fp, "%d %d %s %s %s %d\n", 
+                  &v.id, 
+                  &v.tipologia, 
+                  v.modello, 
+                  v.targa, 
+                  v.posizione, 
+                  &v.disponibile) != EOF) {
+        if (v.id > max_id) {
+            max_id = v.id;
+        }
+    }
+    fclose(fp);
+    return max_id;
 }
 
 veicolo creaVeicolo()
 {
     veicolo v;
-    printf("Inserisci tipologia del veicolo: (0 = Autoveicolo | 1 = Motociclo)");
-    scanf("%d", v.tipologia);
+    static int id = 0; // variabile per id
+
+    if (id == 0)
+    {
+        printf("Caricamento dell'ultimo ID...\n");
+        id = caricaUltimoID();
+    }
+
+    id++;
+    v.id = id;
+
+    printf("Inserisci tipologia del veicolo: (0 = Autoveicolo | 1 = Motociclo) ");
+    scanf("%d", &v.tipologia);
     printf("Inserisci modello del veicolo: ");
     scanf("%s", v.modello);
     printf("Inserisci targa del veicolo: ");
     scanf("%s", v.targa);
     strcpy(v.posizione, "Deposito");
     v.disponibile = true;
+
     return v;
 }
 
 list aggiungiVeicolo(list l)
 {
-    struct node *nuovo = (struct node *)malloc(sizeof(struct node));
+    list nuovo = (list)malloc(sizeof(struct node));
     veicolo v = creaVeicolo();
     nuovo->veicoli = v;
-    nuovo->next = NULL;
-    return l;
+    nuovo->next = l;
+    return nuovo; // aggiunge il nuovo veicolo alla lista;
 }
 
 list rimuoviVeicolo(list l)
 {
-    struct node *p = l;
-    struct node *prev = NULL;
+    list p = l;
+    list prev = NULL;
     printf("Inserisci l'id del veicolo da eliminare: ");
     int id;
     scanf("%d", &id);
@@ -87,10 +147,44 @@ void salvaVeicoloFile(list l)
         printf("Impossibile aprire il file.\n");
         return;
     }
-    while (l->next != NULL)
+    while (l != NULL)
     {
-        fprintf(fp, %d %d %s %s %s %d, l->veicoli.id, l->veicoli.tipologia,l->veicoli.modello,l->veicoli.targa,l->veicoli.posizione, l->veicoli.disponibile );
+        fprintf(fp, "%d %d %s %s %s %d\n",
+                l->veicoli.id,
+                l->veicoli.tipologia,
+                l->veicoli.modello,
+                l->veicoli.targa,
+                l->veicoli.posizione,
+                l->veicoli.disponibile);
+        l = l->next;
     }
-    
+    fclose(fp);
+    printf("Veicoli salvati nel file veicoli.txt\n");
 }
 
+list caricaVeicoloFile(list l)
+{
+    FILE *fp = fopen("veicoli.txt", "r");
+    if (fp == NULL)
+    {
+        printf("Impossibile aprire il file.\n");
+        return l;
+    }
+    
+    veicolo v;
+    while (fscanf(fp, "%d %d %s %s %s %d\n", 
+                  &v.id, 
+                  &v.tipologia, 
+                  v.modello, 
+                  v.targa, 
+                  v.posizione, 
+                  &v.disponibile) != EOF) {
+        list nuovo = (list)malloc(sizeof(struct node));
+        nuovo->veicoli = v;
+        nuovo->next = l;
+        l = nuovo;
+    }
+    
+    fclose(fp);
+    return l;
+}
