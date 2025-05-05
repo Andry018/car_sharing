@@ -18,34 +18,44 @@ typedef struct {
     int ora_inizio;        // 0-23
     int ora_fine;          // 0-23
     StatoPrenotazione stato;
+    int priorita;          // Campo per la priorità (più basso = più prioritario)
 } Prenotazione;
 
-// Nodo della coda
-typedef struct NodoPrenotazione {
-    Prenotazione prenotazione;
-    struct NodoPrenotazione* prossimo;
-} NodoPrenotazione;
-
-// Struttura della coda
+// Struttura della coda con priorità
 typedef struct {
-    NodoPrenotazione* testa;
-    NodoPrenotazione* coda;
-    int dimensione;
+    Prenotazione* heap;    // Array dinamico per l'heap
+    int capacita;          // Capacità massima dell'array
+    int dimensione;        // Numero di elementi attuali
 } CodaPrenotazioni;
 
+// Funzioni di utilità per l'heap
+#define PARENT(i) ((i - 1) / 2)
+#define LEFT_CHILD(i) (2 * i + 1)
+#define RIGHT_CHILD(i) (2 * i + 2)
+
 // Funzione per inizializzare una nuova coda
-CodaPrenotazioni* inizializza_coda(void);
+CodaPrenotazioni* inizializza_coda();
 
 // Funzione per creare una nuova prenotazione
-Prenotazione crea_prenotazione(int id_utente, int id_veicolo, int giorno, int ora_inizio, int ora_fine);
+Prenotazione crea_prenotazione(int id_utente, int id_veicolo, int giorno, 
+                             int ora_inizio, int ora_fine, int priorita);
 
 // Funzione per verificare se una fascia oraria è valida
 int verifica_fascia_oraria(int giorno, int ora_inizio, int ora_fine);
 
+// Funzione per scambiare due prenotazioni
+void scambia_prenotazioni(Prenotazione* a, Prenotazione* b);
+
+// Funzione per fare bubble up nell'heap
+void bubble_up(CodaPrenotazioni* coda, int index);
+
+// Funzione per fare bubble down nell'heap
+void bubble_down(CodaPrenotazioni* coda, int index);
+
 // Funzione per aggiungere una prenotazione alla coda
 int aggiungi_prenotazione(CodaPrenotazioni* coda, Prenotazione prenotazione);
 
-// Funzione per rimuovere una prenotazione dalla coda
+// Funzione per rimuovere la prenotazione con priorità più alta
 Prenotazione rimuovi_prenotazione(CodaPrenotazioni* coda);
 
 // Funzione per cercare una prenotazione per ID
@@ -55,7 +65,8 @@ Prenotazione* cerca_prenotazione(CodaPrenotazioni* coda, int id_prenotazione);
 Prenotazione* cerca_prenotazione_per_orario(CodaPrenotazioni* coda, int giorno, int ora);
 
 // Funzione per modificare lo stato di una prenotazione
-int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, StatoPrenotazione nuovo_stato);
+int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, 
+                              StatoPrenotazione nuovo_stato);
 
 // Funzione per pulire la coda
 void pulisci_coda(CodaPrenotazioni* coda);
@@ -64,3 +75,5 @@ void pulisci_coda(CodaPrenotazioni* coda);
 void distruggi_coda(CodaPrenotazioni* coda);
 
 #endif /* PRENOTAZIONI_H */
+
+
