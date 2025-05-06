@@ -39,11 +39,11 @@ void aggiorna_calendario(CalendarioVeicolo* calendario, CodaPrenotazioni* coda) 
 // Funzione per ottenere il nome del giorno della settimana
 const char* get_nome_giorno(int giorno) {
     switch (giorno) {
-        case 0: return "Lunedì";
-        case 1: return "Martedì";
-        case 2: return "Mercoledì";
-        case 3: return "Giovedì";
-        case 4: return "Venerdì";
+        case 0: return "Lunedi";
+        case 1: return "Martedi";
+        case 2: return "Mercoledi";
+        case 3: return "Giovedi";
+        case 4: return "Venerdi";
         case 5: return "Sabato";
         case 6: return "Domenica";
         default: return "Giorno non valido";
@@ -70,9 +70,9 @@ void visualizza_calendario(CalendarioVeicolo* calendario) {
         
         for (int ora = 0; ora < 24; ora++) {
             if (calendario->calendario[giorno][ora].occupato) {
-                printf(" X |");  // X indica occupato
+                printf(" X  |");  // X indica occupato
             } else {
-                printf("   |");  // Spazio vuoto indica libero
+                printf("    |");  // Spazio vuoto indica libero
             }
         }
         printf("\n");

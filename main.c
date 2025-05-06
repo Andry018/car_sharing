@@ -294,7 +294,7 @@ void visualizzaDisponibilita() {
     system("cls");
     setColor(11); // Ciano
     printf("=====================================\n");
-    printf("       VISUALIZZA DISPONIBILITÀ\n");
+    printf("       VISUALIZZA DISPONIBILITA\n");
     printf("=====================================\n");
     setColor(7); // Bianco
     
@@ -308,7 +308,7 @@ void visualizzaDisponibilita() {
     }
     
     // Chiedi l'ID del veicolo
-    printf("\nInserisci l'ID del veicolo per visualizzare la disponibilità: ");
+    printf("\nInserisci l'ID del veicolo per visualizzare la disponibilita: ");
     scanf("%d", &id_veicolo);
     clearInputBuffer();
     
@@ -367,7 +367,7 @@ int main() {
         printf("2. Visualizza prenotazioni\n");
         printf("3. Restituisci auto\n");
         printf("4. Gestione Veicoli\n");
-        printf("5. Visualizza disponibilità\n");
+        printf("5. Visualizza disponibilita\n");
         printf("0. Esci\n");
         printf("-------------------------------------\n");
         printf("Scelta: ");

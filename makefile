@@ -1,5 +1,5 @@
-car_sharing: main.o vehicle.o prenotazioni.o
-	gcc -Wall -Wextra -g -o car_sharing main.o vehicle.o prenotazioni.o
+car_sharing: main.o vehicle.o prenotazioni.o fasceorarie.o
+	gcc -Wall -Wextra -g -o car_sharing main.o vehicle.o prenotazioni.o fasceorarie.o
 	del *.o
 
 main.o: main.c
