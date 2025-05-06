@@ -67,6 +67,16 @@ Prenotazione* cerca_prenotazione_per_orario(CodaPrenotazioni* coda, int giorno, 
 // Funzione per modificare lo stato di una prenotazione
 int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, 
                               StatoPrenotazione nuovo_stato);
+// Funzione per stampare una prenotazione
+void stampa_prenotazione(Prenotazione prenotazione);
+
+// Funzione per salvare le prenotazioni su un file
+void salvaPrenotazioniSuFile(CodaPrenotazioni* coda);
+
+// Funzione per caricare le prenotazioni da un file
+void caricaPrenotazioniDaFile(CodaPrenotazioni* coda);
+
+void caricaPrenotazioni();
 
 // Funzione per pulire la coda
 void pulisci_coda(CodaPrenotazioni* coda);

@@ -208,6 +208,87 @@ int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, Sta
     prenotazione->stato = nuovo_stato;
     return 0;
 }
+// Funzione per stampare una prenotazione
+void stampa_prenotazione(Prenotazione prenotazione) {
+    printf("ID Prenotazione: %d\n", prenotazione.id_prenotazione);
+    printf("ID Utente: %d\n", prenotazione.id_utente);
+    printf("ID Veicolo: %d\n", prenotazione.id_veicolo);
+    printf("Giorno della settimana: %d\n", prenotazione.giorno_settimana);
+    printf("Ora inizio: %d\n", prenotazione.ora_inizio);
+    printf("Ora fine: %d\n", prenotazione.ora_fine);
+    if (prenotazione.stato == IN_ATTESA) {
+        printf("Stato: In attesa\n");
+    } else if (prenotazione.stato == CONFERMATA) {
+        printf("Stato: Confermata\n");
+    } else if (prenotazione.stato == COMPLETATA) {
+        printf("Stato: Completata\n");
+    } else if (prenotazione.stato == CANCELLATA) {
+        printf("Stato: Cancellata\n");
+    }
+    printf("Priorità: %d\n", prenotazione.priorita);
+}
+
+//Funzione per salvare la coda in un file
+void salvaPrenotazioniSuFile(CodaPrenotazioni* coda){
+    FILE* file = fopen("prenotazioni.txt", "w");
+    if (file == NULL) {
+        printf("Errore nell'apertura del file per la scrittura!\n");
+        return;
+    }
+    
+    for (int i = 0; i < coda->dimensione; i++) {
+        fprintf(file, "%d %d %d %d %d %d %d %d\n",
+                coda->heap[i].id_prenotazione,
+                coda->heap[i].id_utente,
+                coda->heap[i].id_veicolo,
+                coda->heap[i].giorno_settimana,
+                coda->heap[i].ora_inizio,
+                coda->heap[i].ora_fine,
+                coda->heap[i].stato,
+                coda->heap[i].priorita);
+    }
+    
+    fclose(file);
+}
+
+// Funzione per caricare le prenotazioni da un file
+void caricaPrenotazioniDaFile(CodaPrenotazioni* coda) {
+    if (coda == NULL) {
+        printf("Errore: coda non inizializzata!\n");
+        return;
+    }
+
+    FILE* file = fopen("prenotazioni.txt", "r");
+    if (file == NULL) {
+        printf("Errore nell'apertura del file per la lettura!\n");
+        return;
+    }
+    
+    int stato_temp;
+    while (!feof(file)) {
+        Prenotazione prenotazione;
+        if (fscanf(file, "%d %d %d %d %d %d %d %d\n",
+               &prenotazione.id_prenotazione,
+               &prenotazione.id_utente,
+               &prenotazione.id_veicolo,
+               &prenotazione.giorno_settimana,
+               &prenotazione.ora_inizio,
+               &prenotazione.ora_fine,
+               &stato_temp,
+               &prenotazione.priorita) == 8) {
+            
+            prenotazione.stato = (StatoPrenotazione)stato_temp;
+            if (aggiungi_prenotazione(coda, prenotazione) != 0) {
+                printf("Errore nell'aggiunta della prenotazione %d!\n", prenotazione.id_prenotazione);
+            }
+        } else {
+            printf("Errore nella lettura di una prenotazione dal file!\n");
+            break;
+        }
+    }
+    
+    fclose(file);
+}
 
 // Funzione per pulire la coda
 void pulisci_coda(CodaPrenotazioni* coda) {

@@ -107,6 +107,7 @@ void prenotaAuto() {
         printf("2. Visualizza prenotazioni attive\n");
         printf("3. Cancella prenotazione\n");
         printf("4. Modifica stato prenotazione\n");
+        printf("5. Salva prenotazioni su file\n");
         printf("0. Torna al menu principale\n");
         printf("-------------------------------------\n");
         printf("Scelta: ");
@@ -164,6 +165,12 @@ void prenotaAuto() {
                 printf("\nPrenotazioni attive:\n");
                 printf("-------------------\n");
                 
+                // Pulisci la coda esistente prima di caricare dal file
+                pulisci_coda(coda_prenotazioni);
+                
+                // Carica le prenotazioni dal file
+                caricaPrenotazioniDaFile(coda_prenotazioni);
+                
                 // Crea una coda temporanea per non perdere le prenotazioni
                 CodaPrenotazioni* temp = inizializza_coda();
                 if (temp == NULL) {
@@ -176,13 +183,7 @@ void prenotaAuto() {
                 // Estrai e mostra tutte le prenotazioni
                 while (coda_prenotazioni->dimensione > 0) {
                     Prenotazione p = rimuovi_prenotazione(coda_prenotazioni);
-                    printf("ID: %d\n", p.id_prenotazione);
-                    printf("Utente: %d\n", p.id_utente);
-                    printf("Veicolo: %d\n", p.id_veicolo);
-                    printf("Giorno: %d\n", p.giorno_settimana);
-                    printf("Orario: %d-%d\n", p.ora_inizio, p.ora_fine);
-                    printf("Stato: %d\n", p.stato);
-                    printf("Priorità: %d\n", p.priorita);
+                    stampa_prenotazione(p);
                     printf("-------------------\n");
                     
                     // Reinserisci nella coda temporanea
@@ -241,6 +242,12 @@ void prenotaAuto() {
                 clearInputBuffer();
                 break;
             }
+            case 5:
+                salvaPrenotazioniSuFile(coda_prenotazioni);
+                printf("Prenotazioni salvate su file.\n");
+                printf("Premi INVIO per continuare...");
+                clearInputBuffer();
+                break;
             case 0:
                 break;
             default:
@@ -291,7 +298,6 @@ int main() {
     
     // Carica i veicoli all'avvio
     caricaListaVeicoli();
-    inizializza_coda();
 
     while (1) {
         system("cls");
