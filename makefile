@@ -11,6 +11,9 @@ vehicle.o: vehicle.c vehicle.h
 prenotazioni.o: prenotazioni.c prenotazioni.h
 	gcc -Wall -Wextra -g -c prenotazioni.c
 
+fasceorarie.o: fasceorarie.c fasceorarie.h
+	gcc -Wall -Wextra -g -c fasceorarie.c
+
 clean:
 	del *.o car_sharing.exe
 

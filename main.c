@@ -3,6 +3,7 @@
 #include <windows.h>
 #include "vehicle.h"
 #include "prenotazioni.h"
+#include "fasceorarie.h"
 
 // Funzione per impostare il colore del testo
 void setColor(int color) {
@@ -285,6 +286,59 @@ void restituisciAuto() {
     clearInputBuffer();
 }
 
+void visualizzaDisponibilita() {
+    int id_veicolo;
+    CalendarioVeicolo calendario;
+    CodaPrenotazioni* coda_prenotazioni = NULL;
+    
+    system("cls");
+    setColor(11); // Ciano
+    printf("=====================================\n");
+    printf("       VISUALIZZA DISPONIBILITÀ\n");
+    printf("=====================================\n");
+    setColor(7); // Bianco
+    
+    // Visualizza lista veicoli disponibili
+    printf("\nVeicoli disponibili:\n");
+    list temp = getListaVeicoli();
+    while(temp != NULL) {
+        stampaVeicolo(temp->veicoli);
+        printf("-------------------\n");
+        temp = temp->next;
+    }
+    
+    // Chiedi l'ID del veicolo
+    printf("\nInserisci l'ID del veicolo per visualizzare la disponibilità: ");
+    scanf("%d", &id_veicolo);
+    clearInputBuffer();
+    
+    // Inizializza la coda delle prenotazioni se non esiste
+    if (coda_prenotazioni == NULL) {
+        coda_prenotazioni = inizializza_coda();
+        if (coda_prenotazioni == NULL) {
+            setColor(12); // Rosso
+            printf("Errore nell'inizializzazione della coda prenotazioni!\n");
+            setColor(7); // Bianco
+            printf("Premi INVIO per tornare al menu...");
+            clearInputBuffer();
+            return;
+        }
+    }
+    
+    // Carica le prenotazioni dal file
+    caricaPrenotazioniDaFile(coda_prenotazioni);
+    
+    // Inizializza e aggiorna il calendario
+    inizializza_calendario(&calendario, id_veicolo);
+    aggiorna_calendario(&calendario, coda_prenotazioni);
+    
+    // Visualizza il calendario
+    visualizza_calendario(&calendario);
+    
+    printf("\nPremi INVIO per tornare al menu...");
+    clearInputBuffer();
+}
+
 void cleanup() {
     // Salva i dati prima di chiudere
     salvaListaVeicoli();
@@ -313,6 +367,7 @@ int main() {
         printf("2. Visualizza prenotazioni\n");
         printf("3. Restituisci auto\n");
         printf("4. Gestione Veicoli\n");
+        printf("5. Visualizza disponibilità\n");
         printf("0. Esci\n");
         printf("-------------------------------------\n");
         printf("Scelta: ");
@@ -335,6 +390,10 @@ int main() {
             case 4:
                 system("cls");
                 gestioneVeicoli();
+                break;
+            case 5:
+                system("cls");
+                visualizzaDisponibilita();
                 break;
             case 0:
                 setColor(12); // Rosso
