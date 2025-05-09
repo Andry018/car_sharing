@@ -56,23 +56,25 @@ void visualizza_calendario(CalendarioVeicolo* calendario) {
     
     printf("\nCalendario per il veicolo ID: %d\n", calendario->id_veicolo);
     printf("==========================================\n");
-    
-    // Stampa intestazione con le ore
-    printf("Giorno/Ora |");
-    for (int ora = 0; ora < 24; ora++) {
-        printf(" %02d |", ora);
+    printf("Giorno/Ora  ");
+    for (int ora = 0; ora <= 24; ora++) {
+        if(ora == 0){
+            printf("%02d ", ora);
+        } else {
+            printf("  %02d ", ora);
+        }
     }
     printf("\n");
     
     // Stampa il calendario giorno per giorno
     for (int giorno = 0; giorno < 7; giorno++) {
-        printf("%-10s |", get_nome_giorno(giorno));
+        printf("%-10s  ||", get_nome_giorno(giorno));
         
         for (int ora = 0; ora < 24; ora++) {
             if (calendario->calendario[giorno][ora].occupato) {
-                printf(" X  |");  // X indica occupato
+                printf(" X ||");  // X indica occupato
             } else {
-                printf("    |");  // Spazio vuoto indica libero
+                printf("   ||");  // Spazio vuoto indica libero
             }
         }
         printf("\n");
