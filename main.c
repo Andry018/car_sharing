@@ -1,26 +1,66 @@
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
+#endif
 #include "vehicle.h"
 #include "prenotazioni.h"
 #include "fasceorarie.h"
 
 // Funzione per impostare il colore del testo
 void setColor(int color) {
+#ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
+#else
+    // ANSI escape codes for colors
+    switch(color) {
+        case 7:  // Bianco (default)
+            printf("\033[0m");
+            break;
+        case 10: // Verde
+            printf("\033[0;32m");
+            break;
+        case 11: // Ciano
+            printf("\033[0;36m");
+            break;
+        case 12: // Rosso
+            printf("\033[0;31m");
+            break;
+        case 13: // Magenta
+            printf("\033[0;35m");
+            break;
+        case 14: // Giallo
+            printf("\033[0;33m");
+            break;
+        default:
+            printf("\033[0m");
+            break;
+    }
+#endif
 }
 
 // Funzione per pulire il buffer di input
-void clearInputBuffer() {
+void svuotaBuffer() {
     while (getchar() != '\n');
+}
+
+// Funzione per pulire lo schermo in modo cross-platform
+void PulisciSchermo() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
 
 void gestioneVeicoli() {
     int scelta;
     
     do {
-        system("cls");
+        PulisciSchermo();
         setColor(14); // Giallo
         printf("=====================================\n");
         printf("       GESTIONE VEICOLI\n");
@@ -36,7 +76,7 @@ void gestioneVeicoli() {
         printf("-------------------------------------\n");
         printf("Scelta: ");
         scanf("%d", &scelta);
-        clearInputBuffer();
+        svuotaBuffer();
 
         switch(scelta) {
             case 1:
@@ -55,18 +95,18 @@ void gestioneVeicoli() {
                     temp = temp->next;
                 }
                 printf("Premi INVIO per continuare...");
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
             }
             case 4:
                 salvaListaVeicoli();
                 printf("Premi INVIO per continuare...");
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
             case 5:
                 caricaListaVeicoli();
                 printf("Premi INVIO per continuare...");
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
             case 0:
                 break;
@@ -74,7 +114,7 @@ void gestioneVeicoli() {
                 setColor(12); // Rosso
                 printf("\nScelta non valida. Premi INVIO per riprovare...");
                 setColor(7); // Bianco
-                clearInputBuffer();
+                svuotaBuffer();
         }
     } while(scelta != 0);
 }
@@ -91,13 +131,13 @@ void prenotaAuto() {
             printf("Errore nell'inizializzazione della coda prenotazioni!\n");
             setColor(7); // Bianco
             printf("Premi INVIO per tornare al menu...");
-            clearInputBuffer();
+            svuotaBuffer();
             return;
         }
     }
     
     do {
-        system("cls");
+        PulisciSchermo();
         setColor(10); // Verde
         printf("=====================================\n");
         printf("       PRENOTAZIONE AUTO\n");
@@ -113,7 +153,7 @@ void prenotaAuto() {
         printf("-------------------------------------\n");
         printf("Scelta: ");
         scanf("%d", &scelta);
-        clearInputBuffer();
+        svuotaBuffer();
 
         switch(scelta) {
             case 1: {
@@ -141,7 +181,7 @@ void prenotaAuto() {
                 scanf("%d", &ora_fine);
                 printf("Priorità (più bassa = più prioritaria): ");
                 scanf("%d", &priorita);
-                clearInputBuffer();
+                svuotaBuffer();
                 
                 Prenotazione nuova = crea_prenotazione(id_utente, id_veicolo, giorno, 
                                                      ora_inizio, ora_fine, priorita);
@@ -159,7 +199,7 @@ void prenotaAuto() {
                 }
                 setColor(7); // Bianco
                 printf("Premi INVIO per continuare...");
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
             }
             case 2: {
@@ -199,14 +239,14 @@ void prenotaAuto() {
                 
                 distruggi_coda(temp);
                 printf("Premi INVIO per continuare...");
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
             }
             case 3: {
                 int id_prenotazione;
                 printf("\nInserisci l'ID della prenotazione da cancellare: ");
                 scanf("%d", &id_prenotazione);
-                clearInputBuffer();
+                svuotaBuffer();
                 
                 Prenotazione* p = cerca_prenotazione(coda_prenotazioni, id_prenotazione);
                 if (p != NULL) {
@@ -219,7 +259,7 @@ void prenotaAuto() {
                 }
                 setColor(7); // Bianco
                 printf("Premi INVIO per continuare...");
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
             }
             case 4: {
@@ -228,7 +268,7 @@ void prenotaAuto() {
                 scanf("%d", &id_prenotazione);
                 printf("Nuovo stato (0=In attesa, 1=Confermata, 2=Completata, 3=Cancellata): ");
                 scanf("%d", &nuovo_stato);
-                clearInputBuffer();
+                svuotaBuffer();
                 
                 int risultato = modifica_stato_prenotazione(coda_prenotazioni, id_prenotazione, nuovo_stato);
                 if (risultato == 0) {
@@ -240,14 +280,14 @@ void prenotaAuto() {
                 }
                 setColor(7); // Bianco
                 printf("Premi INVIO per continuare...");
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
             }
             case 5:
                 salvaPrenotazioniSuFile(coda_prenotazioni);
                 printf("Prenotazioni salvate su file.\n");
                 printf("Premi INVIO per continuare...");
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
             case 0:
                 break;
@@ -255,7 +295,7 @@ void prenotaAuto() {
                 setColor(12); // Rosso
                 printf("\nScelta non valida. Premi INVIO per riprovare...");
                 setColor(7); // Bianco
-                clearInputBuffer();
+                svuotaBuffer();
         }
     } while(scelta != 0);
 }
@@ -270,7 +310,7 @@ void visualizzaPrenotazioni() {
     // TODO: Implementare la visualizzazione delle prenotazioni
     printf("Funzionalità in sviluppo...\n");
     printf("Premi INVIO per tornare al menu...");
-    clearInputBuffer();
+    svuotaBuffer();
 }
 
 void restituisciAuto() {
@@ -283,7 +323,7 @@ void restituisciAuto() {
     // TODO: Implementare la logica di restituzione
     printf("Funzionalità in sviluppo...\n");
     printf("Premi INVIO per tornare al menu...");
-    clearInputBuffer();
+    svuotaBuffer();
 }
 
 void visualizzaDisponibilita() {
@@ -291,7 +331,7 @@ void visualizzaDisponibilita() {
     CalendarioVeicolo calendario;
     CodaPrenotazioni* coda_prenotazioni = NULL;
     
-    system("cls");
+    PulisciSchermo();
     setColor(11); // Ciano
     printf("=====================================\n");
     printf("       VISUALIZZA DISPONIBILITA\n");
@@ -310,7 +350,7 @@ void visualizzaDisponibilita() {
     // Chiedi l'ID del veicolo
     printf("\nInserisci l'ID del veicolo per visualizzare la disponibilita: ");
     scanf("%d", &id_veicolo);
-    clearInputBuffer();
+    svuotaBuffer();
     
     // Inizializza la coda delle prenotazioni se non esiste
     if (coda_prenotazioni == NULL) {
@@ -320,7 +360,7 @@ void visualizzaDisponibilita() {
             printf("Errore nell'inizializzazione della coda prenotazioni!\n");
             setColor(7); // Bianco
             printf("Premi INVIO per tornare al menu...");
-            clearInputBuffer();
+            svuotaBuffer();
             return;
         }
     }
@@ -336,7 +376,7 @@ void visualizzaDisponibilita() {
     visualizza_calendario(&calendario);
     
     printf("\nPremi INVIO per tornare al menu...");
-    clearInputBuffer();
+    svuotaBuffer();
 }
 
 void cleanup() {
@@ -354,7 +394,7 @@ int main() {
     caricaListaVeicoli();
 
     while (1) {
-        system("cls");
+        PulisciSchermo();
         
         setColor(13); // Magenta
         printf("=====================================\n");
@@ -372,27 +412,27 @@ int main() {
         printf("-------------------------------------\n");
         printf("Scelta: ");
         scanf("%d", &scelta);
-        clearInputBuffer();
+        svuotaBuffer();
 
         switch (scelta) {
             case 1:
-                system("cls");
+                PulisciSchermo();
                 prenotaAuto();
                 break;
             case 2:
-                system("cls");
+                PulisciSchermo();
                 visualizzaPrenotazioni();
                 break;
             case 3:
-                system("cls");
+                PulisciSchermo();
                 restituisciAuto();
                 break;
             case 4:
-                system("cls");
+                PulisciSchermo();
                 gestioneVeicoli();
                 break;
             case 5:
-                system("cls");
+                PulisciSchermo();
                 visualizzaDisponibilita();
                 break;
             case 0:
@@ -405,7 +445,7 @@ int main() {
                 setColor(12); // Rosso
                 printf("\nScelta non valida. Premi INVIO per riprovare...");
                 setColor(7); // Bianco
-                clearInputBuffer();
+                svuotaBuffer();
                 break;
         }
     }
