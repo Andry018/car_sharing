@@ -29,7 +29,7 @@ void aggiorna_calendario(CalendarioVeicolo* calendario, CodaPrenotazioni* coda);
 void visualizza_calendario(CalendarioVeicolo* calendario);
 
 // Funzione per verificare la disponibilità di un veicolo in una fascia oraria
-int verifica_disponibilita(CalendarioVeicolo* calendario, int giorno, int ora_inizio, int ora_fine);
+int verifica_disponibilita(CalendarioVeicolo* calendario, int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);
 
 // Funzione per ottenere il nome del giorno della settimana
 const char* get_nome_giorno(int giorno);

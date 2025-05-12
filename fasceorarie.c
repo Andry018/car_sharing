@@ -34,11 +34,33 @@ void aggiorna_calendario(CalendarioVeicolo* calendario, CodaPrenotazioni* coda) 
             int giorno_fine = estrai_giorno(p.giorno_ora_fine);
             int ora_fine = estrai_ora(p.giorno_ora_fine);
             
-            // Se la prenotazione è nello stesso giorno
+            // Gestione prenotazioni multi-giorno
             if (giorno_inizio == giorno_fine) {
+                // Prenotazione nello stesso giorno
                 for (int ora = ora_inizio; ora < ora_fine; ora++) {
                     calendario->calendario[giorno_inizio][ora].occupato = 1;
                     calendario->calendario[giorno_inizio][ora].id_prenotazione = p.id_prenotazione;
+                }
+            } else {
+                // Prenotazione su più giorni
+                // Primo giorno: da ora_inizio fino alla fine del giorno
+                for (int ora = ora_inizio; ora < 24; ora++) {
+                    calendario->calendario[giorno_inizio][ora].occupato = 1;
+                    calendario->calendario[giorno_inizio][ora].id_prenotazione = p.id_prenotazione;
+                }
+                
+                // Giorni intermedi: tutto il giorno
+                for (int giorno = giorno_inizio + 1; giorno < giorno_fine; giorno++) {
+                    for (int ora = 0; ora < 24; ora++) {
+                        calendario->calendario[giorno][ora].occupato = 1;
+                        calendario->calendario[giorno][ora].id_prenotazione = p.id_prenotazione;
+                    }
+                }
+                
+                // Ultimo giorno: dall'inizio fino a ora_fine
+                for (int ora = 0; ora < ora_fine; ora++) {
+                    calendario->calendario[giorno_fine][ora].occupato = 1;
+                    calendario->calendario[giorno_fine][ora].id_prenotazione = p.id_prenotazione;
                 }
             }
         }
@@ -93,17 +115,46 @@ void visualizza_calendario(CalendarioVeicolo* calendario) {
 }
 
 // Funzione per verificare la disponibilità di un veicolo in una fascia oraria
-int verifica_disponibilita(CalendarioVeicolo* calendario, int giorno, int ora_inizio, int ora_fine) {
+int verifica_disponibilita(CalendarioVeicolo* calendario, int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine) {
     if (calendario == NULL) return 0;
-    if (giorno < 0 || giorno > 6) return 0;
+    if (giorno_inizio < 0 || giorno_inizio > 6) return 0;
+    if (giorno_fine < 0 || giorno_fine > 6) return 0;
     if (ora_inizio < 0 || ora_inizio > 23) return 0;
     if (ora_fine < 0 || ora_fine > 23) return 0;
-    if (ora_inizio >= ora_fine) return 0;
+    if (giorno_inizio > giorno_fine) return 0;
+    if (giorno_inizio == giorno_fine && ora_inizio >= ora_fine) return 0;
     
-    // Verifica se tutte le ore nella fascia richiesta sono libere
-    for (int ora = ora_inizio; ora < ora_fine; ora++) {
-        if (calendario->calendario[giorno][ora].occupato) {
-            return 0;  // Non disponibile
+    // Verifica disponibilità per prenotazioni multi-giorno
+    if (giorno_inizio == giorno_fine) {
+        // Prenotazione nello stesso giorno
+        for (int ora = ora_inizio; ora < ora_fine; ora++) {
+            if (calendario->calendario[giorno_inizio][ora].occupato) {
+                return 0;  // Non disponibile
+            }
+        }
+    } else {
+        // Prenotazione su più giorni
+        // Verifica primo giorno
+        for (int ora = ora_inizio; ora < 24; ora++) {
+            if (calendario->calendario[giorno_inizio][ora].occupato) {
+                return 0;
+            }
+        }
+        
+        // Verifica giorni intermedi
+        for (int giorno = giorno_inizio + 1; giorno < giorno_fine; giorno++) {
+            for (int ora = 0; ora < 24; ora++) {
+                if (calendario->calendario[giorno][ora].occupato) {
+                    return 0;
+                }
+            }
+        }
+        
+        // Verifica ultimo giorno
+        for (int ora = 0; ora < ora_fine; ora++) {
+            if (calendario->calendario[giorno_fine][ora].occupato) {
+                return 0;
+            }
         }
     }
     
