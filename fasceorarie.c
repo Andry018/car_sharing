@@ -1,5 +1,6 @@
 #include "fasceorarie.h"
 
+
 // Funzione per inizializzare il calendario di un veicolo
 void inizializza_calendario(CalendarioVeicolo* calendario, int id_veicolo) {
     if (calendario == NULL) return;
@@ -28,9 +29,17 @@ void aggiorna_calendario(CalendarioVeicolo* calendario, CodaPrenotazioni* coda) 
         
         // Aggiorna solo se la prenotazione è per questo veicolo e non è cancellata
         if (p.id_veicolo == calendario->id_veicolo && p.stato != CANCELLATA) {
-            for (int ora = p.ora_inizio; ora < p.ora_fine; ora++) {
-                calendario->calendario[p.giorno_settimana][ora].occupato = 1;
-                calendario->calendario[p.giorno_settimana][ora].id_prenotazione = p.id_prenotazione;
+            int giorno_inizio = estrai_giorno(p.giorno_ora_inizio);
+            int ora_inizio = estrai_ora(p.giorno_ora_inizio);
+            int giorno_fine = estrai_giorno(p.giorno_ora_fine);
+            int ora_fine = estrai_ora(p.giorno_ora_fine);
+            
+            // Se la prenotazione è nello stesso giorno
+            if (giorno_inizio == giorno_fine) {
+                for (int ora = ora_inizio; ora < ora_fine; ora++) {
+                    calendario->calendario[giorno_inizio][ora].occupato = 1;
+                    calendario->calendario[giorno_inizio][ora].id_prenotazione = p.id_prenotazione;
+                }
             }
         }
     }

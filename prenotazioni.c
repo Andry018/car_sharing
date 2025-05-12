@@ -15,9 +15,8 @@ typedef struct {
     int id_prenotazione;
     int id_utente;
     int id_veicolo;
-    int giorno_settimana;  // 0-6 (Lun-Dom)
-    int ora_inizio;        // 0-23
-    int ora_fine;          // 0-23
+    int giorno_ora_inizio;  // Formato: giorno*24 + ora (es: 0*24 + 15 = 15 per Lunedi 15:00)
+    int giorno_ora_fine;    // Formato: giorno*24 + ora (es: 3*24 + 22 = 94 per Giovedi 22:00)
     StatoPrenotazione stato;
     int priorita;          // Campo per la priorità (più basso = più prioritario)
 } Prenotazione;
@@ -88,26 +87,45 @@ void bubble_down(CodaPrenotazioni* coda, int index) {
     }
 }
 
+// Funzione per convertire giorno e ora in un singolo valore
+int converti_in_timestamp(int giorno, int ora) {
+    return giorno * 24 + ora;
+}
+
+// Funzione per estrarre giorno da timestamp
+int estrai_giorno(int timestamp) {
+    return timestamp / 24;
+}
+
+// Funzione per estrarre ora da timestamp
+int estrai_ora(int timestamp) {
+    return timestamp % 24;
+}
+
 // Funzione per verificare se una fascia oraria è valida
-int verifica_fascia_oraria(int giorno, int ora_inizio, int ora_fine) {
-    if (giorno < 0 || giorno > 6) return 0;
+int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine) {
+    int timestamp_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
+    int timestamp_fine = converti_in_timestamp(giorno_fine, ora_fine);
+    
+    if (giorno_inizio < 0 || giorno_inizio > 6) return 0;
+    if (giorno_fine < 0 || giorno_fine > 6) return 0;
     if (ora_inizio < 0 || ora_inizio > 23) return 0;
     if (ora_fine < 0 || ora_fine > 23) return 0;
-    if (ora_inizio >= ora_fine) return 0;
+    if (timestamp_inizio >= timestamp_fine) return 0;
     return 1;
 }
 
 // Funzione per creare una nuova prenotazione
-Prenotazione crea_prenotazione(int id_utente, int id_veicolo, int giorno, int ora_inizio, int ora_fine, int priorita) {
+Prenotazione crea_prenotazione(int id_utente, int id_veicolo, int giorno_inizio, int ora_inizio, 
+                             int giorno_fine, int ora_fine, int priorita) {
     static int id_counter = 1;
     
     Prenotazione nuova;
     nuova.id_prenotazione = id_counter++;
     nuova.id_utente = id_utente;
     nuova.id_veicolo = id_veicolo;
-    nuova.giorno_settimana = giorno;
-    nuova.ora_inizio = ora_inizio;
-    nuova.ora_fine = ora_fine;
+    nuova.giorno_ora_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
+    nuova.giorno_ora_fine = converti_in_timestamp(giorno_fine, ora_fine);
     nuova.stato = IN_ATTESA;
     nuova.priorita = priorita;
     
@@ -121,9 +139,11 @@ int aggiungi_prenotazione(CodaPrenotazioni* coda, Prenotazione prenotazione) {
     }
     
     // Verifica la validità della fascia oraria
-    if (!verifica_fascia_oraria(prenotazione.giorno_settimana, 
-                              prenotazione.ora_inizio, 
-                              prenotazione.ora_fine)) {
+    if (!verifica_fascia_oraria(
+            estrai_giorno(prenotazione.giorno_ora_inizio),
+            estrai_ora(prenotazione.giorno_ora_inizio),
+            estrai_giorno(prenotazione.giorno_ora_fine),
+            estrai_ora(prenotazione.giorno_ora_fine))) {
         return -2;
     }
     
@@ -187,10 +207,11 @@ Prenotazione* cerca_prenotazione_per_orario(CodaPrenotazioni* coda, int giorno, 
         return NULL;
     }
     
+    int timestamp = converti_in_timestamp(giorno, ora);
+    
     for (int i = 0; i < coda->dimensione; i++) {
-        if (coda->heap[i].giorno_settimana == giorno &&
-            coda->heap[i].ora_inizio <= ora &&
-            coda->heap[i].ora_fine > ora) {
+        if (coda->heap[i].giorno_ora_inizio <= timestamp &&
+            coda->heap[i].giorno_ora_fine > timestamp) {
             return &coda->heap[i];
         }
     }
@@ -208,14 +229,23 @@ int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, Sta
     prenotazione->stato = nuovo_stato;
     return 0;
 }
+
 // Funzione per stampare una prenotazione
 void stampa_prenotazione(Prenotazione prenotazione) {
+    const char* giorni[] = {"Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"};
+    
     printf("ID Prenotazione: %d\n", prenotazione.id_prenotazione);
     printf("ID Utente: %d\n", prenotazione.id_utente);
     printf("ID Veicolo: %d\n", prenotazione.id_veicolo);
-    printf("Giorno della settimana: %d\n", prenotazione.giorno_settimana);
-    printf("Ora inizio: %d\n", prenotazione.ora_inizio);
-    printf("Ora fine: %d\n", prenotazione.ora_fine);
+    
+    int giorno_inizio = estrai_giorno(prenotazione.giorno_ora_inizio);
+    int ora_inizio = estrai_ora(prenotazione.giorno_ora_inizio);
+    int giorno_fine = estrai_giorno(prenotazione.giorno_ora_fine);
+    int ora_fine = estrai_ora(prenotazione.giorno_ora_fine);
+    
+    printf("Inizio: %s alle %02d:00\n", giorni[giorno_inizio], ora_inizio);
+    printf("Fine: %s alle %02d:00\n", giorni[giorno_fine], ora_fine);
+    
     if (prenotazione.stato == IN_ATTESA) {
         printf("Stato: In attesa\n");
     } else if (prenotazione.stato == CONFERMATA) {
@@ -228,8 +258,8 @@ void stampa_prenotazione(Prenotazione prenotazione) {
     printf("Priorità: %d\n", prenotazione.priorita);
 }
 
-//Funzione per salvare la coda in un file
-void salvaPrenotazioniSuFile(CodaPrenotazioni* coda){
+// Funzione per salvare la coda in un file
+void salva_prenotazioni_su_file(CodaPrenotazioni* coda) {
     FILE* file = fopen("prenotazioni.txt", "w");
     if (file == NULL) {
         printf("Errore nell'apertura del file per la scrittura!\n");
@@ -237,13 +267,12 @@ void salvaPrenotazioniSuFile(CodaPrenotazioni* coda){
     }
     
     for (int i = 0; i < coda->dimensione; i++) {
-        fprintf(file, "%d %d %d %d %d %d %d %d\n",
+        fprintf(file, "%d %d %d %d %d %d %d\n",
                 coda->heap[i].id_prenotazione,
                 coda->heap[i].id_utente,
                 coda->heap[i].id_veicolo,
-                coda->heap[i].giorno_settimana,
-                coda->heap[i].ora_inizio,
-                coda->heap[i].ora_fine,
+                coda->heap[i].giorno_ora_inizio,
+                coda->heap[i].giorno_ora_fine,
                 coda->heap[i].stato,
                 coda->heap[i].priorita);
     }
@@ -252,30 +281,29 @@ void salvaPrenotazioniSuFile(CodaPrenotazioni* coda){
 }
 
 // Funzione per caricare le prenotazioni da un file
-void caricaPrenotazioniDaFile(CodaPrenotazioni* coda) {
+int carica_prenotazioni_da_file(CodaPrenotazioni* coda) {
     if (coda == NULL) {
         printf("Errore: coda non inizializzata!\n");
-        return;
+        return -1;
     }
 
     FILE* file = fopen("prenotazioni.txt", "r");
     if (file == NULL) {
         printf("Errore nell'apertura del file per la lettura!\n");
-        return;
+        return -1;
     }
     
     int stato_temp;
     while (!feof(file)) {
         Prenotazione prenotazione;
-        if (fscanf(file, "%d %d %d %d %d %d %d %d\n",
+        if (fscanf(file, "%d %d %d %d %d %d %d\n",
                &prenotazione.id_prenotazione,
                &prenotazione.id_utente,
                &prenotazione.id_veicolo,
-               &prenotazione.giorno_settimana,
-               &prenotazione.ora_inizio,
-               &prenotazione.ora_fine,
+               &prenotazione.giorno_ora_inizio,
+               &prenotazione.giorno_ora_fine,
                &stato_temp,
-               &prenotazione.priorita) == 8) {
+               &prenotazione.priorita) == 7) {
             
             prenotazione.stato = (StatoPrenotazione)stato_temp;
             if (aggiungi_prenotazione(coda, prenotazione) != 0) {
@@ -288,6 +316,7 @@ void caricaPrenotazioniDaFile(CodaPrenotazioni* coda) {
     }
     
     fclose(file);
+    return 0;
 }
 
 // Funzione per pulire la coda

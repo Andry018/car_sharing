@@ -14,9 +14,8 @@ typedef struct {
     int id_prenotazione;
     int id_utente;
     int id_veicolo;
-    int giorno_settimana;  // 0-6 (Lun-Dom)
-    int ora_inizio;        // 0-23
-    int ora_fine;          // 0-23
+    int giorno_ora_inizio;  // Formato: giorno*24 + ora (es: 0*24 + 15 = 15 per Lunedi 15:00)
+    int giorno_ora_fine;    // Formato: giorno*24 + ora (es: 3*24 + 22 = 94 per Giovedi 22:00)
     StatoPrenotazione stato;
     int priorita;          // Campo per la priorità (più basso = più prioritario)
 } Prenotazione;
@@ -33,15 +32,20 @@ typedef struct {
 #define FIGLIO_SINISTRO(i) (2 * i + 1)
 #define FIGLIO_DESTRO(i) (2 * i + 2)
 
+// Funzioni di utilità per i timestamp
+int converti_in_timestamp(int giorno, int ora);
+int estrai_giorno(int timestamp);
+int estrai_ora(int timestamp);
+
 // Funzione per inizializzare una nuova coda
 CodaPrenotazioni* inizializza_coda();
 
 // Funzione per creare una nuova prenotazione
-Prenotazione crea_prenotazione(int id_utente, int id_veicolo, int giorno, 
-                             int ora_inizio, int ora_fine, int priorita);
+Prenotazione crea_prenotazione(int id_utente, int id_veicolo, int giorno_inizio, 
+                             int ora_inizio, int giorno_fine, int ora_fine, int priorita);
 
 // Funzione per verificare se una fascia oraria è valida
-int verifica_fascia_oraria(int giorno, int ora_inizio, int ora_fine);
+int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);
 
 // Funzione per scambiare due prenotazioni
 void scambia_prenotazioni(Prenotazione* a, Prenotazione* b);
@@ -67,16 +71,15 @@ Prenotazione* cerca_prenotazione_per_orario(CodaPrenotazioni* coda, int giorno, 
 // Funzione per modificare lo stato di una prenotazione
 int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, 
                               StatoPrenotazione nuovo_stato);
+
 // Funzione per stampare una prenotazione
 void stampa_prenotazione(Prenotazione prenotazione);
 
 // Funzione per salvare le prenotazioni su un file
-void salvaPrenotazioniSuFile(CodaPrenotazioni* coda);
+void salva_prenotazioni_su_file(CodaPrenotazioni* coda);
 
 // Funzione per caricare le prenotazioni da un file
-void caricaPrenotazioniDaFile(CodaPrenotazioni* coda);
-
-void caricaPrenotazioni();
+int carica_prenotazioni_da_file(CodaPrenotazioni* coda);
 
 // Funzione per pulire la coda
 void pulisci_coda(CodaPrenotazioni* coda);

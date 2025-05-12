@@ -148,7 +148,6 @@ void prenotaAuto() {
         printf("2. Visualizza prenotazioni attive\n");
         printf("3. Cancella prenotazione\n");
         printf("4. Modifica stato prenotazione\n");
-        printf("5. Salva prenotazioni su file\n");
         printf("0. Torna al menu principale\n");
         printf("-------------------------------------\n");
         printf("Scelta: ");
@@ -157,7 +156,7 @@ void prenotaAuto() {
 
         switch(scelta) {
             case 1: {
-                int id_utente, id_veicolo, giorno, ora_inizio, ora_fine, priorita;
+                int id_utente, id_veicolo, giorno_inizio, ora_inizio, giorno_fine, ora_fine, priorita;
                 
                 // Visualizza veicoli disponibili
                 printf("\nVeicoli disponibili:\n");
@@ -173,20 +172,25 @@ void prenotaAuto() {
                 scanf("%d", &id_utente);
                 printf("ID Veicolo: ");
                 scanf("%d", &id_veicolo);
-                printf("Giorno (0-6, Lun-Dom): ");
-                scanf("%d", &giorno);
+                printf("Giorno inizio (0-6, Lun-Dom): ");
+                scanf("%d", &giorno_inizio);
                 printf("Ora inizio (0-23): ");
                 scanf("%d", &ora_inizio);
+                printf("Giorno fine (0-6, Lun-Dom): ");
+                scanf("%d", &giorno_fine);
                 printf("Ora fine (0-23): ");
                 scanf("%d", &ora_fine);
                 printf("Priorità (più bassa = più prioritaria): ");
                 scanf("%d", &priorita);
                 svuotaBuffer();
                 
-                Prenotazione nuova = crea_prenotazione(id_utente, id_veicolo, giorno, 
-                                                     ora_inizio, ora_fine, priorita);
+                Prenotazione nuova = crea_prenotazione(id_utente, id_veicolo, 
+                                                     giorno_inizio, ora_inizio,
+                                                     giorno_fine, ora_fine, 
+                                                     priorita);
                 
                 int risultato = aggiungi_prenotazione(coda_prenotazioni, nuova);
+                salva_prenotazioni_su_file(coda_prenotazioni); 
                 if (risultato == 0) {
                     setColor(10); // Verde
                     printf("\nPrenotazione aggiunta con successo!\n");
@@ -204,40 +208,10 @@ void prenotaAuto() {
             }
             case 2: {
                 printf("\nPrenotazioni attive:\n");
-                printf("-------------------\n");
-                
-                // Pulisci la coda esistente prima di caricare dal file
-                pulisci_coda(coda_prenotazioni);
-                
-                // Carica le prenotazioni dal file
-                caricaPrenotazioniDaFile(coda_prenotazioni);
-                
-                // Crea una coda temporanea per non perdere le prenotazioni
-                CodaPrenotazioni* temp = inizializza_coda();
-                if (temp == NULL) {
-                    setColor(12); // Rosso
-                    printf("Errore nella visualizzazione delle prenotazioni!\n");
-                    setColor(7); // Bianco
-                    break;
-                }
-                
-                // Estrai e mostra tutte le prenotazioni
-                while (coda_prenotazioni->dimensione > 0) {
-                    Prenotazione p = rimuovi_prenotazione(coda_prenotazioni);
-                    stampa_prenotazione(p);
+                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
+                    stampa_prenotazione(coda_prenotazioni->heap[i]);
                     printf("-------------------\n");
-                    
-                    // Reinserisci nella coda temporanea
-                    aggiungi_prenotazione(temp, p);
                 }
-                
-                // Ripristina la coda originale
-                while (temp->dimensione > 0) {
-                    Prenotazione p = rimuovi_prenotazione(temp);
-                    aggiungi_prenotazione(coda_prenotazioni, p);
-                }
-                
-                distruggi_coda(temp);
                 printf("Premi INVIO per continuare...");
                 svuotaBuffer();
                 break;
@@ -248,14 +222,14 @@ void prenotaAuto() {
                 scanf("%d", &id_prenotazione);
                 svuotaBuffer();
                 
-                Prenotazione* p = cerca_prenotazione(coda_prenotazioni, id_prenotazione);
-                if (p != NULL) {
-                    p->stato = CANCELLATA;
+                Prenotazione* prenotazione = cerca_prenotazione(coda_prenotazioni, id_prenotazione);
+                if (prenotazione != NULL) {
+                    prenotazione->stato = CANCELLATA;
                     setColor(10); // Verde
-                    printf("Prenotazione cancellata con successo!\n");
+                    printf("\nPrenotazione cancellata con successo!\n");
                 } else {
                     setColor(12); // Rosso
-                    printf("Prenotazione non trovata!\n");
+                    printf("\nPrenotazione non trovata!\n");
                 }
                 setColor(7); // Bianco
                 printf("Premi INVIO per continuare...");
@@ -264,7 +238,7 @@ void prenotaAuto() {
             }
             case 4: {
                 int id_prenotazione, nuovo_stato;
-                printf("\nInserisci l'ID della prenotazione: ");
+                printf("\nInserisci l'ID della prenotazione da modificare: ");
                 scanf("%d", &id_prenotazione);
                 printf("Nuovo stato (0=In attesa, 1=Confermata, 2=Completata, 3=Cancellata): ");
                 scanf("%d", &nuovo_stato);
@@ -273,22 +247,16 @@ void prenotaAuto() {
                 int risultato = modifica_stato_prenotazione(coda_prenotazioni, id_prenotazione, nuovo_stato);
                 if (risultato == 0) {
                     setColor(10); // Verde
-                    printf("Stato modificato con successo!\n");
+                    printf("\nStato della prenotazione modificato con successo!\n");
                 } else {
                     setColor(12); // Rosso
-                    printf("Errore nella modifica dello stato!\n");
+                    printf("\nErrore nella modifica dello stato!\n");
                 }
                 setColor(7); // Bianco
                 printf("Premi INVIO per continuare...");
                 svuotaBuffer();
                 break;
             }
-            case 5:
-                salvaPrenotazioniSuFile(coda_prenotazioni);
-                printf("Prenotazioni salvate su file.\n");
-                printf("Premi INVIO per continuare...");
-                svuotaBuffer();
-                break;
             case 0:
                 break;
             default:
@@ -366,7 +334,7 @@ void visualizzaDisponibilita() {
     }
     
     // Carica le prenotazioni dal file
-    caricaPrenotazioniDaFile(coda_prenotazioni);
+    carica_prenotazioni_da_file(coda_prenotazioni);
     
     // Inizializza e aggiorna il calendario
     inizializza_calendario(&calendario, id_veicolo);
