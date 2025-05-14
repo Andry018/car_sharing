@@ -8,7 +8,9 @@
 #include "vehicle.h"
 #include "prenotazioni.h"
 #include "fasceorarie.h"
+#include "utenti.h"
 
+// COMMIT BUONO
 // Funzione per impostare il colore del testo
 void set_color(int color) {
 #ifdef _WIN32
