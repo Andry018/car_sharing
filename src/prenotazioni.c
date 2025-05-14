@@ -232,7 +232,7 @@ int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, Sta
 
 // Funzione per stampare una prenotazione
 void stampa_prenotazione(Prenotazione prenotazione) {
-    const char* giorni[] = {"Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"};
+    const char* giorni[] = {"Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato", "Domenica"};
     
     printf("ID Prenotazione: %d\n", prenotazione.id_prenotazione);
     printf("ID Utente: %d\n", prenotazione.id_utente);
@@ -260,7 +260,7 @@ void stampa_prenotazione(Prenotazione prenotazione) {
 
 // Funzione per salvare la coda in un file
 void salva_prenotazioni_su_file(CodaPrenotazioni* coda) {
-    FILE* file = fopen("prenotazioni.txt", "w");
+    FILE* file = fopen("data/prenotazioni.txt", "w");
     if (file == NULL) {
         printf("Errore nell'apertura del file per la scrittura!\n");
         return;
@@ -287,7 +287,7 @@ int carica_prenotazioni_da_file(CodaPrenotazioni* coda) {
         return -1;
     }
 
-    FILE* file = fopen("prenotazioni.txt", "r");
+    FILE* file = fopen("data/prenotazioni.txt", "r");
     if (file == NULL) {
         printf("Errore nell'apertura del file per la lettura!\n");
         return -1;

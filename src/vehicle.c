@@ -8,23 +8,23 @@
 static list listaVeicoli = NULL;
 
 // Funzioni di accesso
-list getListaVeicoli(void) {
+list get_lista_veicoli(void) {
     return listaVeicoli;
 }
 
-void setListaVeicoli(list nuovaLista) {
+void set_lista_veicoli(list nuovaLista) {
     listaVeicoli = nuovaLista;
 }
 
-void salvaListaVeicoli(void) {
-    salvaVeicoloFile(listaVeicoli);
+void salva_lista_veicoli(void) {
+    salva_veicolo_file(listaVeicoli);
 }
 
-void caricaListaVeicoli(void) {
-    listaVeicoli = caricaVeicoloFile(listaVeicoli);
+void carica_lista_veicoli(void) {
+    listaVeicoli = carica_veicolo_file(listaVeicoli);
 }
 
-void pulisciListaVeicoli(void) {
+void pulisci_lista_veicoli(void) {
     while(listaVeicoli != NULL) {
         list temp = listaVeicoli;
         listaVeicoli = listaVeicoli->next;
@@ -33,9 +33,9 @@ void pulisciListaVeicoli(void) {
 }
 
 
-int caricaUltimoID()
+int carica_ultimo_id()
 {
-    FILE *fp = fopen("veicoli.txt", "r");
+    FILE *fp = fopen("data/veicoli.txt", "r");
     if (fp == NULL)
     {
         return 0;
@@ -58,7 +58,7 @@ int caricaUltimoID()
     return max_id;
 }
 
-veicolo creaVeicolo()
+veicolo crea_veicolo()
 {
     veicolo v;
     static int id = 0; // variabile per id
@@ -66,7 +66,7 @@ veicolo creaVeicolo()
     if (id == 0)
     {
         printf("Caricamento dell'ultimo ID...\n");
-        id = caricaUltimoID();
+        id = carica_ultimo_id();
     }
 
     id++;
@@ -92,7 +92,7 @@ veicolo creaVeicolo()
             break;
         default:
             printf("Categoria non valida.\n");
-            return creaVeicolo();
+            return crea_veicolo();
     }
     getchar(); //libera buffer
     printf("Inserisci modello del veicolo: ");
@@ -113,20 +113,20 @@ veicolo creaVeicolo()
     return v;
 }
 
-list aggiungiVeicolo(list l)
+list aggiungi_veicolo(list l)
 {
     list nuovo = (list)malloc(sizeof(struct node));
     if (nuovo == NULL) {
         printf("Errore nell'allocazione della memoria.\n");
         return l;
     }
-    veicolo v = creaVeicolo();
+    veicolo v = crea_veicolo();
     nuovo->veicoli = v;
     nuovo->next = l;
     return nuovo;
 }
 
-list rimuoviVeicolo(list l)
+list rimuovi_veicolo(list l)
 {
     if (l == NULL) {
         printf("La lista dei veicoli è vuota.\n");
@@ -167,7 +167,7 @@ list rimuoviVeicolo(list l)
     return l;
 }
 
-void stampaVeicolo(veicolo v)
+void stampa_veicolo(veicolo v)
 {
     printf("ID: %d\n", v.id);
     printf("Categoria: %s\n", v.categoria);
@@ -181,9 +181,9 @@ void stampaVeicolo(veicolo v)
     }
 }
 
-void salvaVeicoloFile(list l)
+void salva_veicolo_file(list l)
 {
-    FILE *fp = fopen("veicoli.txt", "w");
+    FILE *fp = fopen("data/veicoli.txt", "w");
     if (fp == NULL)
     {
         printf("Impossibile aprire il file.\n");
@@ -201,12 +201,12 @@ void salvaVeicoloFile(list l)
         l = l->next;
     }
     fclose(fp);
-    printf("Veicoli salvati nel file veicoli.txt\n");
+    printf("Veicoli salvati nel file data/veicoli.txt\n");
 }
 
-list caricaVeicoloFile(list l)
+list carica_veicolo_file(list l)
 {
-    FILE *fp = fopen("veicoli.txt", "r");
+    FILE *fp = fopen("data/veicoli.txt", "r");
     if (fp == NULL)
     {
         printf("Impossibile aprire il file.\n");

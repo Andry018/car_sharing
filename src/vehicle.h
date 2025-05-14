@@ -20,20 +20,19 @@ typedef struct node {
 } *list;
 
 // Funzioni di accesso alla lista
-list getListaVeicoli(void);
-void setListaVeicoli(list nuovaLista);
-void salvaListaVeicoli(void);
-void caricaListaVeicoli(void);
-void pulisciListaVeicoli(void);
+list get_lista_veicoli(void);
+void set_lista_veicoli(list nuovaLista);
+void salva_lista_veicoli(void);
+void carica_lista_veicoli(void);
+void pulisci_lista_veicoli(void);
 
 // Funzioni di gestione veicoli
-
-veicolo creaVeicolo(void);
-list aggiungiVeicolo(list);
-list rimuoviVeicolo(list);
-void stampaVeicolo(veicolo);
-void salvaVeicoloFile(list);
-list caricaVeicoloFile(list);
-int caricaUltimoID(void);
+veicolo crea_veicolo(void);
+list aggiungi_veicolo(list);
+list rimuovi_veicolo(list);
+void stampa_veicolo(veicolo);
+void salva_veicolo_file(list);
+list carica_veicolo_file(list);
+int carica_ultimo_id(void);
 
 #endif
