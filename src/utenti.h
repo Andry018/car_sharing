@@ -3,16 +3,20 @@
 
 #define TABLE_SIZE 100
 
-typedef struct Utente {
+typedef struct {
     int id;
     char username[30];
-    char nomeCompleto[50];
+    char nome_completo[50];
     int isAdmin;
 } Utente;
 
+// Function declarations
+int carica_ultimo_id_utente();
 void inizializza_tabella_utenti();
-int inserisci_utente(const char* username, const char* nomeCompleto);
+void salva_utenti_file();
+int carica_utenti_file();
+int inserisci_utente(const char* username, const char* nome_completo);
 Utente* cerca_utente(const char* username);
 void stampa_utenti();
 
-#endif
+#endif // UTENTI_H

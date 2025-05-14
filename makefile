@@ -19,8 +19,8 @@ OBJDIR = obj
 # Crea la directory obj se non esiste (viene eliminata con il comando 'make clean')
 $(shell $(MKDIR))
 
-car_sharing$(EXE): $(OBJDIR)/main.o $(OBJDIR)/vehicle.o $(OBJDIR)/prenotazioni.o $(OBJDIR)/fasceorarie.o
-	gcc -Wall -Wextra -g -o car_sharing$(EXE) $(OBJDIR)/main.o $(OBJDIR)/vehicle.o $(OBJDIR)/prenotazioni.o $(OBJDIR)/fasceorarie.o
+car_sharing$(EXE): $(OBJDIR)/main.o $(OBJDIR)/vehicle.o $(OBJDIR)/prenotazioni.o $(OBJDIR)/fasceorarie.o $(OBJDIR)/utenti.o $(OBJDIR)/hash.o
+	gcc -Wall -Wextra -g -o car_sharing$(EXE) $(OBJDIR)/main.o $(OBJDIR)/vehicle.o $(OBJDIR)/prenotazioni.o $(OBJDIR)/fasceorarie.o $(OBJDIR)/utenti.o $(OBJDIR)/hash.o
 ifeq ($(OS),Windows_NT)
 	$(RM) $(OBJDIR)\\*.o
 	$(RMDIR) $(OBJDIR)
@@ -40,6 +40,12 @@ $(OBJDIR)/prenotazioni.o: $(SRCDIR)/prenotazioni.c $(SRCDIR)/prenotazioni.h
 
 $(OBJDIR)/fasceorarie.o: $(SRCDIR)/fasceorarie.c $(SRCDIR)/fasceorarie.h
 	gcc -Wall -Wextra -g -c $(SRCDIR)/fasceorarie.c -o $(OBJDIR)/fasceorarie.o
+
+$(OBJDIR)/utenti.o: $(SRCDIR)/utenti.c $(SRCDIR)/utenti.h
+	gcc -Wall -Wextra -g -c $(SRCDIR)/utenti.c -o $(OBJDIR)/utenti.o
+
+$(OBJDIR)/hash.o: $(SRCDIR)/hash.c $(SRCDIR)/hash.h
+	gcc -Wall -Wextra -g -c $(SRCDIR)/hash.c -o $(OBJDIR)/hash.o
 
 clean:  									# Pulizia dei file oggetto e dell'eseguibile manuale tramite il comando 'make clean'
 ifeq ($(OS),Windows_NT)
