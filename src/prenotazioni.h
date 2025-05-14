@@ -81,6 +81,9 @@ void salva_prenotazioni_su_file(CodaPrenotazioni* coda);
 // Funzione per caricare le prenotazioni da un file
 int carica_prenotazioni_da_file(CodaPrenotazioni* coda);
 
+// Funzione per caricare da file void
+void carica_prenotazioni();
+
 // Funzione per pulire la coda
 void pulisci_coda(CodaPrenotazioni* coda);
 

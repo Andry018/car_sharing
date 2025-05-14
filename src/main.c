@@ -347,12 +347,75 @@ void cleanup() {
 
 int main() {
     int scelta;
+    int stato = 0; // momentaneo
     
     // Carica i veicoli all'avvio
     carica_lista_veicoli();
 
-    while (1) {
+  while (1) {
         pulisci_schermo();
+
+        if (stato == 0) {
+            set_color(13); //Magenta
+            printf("=====================================\n");
+            printf("        Sei un nuovo utente?\n");
+            printf("=====================================\n");
+            printf("1. Si, voglio registrarmi\n");
+            printf("2. No, voglio accedere\n");
+            printf("0. Esci\n");
+            printf("-------------------------------------\n");  
+            printf("Scelta: ");
+            scanf("%d", &scelta);
+            svuota_buffer();
+            switch (scelta) {
+                case 1:
+                    pulisci_schermo();
+                    Utente* nuovo_utente = malloc(sizeof(Utente));
+                    if (nuovo_utente == NULL) {
+                        set_color(12); // Rosso
+                        printf("Errore: Memoria insufficiente per il nuovo utente.\n");
+                        set_color(7); // Bianco
+                        return 1;
+                    }
+                    printf("Inserisci il tuo nome completo: ");
+                    fgets(nuovo_utente->nome_completo, sizeof(nuovo_utente->nome_completo), stdin); 
+                    strtok(nuovo_utente->nome_completo, "\n"); // Rimuovi newline
+                    printf("Inserisci il tuo username: ");
+                    fgets(nuovo_utente->username, sizeof(nuovo_utente->username), stdin);
+                    strtok(nuovo_utente->username, "\n"); // Rimuovi newline
+                    nuovo_utente->isAdmin = 0; // Default: non admin
+                    if (inserisci_utente(nuovo_utente->username, nuovo_utente->nome_completo) == 1) {
+                        set_color(10); // Verde
+                        printf("Registrazione completata con successo!\n");
+                    } else {
+                        set_color(12); // Rosso
+                        printf("Errore: Registrazione fallita.\n");
+                    }
+                    stato=1;
+                    break;
+                case 2:
+                    pulisci_schermo();
+                    printf("Inserisci il tuo username: ");
+                    char username[30];
+                    fgets(username, sizeof(username), stdin);
+                    strtok(username, "\n"); // Rimuovi newline
+                    Utente* utente = cerca_utente(username);
+                    if (utente == NULL) {
+                        set_color(12); // Rosso
+                        printf("Errore: Utente non trovato.\n");
+                        stato=0;
+                    } else {
+                        set_color(10); // Verde
+                        printf("Accesso effettuato con successo!\n");
+                        printf("Benvenuto, %s!\n", utente->nome_completo);
+                        stato=1;
+                    }
+                    stato=1;
+                    break;       
+        } 
+        pulisci_schermo();
+        
+        
         
         set_color(13); // Magenta
         printf("=====================================\n");
@@ -409,4 +472,5 @@ int main() {
     }
 
     return 0;
+}
 }

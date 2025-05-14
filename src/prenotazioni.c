@@ -319,6 +319,18 @@ int carica_prenotazioni_da_file(CodaPrenotazioni* coda) {
     return 0;
 }
 
+void carica_prenotazioni(){
+    CodaPrenotazioni* coda = inizializza_coda();
+    if (coda == NULL) {
+        printf("Errore nell'inizializzazione della coda!\n");
+        return;
+    }
+    
+    carica_prenotazioni_da_file(coda);
+    }
+    
+
+
 // Funzione per pulire la coda
 void pulisci_coda(CodaPrenotazioni* coda) {
     if (coda == NULL) {
