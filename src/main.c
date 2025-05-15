@@ -10,7 +10,7 @@
 #include "fasceorarie.h"
 #include "utenti.h"
 
-// COMMIT BUONO
+
 // Funzione per impostare il colore del testo
 void set_color(int color) {
 #ifdef _WIN32
@@ -109,21 +109,17 @@ void gestione_veicoli() {
     } while(scelta != 0);
 }
 
-void prenota_auto() {
+void prenota_auto(Utente* current_user) {
     int scelta;
-    static CodaPrenotazioni* coda_prenotazioni = NULL;
+    CodaPrenotazioni* coda_prenotazioni = get_coda_prenotazioni();
     
-    // Inizializza la coda delle prenotazioni se non esiste
     if (coda_prenotazioni == NULL) {
-        coda_prenotazioni = inizializza_coda();
-        if (coda_prenotazioni == NULL) {
-            set_color(12); // Rosso
-            printf("Errore nell'inizializzazione della coda prenotazioni!\n");
-            set_color(7); // Bianco
-            printf("Premi INVIO per tornare al menu...");
-            svuota_buffer();
-            return;
-        }
+        set_color(12); // Rosso
+        printf("Errore nel sistema di prenotazioni!\n");
+        set_color(7); // Bianco
+        printf("Premi INVIO per tornare al menu...");
+        svuota_buffer();
+        return;
     }
     
     do {
@@ -158,8 +154,34 @@ void prenota_auto() {
                 }
                 
                 printf("\nInserisci i dati della prenotazione:\n");
-                printf("ID Utente: ");
-                scanf("%d", &id_utente);
+                
+                // Gestione ID utente in base ai permessi
+                if (current_user->isAdmin) {
+                    do {
+                        printf("ID Utente (0 per usare il tuo ID): ");
+                        scanf("%d", &id_utente);
+                        if (id_utente == 0) {
+                            id_utente = current_user->id;
+                            break;
+                        }
+                        
+                        // Verifica che l'utente esista
+                        Utente* utente_prenotazione = cerca_utente_per_id(id_utente);
+                        if (utente_prenotazione == NULL) {
+                            set_color(12); // Rosso
+                            printf("Errore: Nessun utente trovato con ID %d\n", id_utente);
+                            printf("Inserisci un ID valido o 0 per usare il tuo ID\n");
+                            set_color(7); // Bianco
+                        } else {
+                            printf("Prenotazione per: %s\n", utente_prenotazione->nome_completo);
+                            break;
+                        }
+                    } while (1);
+                } else {
+                    id_utente = current_user->id;
+                    printf("ID Utente: %d (il tuo ID)\n", id_utente);
+                }
+
                 printf("ID Veicolo: ");
                 scanf("%d", &id_veicolo);
                 printf("Giorno inizio (0-6, Lun-Dom): ");
@@ -214,9 +236,16 @@ void prenota_auto() {
                 
                 Prenotazione* prenotazione = cerca_prenotazione(coda_prenotazioni, id_prenotazione);
                 if (prenotazione != NULL) {
-                    prenotazione->stato = CANCELLATA;
-                    set_color(10); // Verde
-                    printf("\nPrenotazione cancellata con successo!\n");
+                    // Verifica che l'utente possa cancellare questa prenotazione
+                    if (current_user->isAdmin || prenotazione->id_utente == current_user->id) {
+                        prenotazione->stato = CANCELLATA;
+                        salva_prenotazioni_su_file(coda_prenotazioni);
+                        set_color(10); // Verde
+                        printf("\nPrenotazione cancellata con successo!\n");
+                    } else {
+                        set_color(12); // Rosso
+                        printf("\nNon hai i permessi per cancellare questa prenotazione!\n");
+                    }
                 } else {
                     set_color(12); // Rosso
                     printf("\nPrenotazione non trovata!\n");
@@ -227,6 +256,16 @@ void prenota_auto() {
                 break;
             }
             case 4: {
+                // Solo gli admin possono modificare lo stato delle prenotazioni
+                if (!current_user->isAdmin) {
+                    set_color(12); // Rosso
+                    printf("\nSolo gli amministratori possono modificare lo stato delle prenotazioni!\n");
+                    set_color(7); // Bianco
+                    printf("Premi INVIO per continuare...");
+                    svuota_buffer();
+                    break;
+                }
+
                 int id_prenotazione, nuovo_stato;
                 printf("\nInserisci l'ID della prenotazione da modificare: ");
                 scanf("%d", &id_prenotazione);
@@ -236,6 +275,7 @@ void prenota_auto() {
                 
                 int risultato = modifica_stato_prenotazione(coda_prenotazioni, id_prenotazione, nuovo_stato);
                 if (risultato == 0) {
+                    salva_prenotazioni_su_file(coda_prenotazioni);
                     set_color(10); // Verde
                     printf("\nStato della prenotazione modificato con successo!\n");
                 } else {
@@ -340,6 +380,7 @@ void visualizza_disponibilita() {
 void cleanup() {
     // Salva i dati prima di chiudere
     salva_lista_veicoli();
+    salva_prenotazioni_su_file(get_coda_prenotazioni());
     
     // Libera la memoria
     pulisci_lista_veicoli();
@@ -348,11 +389,19 @@ void cleanup() {
 int main() {
     int scelta;
     int stato = 0; // momentaneo
+    Utente* current_user = NULL;  // Aggiungiamo un puntatore all'utente corrente
     
     // Carica i veicoli all'avvio
     carica_lista_veicoli();
+    
+    // Inizializza e carica gli utenti
+    inizializza_tabella_utenti();
+    carica_utenti_file();
+    
+    // Carica le prenotazioni
+    carica_prenotazioni();
 
-  while (1) {
+    while (1) {
         pulisci_schermo();
 
         if (stato == 0) {
@@ -367,6 +416,7 @@ int main() {
             printf("Scelta: ");
             scanf("%d", &scelta);
             svuota_buffer();
+            
             switch (scelta) {
                 case 1:
                     pulisci_schermo();
@@ -387,11 +437,16 @@ int main() {
                     if (inserisci_utente(nuovo_utente->username, nuovo_utente->nome_completo) == 1) {
                         set_color(10); // Verde
                         printf("Registrazione completata con successo!\n");
+                        current_user = cerca_utente(nuovo_utente->username);  // Salva riferimento all'utente
                     } else {
                         set_color(12); // Rosso
                         printf("Errore: Registrazione fallita.\n");
                     }
-                    stato=1;
+                    free(nuovo_utente);
+                    stato = 1;
+                    salva_utenti_file();
+                    printf("Premi INVIO per continuare...");
+                    svuota_buffer();
                     break;
                 case 2:
                     pulisci_schermo();
@@ -399,78 +454,97 @@ int main() {
                     char username[30];
                     fgets(username, sizeof(username), stdin);
                     strtok(username, "\n"); // Rimuovi newline
-                    Utente* utente = cerca_utente(username);
-                    if (utente == NULL) {
+                    current_user = cerca_utente(username);  // Salva riferimento all'utente
+                    if (current_user == NULL) {
                         set_color(12); // Rosso
                         printf("Errore: Utente non trovato.\n");
-                        stato=0;
+                        printf("Premi INVIO per continuare...");
+                        svuota_buffer();
                     } else {
                         set_color(10); // Verde
                         printf("Accesso effettuato con successo!\n");
-                        printf("Benvenuto, %s!\n", utente->nome_completo);
-                        stato=1;
+                        printf("Benvenuto, %s!\n", current_user->nome_completo);
+                        stato = 1;
+                        printf("Premi INVIO per continuare...");
+                        svuota_buffer();
                     }
-                    stato=1;
-                    break;       
-        } 
-        pulisci_schermo();
-        
-        
-        
-        set_color(13); // Magenta
-        printf("=====================================\n");
-        printf("       SISTEMA DI CAR SHARING\n");
-        printf("=====================================\n");
-        set_color(7); // Bianco
+                    break;
+                case 0:
+                    set_color(12); // Rosso
+                    printf("\nChiusura del programma...\n");
+                    cleanup();
+                    set_color(7); // Bianco
+                    return 0;
+                default:
+                    set_color(12); // Rosso
+                    printf("\nScelta non valida. Premi INVIO per riprovare...");
+                    set_color(7); // Bianco
+                    svuota_buffer();
+                    break;
+            }
+        } else {
+            set_color(13); // Magenta
+            printf("=====================================\n");
+            printf("       SISTEMA DI CAR SHARING\n");
+            if (current_user != NULL) {
+                printf("       Benvenuto, %s\n", current_user->nome_completo);
+            }
+            printf("=====================================\n");
+            set_color(7); // Bianco
 
-        // Opzioni del menu
-        printf("1. Prenota un'auto\n");
-        printf("2. Visualizza prenotazioni\n");
-        printf("3. Restituisci auto\n");
-        printf("4. Gestione Veicoli\n");
-        printf("5. Visualizza disponibilita\n");
-        printf("0. Esci\n");
-        printf("-------------------------------------\n");
-        printf("Scelta: ");
-        scanf("%d", &scelta);
-        svuota_buffer();
+            // Opzioni del menu
+            printf("1. Prenota un'auto\n");
+            printf("2. Visualizza prenotazioni\n");
+            printf("3. Restituisci auto\n");
+            printf("4. Gestione Veicoli\n");
+            printf("5. Visualizza disponibilita\n");
+            printf("6. Logout\n");
+            printf("0. Esci\n");
+            printf("-------------------------------------\n");
+            printf("Scelta: ");
+            scanf("%d", &scelta);
+            svuota_buffer();
 
-        switch (scelta) {
-            case 1:
-                pulisci_schermo();
-                prenota_auto();
-                break;
-            case 2:
-                pulisci_schermo();
-                visualizza_prenotazioni();
-                break;
-            case 3:
-                pulisci_schermo();
-                restituisci_auto();
-                break;
-            case 4:
-                pulisci_schermo();
-                gestione_veicoli();
-                break;
-            case 5:
-                pulisci_schermo();
-                visualizza_disponibilita();
-                break;
-            case 0:
-                set_color(12); // Rosso
-                printf("\nSalvataggio dei dati e chiusura del programma...\n");
-                cleanup(); // Salva e pulisce prima di chiudere
-                set_color(7); // Bianco
-                return 0;
-            default:
-                set_color(12); // Rosso
-                printf("\nScelta non valida. Premi INVIO per riprovare...");
-                set_color(7); // Bianco
-                svuota_buffer();
-                break;
+            switch (scelta) {
+                case 1:
+                    pulisci_schermo();
+                    prenota_auto(current_user);
+                    break;
+                case 2:
+                    pulisci_schermo();
+                    visualizza_prenotazioni();
+                    break;
+                case 3:
+                    pulisci_schermo();
+                    restituisci_auto();
+                    break;
+                case 4:
+                    pulisci_schermo();
+                    gestione_veicoli();
+                    break;
+                case 5:
+                    pulisci_schermo();
+                    visualizza_disponibilita();
+                    break;
+                case 6:
+                    stato = 0;  // Torna al menu di login
+                    current_user = NULL;  // Resetta l'utente corrente
+                    break;
+                case 0:
+                    set_color(12); // Rosso
+                    printf("\nSalvataggio dei dati e chiusura del programma...\n");
+                    cleanup(); // Salva e pulisce prima di chiudere
+                    set_color(7); // Bianco
+                    return 0;
+                default:
+                    set_color(12); // Rosso
+                    printf("\nScelta non valida. Premi INVIO per riprovare...");
+                    set_color(7); // Bianco
+                    svuota_buffer();
+                    break;
+            }
         }
     }
 
     return 0;
-}
 }

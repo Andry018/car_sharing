@@ -42,16 +42,14 @@ int carica_ultimo_id()
     }
     
     int max_id = 0;
-    veicolo v;
-    while (fscanf(fp, "%d %s %s %s %s %d\n", 
-                  &v.id, 
-                  v.categoria, 
-                  v.modello, 
-                  v.targa, 
-                  v.posizione, 
-                  &v.disponibile) != EOF) {
-        if (v.id > max_id) {
-            max_id = v.id;
+    char line[256];
+    
+    while (fgets(line, sizeof(line), fp)) {
+        int id;
+        if (sscanf(line, "%d", &id) == 1) {
+            if (id > max_id) {
+                max_id = id;
+            }
         }
     }
     fclose(fp);
@@ -213,18 +211,60 @@ list carica_veicolo_file(list l)
         return l;
     }
     
-    veicolo v;
-    while (fscanf(fp, "%d %s %s %s %s %d\n", 
-                  &v.id, 
-                  v.categoria, 
-                  v.modello, 
-                  v.targa, 
-                  v.posizione, 
-                  &v.disponibile) != EOF) {
-        list nuovo = (list)malloc(sizeof(struct node));
-        nuovo->veicoli = v;
-        nuovo->next = l;
-        l = nuovo;
+    char line[256];
+    while (fgets(line, sizeof(line), fp)) {
+        veicolo v;
+        char* token = strtok(line, " ");  // Legge ID
+        
+        if (token != NULL) {
+            v.id = atoi(token);
+            
+            // Legge categoria
+            token = strtok(NULL, " ");
+            if (token != NULL) {
+                strcpy(v.categoria, token);
+                
+                // Legge modello (può contenere spazi)
+                token = strtok(NULL, " ");
+                if (token != NULL) {
+                    char temp_modello[30] = "";
+                    while (token != NULL) {
+                        // Cerca la targa (che inizia sempre con una lettera)
+                        if (strlen(token) == 7 && ((token[0] >= 'A' && token[0] <= 'Z') || (token[0] >= 'a' && token[0] <= 'z'))) {
+                            strcpy(v.targa, token);
+                            break;
+                        }
+                        // Altrimenti è parte del modello
+                        if (strlen(temp_modello) > 0) {
+                            strcat(temp_modello, " ");
+                        }
+                        strcat(temp_modello, token);
+                        token = strtok(NULL, " ");
+                    }
+                    strcpy(v.modello, temp_modello);
+                    
+                    // Legge posizione
+                    token = strtok(NULL, " ");
+                    if (token != NULL) {
+                        strcpy(v.posizione, token);
+                        
+                        // Legge disponibilità
+                        token = strtok(NULL, " \n");
+                        if (token != NULL) {
+                            v.disponibile = atoi(token);
+                            
+                            // Crea nuovo nodo
+                            list nuovo = (list)malloc(sizeof(struct node));
+                            if (nuovo != NULL) {
+                                nuovo->veicoli = v;
+                                nuovo->next = l;
+                                l = nuovo;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     fclose(fp);

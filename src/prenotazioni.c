@@ -33,6 +33,14 @@ typedef struct {
 #define FIGLIO_SINISTRO(i) (2 * i + 1)
 #define FIGLIO_DESTRO(i) (2 * i + 2)
 
+// Variabile statica per mantenere la coda
+static CodaPrenotazioni* coda_globale = NULL;
+
+// Funzione per ottenere la coda globale
+CodaPrenotazioni* get_coda_prenotazioni() {
+    return coda_globale;
+}
+
 // Funzione per inizializzare una nuova coda
 CodaPrenotazioni* inizializza_coda() {
     CodaPrenotazioni* coda = (CodaPrenotazioni*)malloc(sizeof(CodaPrenotazioni));
@@ -319,17 +327,24 @@ int carica_prenotazioni_da_file(CodaPrenotazioni* coda) {
     return 0;
 }
 
-void carica_prenotazioni(){
-    CodaPrenotazioni* coda = inizializza_coda();
-    if (coda == NULL) {
-        printf("Errore nell'inizializzazione della coda!\n");
-        return;
+void carica_prenotazioni() {
+    // Se la coda esiste già, puliscila
+    if (coda_globale != NULL) {
+        pulisci_coda(coda_globale);
+    } else {
+        // Altrimenti creala
+        coda_globale = inizializza_coda();
+        if (coda_globale == NULL) {
+            printf("Errore nell'inizializzazione della coda!\n");
+            return;
+        }
     }
     
-    carica_prenotazioni_da_file(coda);
+    // Carica le prenotazioni dal file
+    if (carica_prenotazioni_da_file(coda_globale) == 0) {
+        printf("Prenotazioni caricate con successo.\n");
     }
-    
-
+}
 
 // Funzione per pulire la coda
 void pulisci_coda(CodaPrenotazioni* coda) {

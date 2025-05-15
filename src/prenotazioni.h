@@ -37,6 +37,9 @@ int converti_in_timestamp(int giorno, int ora);
 int estrai_giorno(int timestamp);
 int estrai_ora(int timestamp);
 
+// Funzione per ottenere la coda globale
+CodaPrenotazioni* get_coda_prenotazioni();
+
 // Funzione per inizializzare una nuova coda
 CodaPrenotazioni* inizializza_coda();
 
