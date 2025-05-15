@@ -1,27 +1,45 @@
 # Sistema di Car Sharing
 
 ## 👥 Autori
-### Team di Sviluppo
-- **Andrea Rizzo** 
-  - GitHub: [@Andry018](https://github.com/Andry018)
-  - Università degli Studi di Salerno
-  - Corso: Programmazione e Strutture Dati
-  - Anno Accademico: 2024/2025
-
-- **Giovanni Varricchio**
-  - GitHub: [@Ayamiba](https://github.com/Ayamiba)
-  - Università degli Studi di Salerno
-  - Corso: Programmazione e Strutture Dati
-  - Anno Accademico: 2024/2025
-
-- **Gabriele Vicinanza**
-  - GitHub: [@Gabrzzz](https://github.com/Gabrzzz)
-  - Università degli Studi di Salerno
-  - Corso: Programmazione e Strutture Dati
-  - Anno Accademico: 2024/2025
+- **Andrea Rizzo** ([@Andry018](https://github.com/Andry018))
+- **Giovanni Varricchio** ([@Ayamiba](https://github.com/Ayamiba))
+- **Gabriele Vicinanza** ([@Gabrzzz](https://github.com/Gabrzzz))
 
 ## 📝 Descrizione
 Un sistema completo di car sharing sviluppato in C che permette la gestione di veicoli, prenotazioni e utenti. Il sistema supporta ruoli differenziati (admin e utenti standard) e offre una gestione completa delle prenotazioni con persistenza dei dati.
+
+## 📚 Documentazione
+- [Guida Utente](docs/guida-utente.md)
+- [Documentazione Tecnica](docs/documentazione-tecnica.md)
+- [Struttura del Progetto](docs/struttura-progetto.md)
+- [Componenti e API](docs/componenti-api.md)
+- [Note di Sviluppo](docs/note-sviluppo.md)
+
+## 🚀 Quick Start
+
+### Requisiti
+- Compilatore C (GCC raccomandato)
+- Make/MinGW32-make per Windows
+
+### Compilazione
+```bash
+# Su Linux/Mac
+make
+
+# Su Windows con MinGW
+mingw32-make
+```
+
+### Esecuzione
+```bash
+# Su Linux/Mac
+./car_sharing
+
+# Su Windows
+car_sharing.exe
+```
+
+Per maggiori dettagli, consultare la [Guida Utente](docs/guida-utente.md).
 
 ## 🚀 Funzionalità Principali
 
