@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "vehicle.h"
+#include "tariffe.h"
 
 // Variabile privata
 static list listaVeicoli = NULL;
@@ -70,28 +71,32 @@ veicolo crea_veicolo()
     id++;
     v.id = id;
     int scelta;
-    printf("Inserisci categoria del veicolo: \n (0 = Utilitaria | 1 = SUV | 2 = Sportiva | 3 = Elettrico | 4 = Moto) ");
+    printf("Inserisci categoria del veicolo:\n");
+    printf("0: Utilitaria (%.2f euro/ora)\n", TARIFFA_UTILITARIA);
+    printf("1: SUV (%.2f euro/ora)\n", TARIFFA_SUV);
+    printf("2: Sportiva (%.2f euro/ora)\n", TARIFFA_SPORTIVA);
+    printf("3: Moto (%.2f euro/ora)\n", TARIFFA_MOTO);
+    printf("Scelta: ");
     scanf("%d", &scelta);
+    
     switch (scelta) {
         case 0:
-            strcpy(v.categoria, "Utilitaria");
+            v.tipo = UTILITARIA;
             break;
         case 1:
-            strcpy(v.categoria, "SUV");
+            v.tipo = SUV;
             break;
         case 2:
-            strcpy(v.categoria, "Sportiva");
+            v.tipo = SPORTIVA;
             break;
         case 3:
-            strcpy(v.categoria, "Elettrico");
-            break;
-        case 4:
-            strcpy(v.categoria, "Moto");
+            v.tipo = MOTO;
             break;
         default:
             printf("Categoria non valida.\n");
             return crea_veicolo();
     }
+    
     getchar(); //libera buffer
     printf("Inserisci modello del veicolo: ");
     if (fgets(v.modello, 30, stdin) == NULL) {
@@ -168,7 +173,7 @@ list rimuovi_veicolo(list l)
 void stampa_veicolo(veicolo v)
 {
     printf("ID: %d\n", v.id);
-    printf("Categoria: %s\n", v.categoria);
+    printf("Categoria: %s (%.2f euro/ora)\n", get_nome_tipo_veicolo(v.tipo), get_tariffa_oraria(v.tipo));
     printf("Modello: %s \n", v.modello);
     printf("Targa: %s\n", v.targa);
     printf("Posizione: %s\n", v.posizione);
@@ -189,9 +194,9 @@ void salva_veicolo_file(list l)
     }
     while (l != NULL)
     {
-        fprintf(fp, "%d %s %s %s %s %d\n",
+        fprintf(fp, "%d %d %s %s %s %d\n",
                 l->veicoli.id,
-                l->veicoli.categoria,
+                l->veicoli.tipo,
                 l->veicoli.modello,
                 l->veicoli.targa,
                 l->veicoli.posizione,
@@ -219,10 +224,10 @@ list carica_veicolo_file(list l)
         if (token != NULL) {
             v.id = atoi(token);
             
-            // Legge categoria
+            // Legge tipo veicolo
             token = strtok(NULL, " ");
             if (token != NULL) {
-                strcpy(v.categoria, token);
+                v.tipo = (TipoVeicolo)atoi(token);
                 
                 // Legge modello (può contenere spazi)
                 token = strtok(NULL, " ");
@@ -249,11 +254,11 @@ list carica_veicolo_file(list l)
                         strcpy(v.posizione, token);
                         
                         // Legge disponibilità
-                        token = strtok(NULL, " \n");
+                        token = strtok(NULL, " ");
                         if (token != NULL) {
                             v.disponibile = atoi(token);
                             
-                            // Crea nuovo nodo
+                            // Aggiunge il veicolo alla lista
                             list nuovo = (list)malloc(sizeof(struct node));
                             if (nuovo != NULL) {
                                 nuovo->veicoli = v;
@@ -266,7 +271,6 @@ list carica_veicolo_file(list l)
             }
         }
     }
-    
     fclose(fp);
     return l;
 }

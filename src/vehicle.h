@@ -4,10 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "tariffe.h"
 
 typedef struct {
     int id;
-    char categoria[20]; // 0: Utilitaria | 1: SUV | 2: Sportiva | 3: Elettrico | 4: Moto
+    TipoVeicolo tipo;  // Usando l'enum TipoVeicolo invece di una stringa
     char modello[30];
     char targa[8];
     char posizione[50]; 

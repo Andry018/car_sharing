@@ -9,6 +9,7 @@
 #include "prenotazioni.h"
 #include "fasceorarie.h"
 #include "utenti.h"
+#include "tariffe.h"
 
 
 // Funzione per impostare il colore del testo
@@ -134,6 +135,7 @@ void prenota_auto(Utente* current_user) {
         printf("2. Visualizza prenotazioni attive\n");
         printf("3. Cancella prenotazione\n");
         printf("4. Modifica stato prenotazione\n");
+        printf("5. Visualizza tariffe\n");
         printf("0. Torna al menu principale\n");
         printf("-------------------------------------\n");
         printf("Scelta: ");
@@ -144,14 +146,22 @@ void prenota_auto(Utente* current_user) {
             case 1: {
                 int id_utente, id_veicolo, giorno_inizio, ora_inizio, giorno_fine, ora_fine, priorita;
                 
-                // Visualizza veicoli disponibili
+                // Visualizza veicoli disponibili con tariffe
                 printf("\nVeicoli disponibili:\n");
                 list temp = get_lista_veicoli();
                 while(temp != NULL) {
-                    stampa_veicolo(temp->veicoli);
-                    printf("-------------------\n");
+                    if(temp->veicoli.disponibile) {
+                        stampa_veicolo(temp->veicoli);
+                        printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(temp->veicoli.tipo));
+                        printf("-------------------\n");
+                    }
                     temp = temp->next;
                 }
+                
+                // Mostra informazioni sugli sconti disponibili
+                set_color(10); // Verde
+                stampa_info_sconti();
+                set_color(7); // Bianco
                 
                 printf("\nInserisci i dati della prenotazione:\n");
                 
@@ -184,6 +194,27 @@ void prenota_auto(Utente* current_user) {
 
                 printf("ID Veicolo: ");
                 scanf("%d", &id_veicolo);
+                
+                // Trova il veicolo per mostrare il costo orario
+                temp = get_lista_veicoli();
+                veicolo* veicolo_selezionato = NULL;
+                while(temp != NULL) {
+                    if(temp->veicoli.id == id_veicolo) {
+                        veicolo_selezionato = &(temp->veicoli);
+                        break;
+                    }
+                    temp = temp->next;
+                }
+                
+                if(veicolo_selezionato == NULL) {
+                    set_color(12); // Rosso
+                    printf("Errore: Veicolo non trovato!\n");
+                    set_color(7); // Bianco
+                    printf("Premi INVIO per continuare...");
+                    svuota_buffer();
+                    break;
+                }
+                
                 printf("Giorno inizio (0-6, Lun-Dom): ");
                 scanf("%d", &giorno_inizio);
                 printf("Ora inizio (0-23): ");
@@ -192,6 +223,56 @@ void prenota_auto(Utente* current_user) {
                 scanf("%d", &giorno_fine);
                 printf("Ora fine (0-23): ");
                 scanf("%d", &ora_fine);
+                
+                // Calcola e mostra il costo stimato
+                int giorno_ora_inizio = giorno_inizio * 100 + ora_inizio;
+                int giorno_ora_fine = giorno_fine * 100 + ora_fine;
+                double costo_base = calcola_tariffa_prenotazione(veicolo_selezionato->tipo, 
+                                                              giorno_ora_inizio, 
+                                                              giorno_ora_fine);
+                
+                // Calcola il numero di prenotazioni dell'utente per lo sconto fedeltà
+                int num_prenotazioni = 0;
+                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
+                    if (coda_prenotazioni->heap[i].id_utente == id_utente && 
+                        coda_prenotazioni->heap[i].stato == COMPLETATA) {
+                        num_prenotazioni++;
+                    }
+                }
+                
+                // Applica lo sconto fedeltà se applicabile
+                double costo_finale = applica_sconto_fedelta(costo_base, num_prenotazioni);
+                
+                set_color(14); // Giallo
+                printf("\nRiepilogo prenotazione:\n");
+                printf("Veicolo: %s (ID: %d)\n", veicolo_selezionato->modello, veicolo_selezionato->id);
+                printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(veicolo_selezionato->tipo));
+                printf("Data inizio: %s ore %02d:00\n", get_nome_giorno(giorno_inizio), ora_inizio);
+                printf("Data fine: %s ore %02d:00\n", get_nome_giorno(giorno_fine), ora_fine);
+                printf("Costo base: %.2f euro\n", costo_base);
+                
+                if (costo_finale < costo_base) {
+                    printf("Sconto applicato: %.2f euro\n", costo_base - costo_finale);
+                    printf("Costo finale: %.2f euro\n", costo_finale);
+                }
+                
+                if (num_prenotazioni < NOLEGGI_PER_SCONTO) {
+                    printf("\nNota: Ti mancano %d noleggi per ottenere lo sconto fedeltà!\n", 
+                           NOLEGGI_PER_SCONTO - num_prenotazioni);
+                }
+                
+                set_color(7); // Bianco
+                
+                printf("\nConfermi la prenotazione? (1: Si, 0: No): ");
+                int conferma;
+                scanf("%d", &conferma);
+                if(!conferma) {
+                    printf("Prenotazione annullata.\n");
+                    printf("Premi INVIO per continuare...");
+                    svuota_buffer();
+                    break;
+                }
+                
                 printf("Priorità (piu' bassa = piu' prioritaria): ");
                 scanf("%d", &priorita);
                 svuota_buffer();
@@ -206,6 +287,7 @@ void prenota_auto(Utente* current_user) {
                 if (risultato == 0) {
                     set_color(10); // Verde
                     printf("\nPrenotazione aggiunta con successo!\n");
+                    printf("Costo totale: %.2f euro\n", costo_finale);
                 } else if (risultato == -2) {
                     set_color(12); // Rosso
                     printf("\nErrore: Fascia oraria non valida!\n");
@@ -221,7 +303,21 @@ void prenota_auto(Utente* current_user) {
             case 2: {
                 printf("\nPrenotazioni attive:\n");
                 for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
-                    stampa_prenotazione(coda_prenotazioni->heap[i]);
+                    Prenotazione p = coda_prenotazioni->heap[i];
+                    stampa_prenotazione(p);
+                    
+                    // Trova il veicolo per mostrare il costo
+                    list temp = get_lista_veicoli();
+                    while(temp != NULL) {
+                        if(temp->veicoli.id == p.id_veicolo) {
+                            double costo = calcola_tariffa_prenotazione(temp->veicoli.tipo,
+                                                                      p.giorno_ora_inizio,
+                                                                      p.giorno_ora_fine);
+                            printf("Costo totale: %.2f euro\n", costo);
+                            break;
+                        }
+                        temp = temp->next;
+                    }
                     printf("-------------------\n");
                 }
                 printf("Premi INVIO per continuare...");
@@ -287,6 +383,9 @@ void prenota_auto(Utente* current_user) {
                 svuota_buffer();
                 break;
             }
+            case 5:
+                visualizza_tariffe();
+                break;
             case 0:
                 break;
             default:
@@ -372,6 +471,24 @@ void visualizza_disponibilita() {
     
     // Visualizza il calendario
     visualizza_calendario(&calendario);
+    
+    printf("\nPremi INVIO per tornare al menu...");
+    svuota_buffer();
+}
+
+void visualizza_tariffe() {
+    pulisci_schermo();
+    set_color(14); // Giallo
+    printf("=====================================\n");
+    printf("       TARIFFE VEICOLI\n");
+    printf("=====================================\n");
+    set_color(7); // Bianco
+    
+    printf("Tariffe orarie per tipo di veicolo:\n\n");
+    printf("1. Utilitaria: %.2f euro/ora\n", TARIFFA_UTILITARIA);
+    printf("2. SUV: %.2f euro/ora\n", TARIFFA_SUV);
+    printf("3. Sportiva: %.2f euro/ora\n", TARIFFA_SPORTIVA);
+    printf("4. Moto: %.2f euro/ora\n", TARIFFA_MOTO);
     
     printf("\nPremi INVIO per tornare al menu...");
     svuota_buffer();
