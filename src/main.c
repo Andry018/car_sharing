@@ -29,6 +29,10 @@ void mostra_menu_cliente(Utente* current_user);
 void mostra_menu_admin(Utente* current_user);
 void gestione_prenotazioni_admin(void);
 void mostra_menu_iniziale();
+void mostra_logo();
+void mostra_menu_login();
+int valida_username(const char* username);
+int valida_nome_completo(const char* nome);
 
 // Funzione per impostare il colore del testo
 void set_color(int color) {
@@ -1047,6 +1051,73 @@ void gestione_prenotazioni_admin() {
     } while (scelta != 0);
 }
 
+void mostra_logo() {
+    set_color(14); // Giallo
+    printf("\n");
+    printf("   ______              _____ __              _            \n");
+    printf("  / ____/___ ______   / ___// /_  ____ _____(_)___  ____ \n");
+    printf(" / /   / __ `/ ___/   \\__ \\/ __ \\/ __ `/ ___/ / __ \\/ __ \\\n");
+    printf("/ /___/ /_/ / /      ___/ / / / / /_/ / /  / / / / / / / /\n");
+    printf("\\____/\\__,_/_/      /____/_/ /_/\\__,_/_/  /_/_/ /_/_/ /_/ \n");
+    printf("\n");
+    set_color(7); // Bianco
+}
+
+void mostra_menu_login() {
+    stampa_bordo_superiore();
+    
+    mostra_logo();
+    
+    stampa_separatore();
+    
+    set_color(13); // Magenta
+    printf("             BENVENUTO\n");
+    stampa_separatore();
+    
+    set_color(10); // Verde
+    printf("           ACCESSO\n");
+    set_color(7); // Bianco
+    printf("1. Accedi\n");
+    printf("2. Registrati\n");
+    
+    stampa_separatore();
+    
+    set_color(12); // Rosso
+    printf("           SISTEMA\n");
+    set_color(7); // Bianco
+    printf("0. Esci\n");
+    
+    stampa_bordo_inferiore();
+}
+
+int valida_username(const char* username) {
+    if (strlen(username) < 3 || strlen(username) > 29) {
+        return 0;
+    }
+    
+    // Verifica che contenga solo caratteri alfanumerici e underscore
+    for (int i = 0; username[i]; i++) {
+        if (!isalnum(username[i]) && username[i] != '_') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int valida_nome_completo(const char* nome) {
+    if (strlen(nome) < 3 || strlen(nome) > 49) {
+        return 0;
+    }
+    
+    // Verifica che contenga solo lettere, spazi e alcuni caratteri speciali
+    for (int i = 0; nome[i]; i++) {
+        if (!isalpha(nome[i]) && nome[i] != ' ' && nome[i] != '\'' && nome[i] != '-') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int main() {
     // Inizializza la data di sistema
     inizializza_data_sistema();
@@ -1077,71 +1148,126 @@ int main() {
         pulisci_schermo();
 
         if (stato == 0) {
-            set_color(13); //Magenta
-            printf("=====================================\n");
-            printf("        Sei un nuovo utente?\n");
-            printf("=====================================\n");
-            printf("1. Si, voglio registrarmi\n");
-            printf("2. No, voglio accedere\n");
-            printf("0. Esci\n");
-            printf("-------------------------------------\n");  
+            mostra_menu_login();
             printf("Scelta: ");
             scanf("%d", &scelta);
             svuota_buffer();
             
             switch (scelta) {
-                case 1:
+                case 1: { // Login
                     pulisci_schermo();
+                    stampa_bordo_superiore();
+                    
+                    set_color(13); // Magenta
+                    printf("             LOGIN\n");
+                    stampa_separatore();
+                    
+                    char username[30];
+                    do {
+                        set_color(7); // Bianco
+                        printf("Username: ");
+                        fgets(username, sizeof(username), stdin);
+                        strtok(username, "\n"); // Rimuovi newline
+                        
+                        if (!valida_username(username)) {
+                            set_color(12); // Rosso
+                            printf("Username non valido! Deve contenere solo caratteri alfanumerici\n");
+                            printf("e underscore, lunghezza tra 3 e 29 caratteri.\n");
+                            set_color(7); // Bianco
+                        }
+                    } while (!valida_username(username));
+                    
+                    current_user = cerca_utente(username);
+                    if (current_user == NULL) {
+                        set_color(12); // Rosso
+                        printf("\nErrore: Utente non trovato!\n");
+                        printf("Premi INVIO per tornare al menu principale...");
+                        set_color(7); // Bianco
+                        svuota_buffer();
+                    } else {
+                        set_color(10); // Verde
+                        printf("\nAccesso effettuato con successo!\n");
+                        printf("Benvenuto, %s!\n", current_user->nome_completo);
+                        stato = 1;
+                        printf("\nPremi INVIO per continuare...");
+                        set_color(7); // Bianco
+                        svuota_buffer();
+                    }
+                    break;
+                }
+                case 2: { // Registrazione
+                    pulisci_schermo();
+                    stampa_bordo_superiore();
+                    
+                    set_color(13); // Magenta
+                    printf("          REGISTRAZIONE\n");
+                    stampa_separatore();
+                    
                     Utente* nuovo_utente = malloc(sizeof(Utente));
                     if (nuovo_utente == NULL) {
                         set_color(12); // Rosso
-                        printf("Errore: Memoria insufficiente per il nuovo utente.\n");
+                        printf("Errore: Memoria insufficiente.\n");
                         set_color(7); // Bianco
                         return 1;
                     }
-                    printf("Inserisci il tuo nome completo: ");
-                    fgets(nuovo_utente->nome_completo, sizeof(nuovo_utente->nome_completo), stdin); 
-                    strtok(nuovo_utente->nome_completo, "\n"); // Rimuovi newline
-                    printf("Inserisci il tuo username: ");
-                    fgets(nuovo_utente->username, sizeof(nuovo_utente->username), stdin);
-                    strtok(nuovo_utente->username, "\n"); // Rimuovi newline
+                    
+                    // Input e validazione nome completo
+                    do {
+                        set_color(7); // Bianco
+                        printf("Nome completo: ");
+                        fgets(nuovo_utente->nome_completo, sizeof(nuovo_utente->nome_completo), stdin);
+                        strtok(nuovo_utente->nome_completo, "\n");
+                        
+                        if (!valida_nome_completo(nuovo_utente->nome_completo)) {
+                            set_color(12); // Rosso
+                            printf("Nome non valido! Usa solo lettere, spazi, apostrofi e trattini.\n");
+                            printf("Lunghezza tra 3 e 49 caratteri.\n");
+                            set_color(7); // Bianco
+                        }
+                    } while (!valida_nome_completo(nuovo_utente->nome_completo));
+                    
+                    // Input e validazione username
+                    do {
+                        set_color(7); // Bianco
+                        printf("Username: ");
+                        fgets(nuovo_utente->username, sizeof(nuovo_utente->username), stdin);
+                        strtok(nuovo_utente->username, "\n");
+                        
+                        if (!valida_username(nuovo_utente->username)) {
+                            set_color(12); // Rosso
+                            printf("Username non valido! Usa solo caratteri alfanumerici e underscore.\n");
+                            printf("Lunghezza tra 3 e 29 caratteri.\n");
+                            set_color(7); // Bianco
+                        } else if (cerca_utente(nuovo_utente->username) != NULL) {
+                            set_color(12); // Rosso
+                            printf("Username già in uso! Scegline un altro.\n");
+                            set_color(7); // Bianco
+                            continue;
+                        }
+                    } while (!valida_username(nuovo_utente->username) || 
+                            cerca_utente(nuovo_utente->username) != NULL);
+                    
                     nuovo_utente->isAdmin = 0; // Default: non admin
-                    if (inserisci_utente(nuovo_utente->username, nuovo_utente->nome_completo) == 1) {
+                    
+                    if (inserisci_utente(nuovo_utente->username, nuovo_utente->nome_completo)) {
                         set_color(10); // Verde
-                        printf("Registrazione completata con successo!\n");
-                        current_user = cerca_utente(nuovo_utente->username);  // Salva riferimento all'utente
+                        printf("\nRegistrazione completata con successo!\n");
+                        current_user = cerca_utente(nuovo_utente->username);
+                        stato = 1;
                     } else {
                         set_color(12); // Rosso
-                        printf("Errore: Registrazione fallita.\n");
+                        printf("\nErrore: Registrazione fallita.\n");
                     }
+                    
                     free(nuovo_utente);
-                    stato = 1;
                     salva_utenti_file();
-                    printf("Premi INVIO per continuare...");
+                    
+                    printf("\nPremi INVIO per continuare...");
+                    set_color(7); // Bianco
                     svuota_buffer();
                     break;
-                case 2:
-                    pulisci_schermo();
-                    printf("Inserisci il tuo username: ");
-                    char username[30];
-                    fgets(username, sizeof(username), stdin);
-                    strtok(username, "\n"); // Rimuovi newline
-                    current_user = cerca_utente(username);  // Salva riferimento all'utente
-                    if (current_user == NULL) {
-                        set_color(12); // Rosso
-                        printf("Errore: Utente non trovato.\n");
-                        printf("Premi INVIO per continuare...");
-                        svuota_buffer();
-                    } else {
-                        set_color(10); // Verde
-                        printf("Accesso effettuato con successo!\n");
-                        printf("Benvenuto, %s!\n", current_user->nome_completo);
-                        stato = 1;
-                        printf("Premi INVIO per continuare...");
-                        svuota_buffer();
-                    }
-                    break;
-                case 0:
+                }
+                case 0: // Uscita
                     set_color(12); // Rosso
                     printf("\nChiusura del programma...\n");
                     cleanup();
@@ -1149,7 +1275,7 @@ int main() {
                     return 0;
                 default:
                     set_color(12); // Rosso
-                    printf("\nScelta non valida. Premi INVIO per riprovare...");
+                    printf("\nScelta non valida! Premi INVIO per riprovare...");
                     set_color(7); // Bianco
                     svuota_buffer();
                     break;

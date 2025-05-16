@@ -133,15 +133,6 @@ int aggiungi_prenotazione(CodaPrenotazioni* coda, Prenotazione prenotazione) {
         return -1;
     }
     
-    // Verifica la validità della fascia oraria
-    if (!verifica_fascia_oraria(
-            estrai_giorno(prenotazione.giorno_ora_inizio),
-            estrai_ora(prenotazione.giorno_ora_inizio),
-            estrai_giorno(prenotazione.giorno_ora_fine),
-            estrai_ora(prenotazione.giorno_ora_fine))) {
-        return -2;
-    }
-    
     // Se necessario, ridimensiona l'array
     if (coda->dimensione >= coda->capacita) {
         int nuova_capacita = coda->capacita * 2;

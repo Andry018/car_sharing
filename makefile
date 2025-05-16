@@ -1,20 +1,26 @@
-ifeq ($(OS),Windows_NT)   #Controlla se il sistema operativo è Windows. Se è Windows, usa il comando 'del' per rimuovere i file
-	
+ifeq ($(OS),Windows_NT)   
     RM = del
     EXE = .exe
     MKDIR = if not exist $(OBJDIR) mkdir $(OBJDIR)
     RMDIR = rmdir /s /q
     SEP = \\
+    COMPILE_FLAGS = -Wall -Wextra -g
+    ICON = resources$(SEP)icon.ico
 else
     RM = rm -f
     EXE =
     MKDIR = mkdir -p $(OBJDIR)
     RMDIR = rm -rf
     SEP = /
+    COMPILE_FLAGS = -Wall -Wextra -g
+    PREFIX = $(HOME)/.local
+    DESKTOP_FILE = car_sharing.desktop
+    ICON = resources$(SEP)icon.png
 endif
 
 SRCDIR = src
 OBJDIR = obj
+RESDIR = resources
 
 # Crea la directory obj se non esiste (viene eliminata con il comando 'make clean')
 $(shell $(MKDIR))
@@ -29,14 +35,36 @@ OBJS = $(OBJDIR)/main.o \
        $(OBJDIR)/tariffe.o \
        $(OBJDIR)/data_sistema.o
 
+# Aggiungi resource.res solo su Windows
+ifeq ($(OS),Windows_NT)
+OBJS += $(OBJDIR)/resource.res
+endif
+
 car_sharing$(EXE): $(OBJS)
-	gcc -Wall -Wextra -g -o car_sharing$(EXE) $(OBJS)
+	gcc $(COMPILE_FLAGS) -o car_sharing$(EXE) $(OBJS)
 ifeq ($(OS),Windows_NT)
 	$(RM) $(OBJDIR)\\*.o
 	$(RMDIR) $(OBJDIR)
 else
 	$(RM) $(OBJDIR)/*.o
 	$(RMDIR) $(OBJDIR)
+	# Crea la directory per le icone se non esiste
+	mkdir -p $(PREFIX)/share/icons/hicolor/256x256/apps
+	mkdir -p $(PREFIX)/share/applications
+	# Copia l'icona nella directory appropriata
+	cp $(ICON) $(PREFIX)/share/icons/hicolor/256x256/apps/car_sharing.png
+	# Crea il file .desktop
+	echo "[Desktop Entry]" > $(DESKTOP_FILE)
+	echo "Name=Car Sharing" >> $(DESKTOP_FILE)
+	echo "Exec=$(shell pwd)/car_sharing" >> $(DESKTOP_FILE)
+	echo "Icon=car_sharing" >> $(DESKTOP_FILE)
+	echo "Type=Application" >> $(DESKTOP_FILE)
+	echo "Categories=Utility;" >> $(DESKTOP_FILE)
+	# Installa il file .desktop
+	mv $(DESKTOP_FILE) $(PREFIX)/share/applications/
+	# Aggiorna la cache delle icone
+	-update-desktop-database $(PREFIX)/share/applications
+	-gtk-update-icon-cache -f -t $(PREFIX)/share/icons/hicolor
 endif
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.c
@@ -63,7 +91,10 @@ $(OBJDIR)/tariffe.o: $(SRCDIR)/tariffe.c $(SRCDIR)/tariffe.h
 $(OBJDIR)/data_sistema.o: $(SRCDIR)/data_sistema.c $(SRCDIR)/data_sistema.h
 	gcc -Wall -Wextra -g -c $(SRCDIR)/data_sistema.c -o $(OBJDIR)/data_sistema.o
 
-clean:  									# Pulizia dei file oggetto e dell'eseguibile manuale tramite il comando 'make clean'
+$(OBJDIR)/resource.res: $(RESDIR)/resource.rc
+	windres $(RESDIR)/resource.rc -O coff -o $(OBJDIR)/resource.res
+
+clean:  									
 ifeq ($(OS),Windows_NT)
 	$(RM) $(OBJDIR)\\*.o
 	$(RM) car_sharing$(EXE)
@@ -71,5 +102,7 @@ ifeq ($(OS),Windows_NT)
 else
 	$(RM) $(OBJDIR)/*.o car_sharing$(EXE)
 	$(RMDIR) $(OBJDIR)
+	$(RM) $(PREFIX)/share/applications/$(DESKTOP_FILE)
+	$(RM) $(PREFIX)/share/icons/hicolor/256x256/apps/car_sharing.png
 endif
 
