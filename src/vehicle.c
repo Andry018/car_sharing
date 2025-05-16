@@ -5,6 +5,9 @@
 #include "vehicle.h"
 #include "tariffe.h"
 
+// Dichiarazione della funzione set_color
+void set_color(int color);
+
 // Variabile privata
 static list listaVeicoli = NULL;
 
@@ -170,18 +173,44 @@ list rimuovi_veicolo(list l)
     return l;
 }
 
-void stampa_veicolo(veicolo v)
-{
-    printf("ID: %d\n", v.id);
-    printf("Categoria: %s (%.2f euro/ora)\n", get_nome_tipo_veicolo(v.tipo), get_tariffa_oraria(v.tipo));
-    printf("Modello: %s \n", v.modello);
-    printf("Targa: %s\n", v.targa);
-    printf("Posizione: %s\n", v.posizione);
-    if (v.disponibile == 1) {
-        printf("Disponibile: Si\n");
-    } else {
-        printf("Disponibile: No\n");
+void stampa_veicolo(veicolo v) {
+    set_color(7); // Bianco
+    printf("  ID: %d\n", v.id);
+    printf("  Modello: %s\n", v.modello);
+    printf("  Targa: %s\n", v.targa);
+    
+    printf("  Tipo: ");
+    switch(v.tipo) {
+        case UTILITARIA:
+            set_color(10); // Verde
+            printf("%s", "Utilitaria");
+            break;
+        case SUV:
+            set_color(14); // Giallo
+            printf("%s", "SUV");
+            break;
+        case SPORTIVA:
+            set_color(12); // Rosso
+            printf("%s", "Sportiva");
+            break;
+        case MOTO:
+            set_color(11); // Ciano
+            printf("%s", "Moto");
+            break;
     }
+    set_color(7); // Bianco
+    printf("\n");
+    
+    printf("  Stato: ");
+    if(v.disponibile) {
+        set_color(10); // Verde
+        printf("Disponibile");
+    } else {
+        set_color(12); // Rosso
+        printf("Non disponibile");
+    }
+    set_color(7); // Bianco
+    printf("\n");
 }
 
 void salva_veicolo_file(list l)

@@ -1,6 +1,9 @@
 #ifndef PRENOTAZIONI_H
 #define PRENOTAZIONI_H
 
+#include "data_sistema.h"
+#include <stdbool.h>
+
 // Stati possibili di una prenotazione
 typedef enum {
     IN_ATTESA,
@@ -14,8 +17,8 @@ typedef struct {
     int id_prenotazione;
     int id_utente;
     int id_veicolo;
-    int giorno_ora_inizio;  // Formato: giorno*24 + ora (es: 0*24 + 15 = 15 per Lunedi 15:00)
-    int giorno_ora_fine;    // Formato: giorno*24 + ora (es: 3*24 + 22 = 94 per Giovedi 22:00)
+    int giorno_ora_inizio;  // Formato: giorno*24*60 + ora*60 + minuto
+    int giorno_ora_fine;    // Formato: giorno*24*60 + ora*60 + minuto
     StatoPrenotazione stato;
     int priorita;          // Campo per la priorità (più basso = più prioritario)
 } Prenotazione;
@@ -92,6 +95,21 @@ void pulisci_coda(CodaPrenotazioni* coda);
 
 // Funzione per liberare la memoria della coda
 void distruggi_coda(CodaPrenotazioni* coda);
+
+// Nuove funzioni per la gestione delle prenotazioni con data di sistema
+void aggiorna_priorita_prenotazioni(CodaPrenotazioni* coda);
+void rimuovi_prenotazioni_scadute(CodaPrenotazioni* coda);
+void stampa_data_sistema();
+
+// Nuove funzioni di validazione
+int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine);
+int verifica_sovrapposizioni(CodaPrenotazioni* coda, int id_veicolo, int giorno_ora_inizio, int giorno_ora_fine);
+
+// Dichiarazioni delle funzioni per la gestione delle date
+DataSistema get_data_sistema(void);
+int converti_data_in_timestamp(DataSistema data);
+int calcola_priorita_temporale(int timestamp);
+void set_color(int color);
 
 #endif /* PRENOTAZIONI_H */
 

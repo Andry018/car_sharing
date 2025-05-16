@@ -56,13 +56,8 @@ double applica_sconto_pacchetto_ore(double tariffa_base, int ore_totali) {
 
 // Funzione per calcolare la tariffa totale dato il tipo di veicolo e le ore totali
 double calcola_tariffa(TipoVeicolo tipo, int ore_totali) {
-    if (ore_totali <= 0) return 0.0;
-    
     double tariffa_oraria = get_tariffa_oraria(tipo);
-    double tariffa_base = tariffa_oraria * ore_totali;
-    
-    // Applica lo sconto pacchetto ore
-    return applica_sconto_pacchetto_ore(tariffa_oraria, ore_totali);
+    return tariffa_oraria * ore_totali;
 }
 
 // Funzione per calcolare la tariffa di una prenotazione
@@ -97,7 +92,7 @@ double calcola_tariffa_prenotazione(TipoVeicolo tipo, int giorno_ora_inizio, int
 // Funzione per stampare le informazioni sugli sconti disponibili
 void stampa_info_sconti(void) {
     printf("\nSconti disponibili:\n");
-    printf("1. Sconto fedeltà:\n");
+    printf("1. Sconto fedelta':\n");
     printf("   - %.0f%% di sconto dopo %d noleggi\n", SCONTO_FEDELTA * 100, NOLEGGI_PER_SCONTO);
     printf("\n2. Pacchetti orari:\n");
     printf("   - 1 ora gratuita ogni %d ore di noleggio\n", ORE_PER_PACCHETTO);

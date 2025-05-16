@@ -125,3 +125,72 @@ void test_inserimento_prenotazione() {
 - Chiedi aiuto se serve - siamo un team!
 
 Buon coding! 🚀✨ 
+
+## Sistema di Priorità delle Prenotazioni
+
+### Calcolo Automatico della Priorità
+Il sistema ora utilizza un calcolo automatico della priorità per le prenotazioni, eliminando l'input manuale. La priorità viene determinata in base a:
+- Tempo di inizio della prenotazione
+- Stato della prenotazione
+- Cronologia dell'utente
+
+### Implementazione
+```c
+// In prenotazioni.c
+Prenotazione crea_prenotazione(int id_utente, int id_veicolo, 
+                             int giorno_inizio, int ora_inizio,
+                             int giorno_fine, int ora_fine, 
+                             int priorita) {
+    // Se priorita è -1, viene calcolata automaticamente
+    if (priorita < 0) {
+        priorita = calcola_priorita_temporale(
+            converti_in_timestamp(giorno_inizio, ora_inizio)
+        );
+    }
+    // ... resto del codice
+}
+```
+
+## Interfaccia Utente
+
+### Design dell'Interfaccia
+L'interfaccia è stata ottimizzata per la massima compatibilità utilizzando:
+- Caratteri ASCII standard per bordi e separatori
+- Codici colore standard ANSI/Windows
+- Layout consistente tra diverse piattaforme
+
+### Elementi di Formattazione
+```c
+// Bordi e separatori standard
+"=====================================" // Bordo superiore/inferiore
+"-------------------------------------" // Separatore
+"  " // Indentazione standard per il contenuto
+```
+
+### Schema Colori
+- Magenta (13): Titoli principali
+- Giallo (14): Sezioni prenotazioni e stati "in attesa"
+- Verde (10): Informazioni e stati "confermati"
+- Rosso (12): Avvisi e stati "cancellati"
+- Ciano (11): Bordi e stati "completati"
+- Bianco (7): Testo standard
+
+## Gestione delle Prenotazioni
+
+### Struttura Dati
+```c
+typedef struct {
+    int id_prenotazione;
+    int id_utente;
+    int id_veicolo;
+    int giorno_ora_inizio;
+    int giorno_ora_fine;
+    StatoPrenotazione stato;
+    int priorita;  // Calcolata automaticamente
+} Prenotazione;
+```
+
+### Coda di Priorità
+- Implementata come heap binario minimo
+- Ordinamento basato sulla priorità calcolata automaticamente
+- Riorganizzazione automatica dopo modifiche di stato 

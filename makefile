@@ -19,8 +19,18 @@ OBJDIR = obj
 # Crea la directory obj se non esiste (viene eliminata con il comando 'make clean')
 $(shell $(MKDIR))
 
-car_sharing$(EXE): $(OBJDIR)/main.o $(OBJDIR)/vehicle.o $(OBJDIR)/prenotazioni.o $(OBJDIR)/fasceorarie.o $(OBJDIR)/utenti.o $(OBJDIR)/hash.o $(OBJDIR)/tariffe.o
-	gcc -Wall -Wextra -g -o car_sharing$(EXE) $(OBJDIR)/main.o $(OBJDIR)/vehicle.o $(OBJDIR)/prenotazioni.o $(OBJDIR)/fasceorarie.o $(OBJDIR)/utenti.o $(OBJDIR)/hash.o $(OBJDIR)/tariffe.o
+# Lista dei file oggetto
+OBJS = $(OBJDIR)/main.o \
+       $(OBJDIR)/vehicle.o \
+       $(OBJDIR)/prenotazioni.o \
+       $(OBJDIR)/fasceorarie.o \
+       $(OBJDIR)/utenti.o \
+       $(OBJDIR)/hash.o \
+       $(OBJDIR)/tariffe.o \
+       $(OBJDIR)/data_sistema.o
+
+car_sharing$(EXE): $(OBJS)
+	gcc -Wall -Wextra -g -o car_sharing$(EXE) $(OBJS)
 ifeq ($(OS),Windows_NT)
 	$(RM) $(OBJDIR)\\*.o
 	$(RMDIR) $(OBJDIR)
@@ -49,6 +59,9 @@ $(OBJDIR)/hash.o: $(SRCDIR)/hash.c $(SRCDIR)/hash.h
 
 $(OBJDIR)/tariffe.o: $(SRCDIR)/tariffe.c $(SRCDIR)/tariffe.h
 	gcc -Wall -Wextra -g -c $(SRCDIR)/tariffe.c -o $(OBJDIR)/tariffe.o
+
+$(OBJDIR)/data_sistema.o: $(SRCDIR)/data_sistema.c $(SRCDIR)/data_sistema.h
+	gcc -Wall -Wextra -g -c $(SRCDIR)/data_sistema.c -o $(OBJDIR)/data_sistema.o
 
 clean:  									# Pulizia dei file oggetto e dell'eseguibile manuale tramite il comando 'make clean'
 ifeq ($(OS),Windows_NT)
