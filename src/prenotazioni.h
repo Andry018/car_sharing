@@ -111,6 +111,7 @@ int converti_data_in_timestamp(DataSistema data);
 int calcola_priorita_temporale(int timestamp);
 void set_color(int color);
 
-#endif /* PRENOTAZIONI_H */
+// Funzione per contare le prenotazioni completate di un utente
+int conta_prenotazioni_completate(CodaPrenotazioni* coda, int id_utente);
 
-
+#endif // PRENOTAZIONI_H 

@@ -432,3 +432,18 @@ int verifica_sovrapposizioni(CodaPrenotazioni* coda, int id_veicolo, int giorno_
     
     return 0;  // Nessuna sovrapposizione
 }
+
+// Funzione per contare le prenotazioni completate di un utente
+int conta_prenotazioni_completate(CodaPrenotazioni* coda, int id_utente) {
+    if (coda == NULL) {
+        return 0;
+    }
+    
+    int conteggio = 0;
+    for (int i = 0; i < coda->dimensione; i++) {
+        if (coda->heap[i].id_utente == id_utente && coda->heap[i].stato == COMPLETATA) {
+            conteggio++;
+        }
+    }
+    return conteggio;
+}

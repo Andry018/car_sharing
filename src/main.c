@@ -18,7 +18,7 @@ void pulisci_schermo(void);
 void stampa_bordo_superiore(void);
 void stampa_bordo_inferiore(void);
 void stampa_separatore(void);
-void visualizza_tariffe(void);
+void visualizza_tariffe(Utente* current_user);
 void gestione_veicoli(void);
 void prenota_auto(Utente* current_user);
 void visualizza_prenotazioni(void);
@@ -342,13 +342,8 @@ void prenota_auto(Utente* current_user) {
                                                               giorno_ora_fine);
                 
                 // Calcola il numero di prenotazioni dell'utente per lo sconto fedeltà
-                int num_prenotazioni = 0;
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
-                    if (coda_prenotazioni->heap[i].id_utente == id_utente && 
-                        coda_prenotazioni->heap[i].stato == COMPLETATA) {
-                        num_prenotazioni++;
-                    }
-                }
+                int num_prenotazioni = conta_prenotazioni_completate(coda_prenotazioni, id_utente);
+                
                 
                 // Applica lo sconto fedeltà se applicabile
                 double costo_finale = applica_sconto_fedelta(costo_base, num_prenotazioni);
@@ -362,7 +357,7 @@ void prenota_auto(Utente* current_user) {
                 printf("Costo base: %.2f euro\n", costo_base);
                 
                 if (costo_finale < costo_base) {
-                    printf("Sconto applicato: %.2f euro\n", costo_base - costo_finale);
+                    printf("Sconto fedelta' applicato: %.2f euro\n", costo_base - costo_finale);
                     printf("Costo finale: %.2f euro\n", costo_finale);
                 }
                 
@@ -491,7 +486,7 @@ void prenota_auto(Utente* current_user) {
                 break;
             }
             case 5:
-                visualizza_tariffe();
+                visualizza_tariffe(current_user);
                 break;
             case 6: {
                 pulisci_schermo();
@@ -714,7 +709,7 @@ void visualizza_disponibilita() {
     svuota_buffer();
 }
 
-void visualizza_tariffe() {
+void visualizza_tariffe(Utente* current_user) {
     pulisci_schermo();
     stampa_bordo_superiore();
     
@@ -739,6 +734,19 @@ void visualizza_tariffe() {
     printf("3. Sportiva: %.2f euro/ora\n", TARIFFA_SPORTIVA);
     printf("4. Moto: %.2f euro/ora\n", TARIFFA_MOTO);
     
+    stampa_separatore();
+
+    set_color(14); // Giallo
+    printf("         SCONTI DISPONIBILI'\n");
+    stampa_info_sconti();
+    set_color(7); // Bianco
+
+    // Mostra il numero di noleggi completati dell'utente corrente
+    if (current_user != NULL) {
+        int noleggi_completati = conta_prenotazioni_completate(get_coda_prenotazioni(), current_user->id);
+        printf("\nNoleggi completati: %d\n", noleggi_completati);
+    }
+
     stampa_bordo_inferiore();
     printf("Premi INVIO per continuare...");
     svuota_buffer();
@@ -1374,7 +1382,7 @@ int main() {
                         break;
                     case 4:
                         pulisci_schermo();
-                        visualizza_tariffe();
+                        visualizza_tariffe(current_user);
                         break;
                     case 5:
                         stato = 0;  // Torna al menu di login

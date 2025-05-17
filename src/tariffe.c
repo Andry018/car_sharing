@@ -36,10 +36,11 @@ const char* get_nome_tipo_veicolo(TipoVeicolo tipo) {
 
 // Funzione per applicare lo sconto fedeltà
 double applica_sconto_fedelta(double tariffa_base, int numero_noleggi) {
-    if (numero_noleggi > NOLEGGI_PER_SCONTO) {
+    if (numero_noleggi >= NOLEGGI_PER_SCONTO) {
         return tariffa_base * (1.0 - SCONTO_FEDELTA);
+    } else {
+        return tariffa_base;
     }
-    return tariffa_base;
 }
 
 // Funzione per calcolare il numero di ore gratuite
@@ -57,7 +58,8 @@ double applica_sconto_pacchetto_ore(double tariffa_base, int ore_totali) {
 // Funzione per calcolare la tariffa totale dato il tipo di veicolo e le ore totali
 double calcola_tariffa(TipoVeicolo tipo, int ore_totali) {
     double tariffa_oraria = get_tariffa_oraria(tipo);
-    return tariffa_oraria * ore_totali;
+    // Applica lo sconto pacchetto ore (1 ora gratis ogni 5 ore)
+    return applica_sconto_pacchetto_ore(tariffa_oraria, ore_totali);
 }
 
 // Funzione per calcolare la tariffa di una prenotazione
