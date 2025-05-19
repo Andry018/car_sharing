@@ -97,8 +97,8 @@ void visualizza_calendario(CalendarioVeicolo* calendario) {
             }
         }
         printf("\n");
+        printf("--------------------------------------------------------------------------------------------------------------------------------------\n");
     }
-    printf("==========================================\n");
     printf("Legenda: X = Occupato, Spazio vuoto = Libero\n");
 }
 
