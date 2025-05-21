@@ -1,11 +1,11 @@
-#ifndef FASCEORARIE_H
-#define FASCEORARIE_H
+#ifndef fasce_orarie_H
+#define fasce_orarie_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "prenotazioni.h"
-#include "vehicle.h"
+#include "veicolo.h"
 
 // Struttura per rappresentare una fascia oraria
 typedef struct {
@@ -34,4 +34,4 @@ int verifica_disponibilita(CalendarioVeicolo* calendario, int giorno_inizio, int
 // Funzione per ottenere il nome del giorno della settimana
 const char* get_nome_giorno(int giorno);
 
-#endif /* FASCEORARIE_H */
+#endif /* fasce_orarie_H */

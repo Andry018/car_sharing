@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "vehicle.h"
+#include "veicolo.h"
 #include "tariffe.h"
 
 // Dichiarazione della funzione set_color

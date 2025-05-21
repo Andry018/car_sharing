@@ -1,5 +1,5 @@
-#ifndef VEHICLE_C
-#define VEHICLE_C
+#ifndef veicolo_C
+#define veicolo_C
 
 #include <stdio.h>
 #include <stdlib.h>

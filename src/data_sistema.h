@@ -1,7 +1,7 @@
 #ifndef DATA_SISTEMA_H
 #define DATA_SISTEMA_H
 
-#include <time.h>
+
 
 // Struttura per rappresentare la data e ora del sistema
 typedef struct {

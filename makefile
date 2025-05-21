@@ -27,13 +27,15 @@ $(shell $(MKDIR))
 
 # Lista dei file oggetto
 OBJS = $(OBJDIR)/main.o \
-       $(OBJDIR)/vehicle.o \
+       $(OBJDIR)/veicolo.o \
        $(OBJDIR)/prenotazioni.o \
-       $(OBJDIR)/fasceorarie.o \
+       $(OBJDIR)/fasce_orarie.o \
        $(OBJDIR)/utenti.o \
        $(OBJDIR)/hash.o \
        $(OBJDIR)/tariffe.o \
-       $(OBJDIR)/data_sistema.o
+       $(OBJDIR)/data_sistema.o \
+       $(OBJDIR)/menu.o \
+       $(OBJDIR)/f_utili.o
 
 # Aggiungi resource.res solo su Windows
 ifeq ($(OS),Windows_NT)
@@ -70,14 +72,14 @@ endif
 $(OBJDIR)/main.o: $(SRCDIR)/main.c
 	gcc -Wall -Wextra -g -c $(SRCDIR)/main.c -o $(OBJDIR)/main.o
 
-$(OBJDIR)/vehicle.o: $(SRCDIR)/vehicle.c $(SRCDIR)/vehicle.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/vehicle.c -o $(OBJDIR)/vehicle.o
+$(OBJDIR)/veicolo.o: $(SRCDIR)/veicolo.c $(SRCDIR)/veicolo.h
+	gcc -Wall -Wextra -g -c $(SRCDIR)/veicolo.c -o $(OBJDIR)/veicolo.o
 
 $(OBJDIR)/prenotazioni.o: $(SRCDIR)/prenotazioni.c $(SRCDIR)/prenotazioni.h
 	gcc -Wall -Wextra -g -c $(SRCDIR)/prenotazioni.c -o $(OBJDIR)/prenotazioni.o
 
-$(OBJDIR)/fasceorarie.o: $(SRCDIR)/fasceorarie.c $(SRCDIR)/fasceorarie.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/fasceorarie.c -o $(OBJDIR)/fasceorarie.o
+$(OBJDIR)/fasce_orarie.o: $(SRCDIR)/fasce_orarie.c $(SRCDIR)/fasce_orarie.h
+	gcc -Wall -Wextra -g -c $(SRCDIR)/fasce_orarie.c -o $(OBJDIR)/fasce_orarie.o
 
 $(OBJDIR)/utenti.o: $(SRCDIR)/utenti.c $(SRCDIR)/utenti.h
 	gcc -Wall -Wextra -g -c $(SRCDIR)/utenti.c -o $(OBJDIR)/utenti.o
@@ -90,6 +92,12 @@ $(OBJDIR)/tariffe.o: $(SRCDIR)/tariffe.c $(SRCDIR)/tariffe.h
 
 $(OBJDIR)/data_sistema.o: $(SRCDIR)/data_sistema.c $(SRCDIR)/data_sistema.h
 	gcc -Wall -Wextra -g -c $(SRCDIR)/data_sistema.c -o $(OBJDIR)/data_sistema.o
+
+$(OBJDIR)/menu.o: $(SRCDIR)/menu.c $(SRCDIR)/menu.h
+	gcc -Wall -Wextra -g -c $(SRCDIR)/menu.c -o $(OBJDIR)/menu.o
+
+$(OBJDIR)/f_utili.o: $(SRCDIR)/f_utili.c $(SRCDIR)/f_utili.h
+	gcc -Wall -Wextra -g -c $(SRCDIR)/f_utili.c -o $(OBJDIR)/f_utili.o
 
 $(OBJDIR)/resource.res: $(RESDIR)/resource.rc
 	windres $(RESDIR)/resource.rc -O coff -o $(OBJDIR)/resource.res
