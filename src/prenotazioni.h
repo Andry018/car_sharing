@@ -17,8 +17,8 @@ typedef struct {
     int id_prenotazione;
     int id_utente;
     int id_veicolo;
-    int giorno_ora_inizio;  // Formato: giorno*24*60 + ora*60 + minuto
-    int giorno_ora_fine;    // Formato: giorno*24*60 + ora*60 + minuto
+    int giorno_ora_inizio;  // Formato: giorno*24*60 + ora*60 
+    int giorno_ora_fine;    // Formato: giorno*24*60 + ora*60 
     StatoPrenotazione stato;
     int priorita;          // Campo per la priorità (più basso = più prioritario)
 } Prenotazione;

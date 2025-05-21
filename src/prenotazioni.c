@@ -132,6 +132,14 @@ int aggiungi_prenotazione(CodaPrenotazioni* coda, Prenotazione prenotazione) {
     if (coda == NULL) {
         return -1;
     }
+
+    // Verifica se la fascia oraria è valida
+    if (!verifica_fascia_oraria(estrai_giorno(prenotazione.giorno_ora_inizio), 
+                                estrai_ora(prenotazione.giorno_ora_inizio),
+                                estrai_giorno(prenotazione.giorno_ora_fine), 
+                                estrai_ora(prenotazione.giorno_ora_fine))) {
+        return -2;  // Fascia oraria non valida
+    }   
     
     // Se necessario, ridimensiona l'array
     if (coda->dimensione >= coda->capacita) {
