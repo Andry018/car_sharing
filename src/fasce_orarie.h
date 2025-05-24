@@ -7,17 +7,9 @@
 #include "prenotazioni.h"
 #include "veicolo.h"
 
-// Struttura per rappresentare una fascia oraria
-typedef struct {
-    int occupato;          // 0 = libero, 1 = occupato
-    int id_prenotazione;   // ID della prenotazione che occupa questa fascia
-} FasciaOraria;
+typedef struct FasciaOrarioa *FasciaOraria;
 
-// Struttura per rappresentare il calendario di un veicolo
-typedef struct {
-    int id_veicolo;
-    FasciaOraria calendario[7][24];  // [giorno][ora]
-} CalendarioVeicolo;
+typedef struct CalendarioVeicolo *CalendarioVeicolo;
 
 // Funzione per inizializzare il calendario di un veicolo
 void inizializza_calendario(CalendarioVeicolo* calendario, int id_veicolo);
@@ -34,4 +26,13 @@ int verifica_disponibilita(CalendarioVeicolo* calendario, int giorno_inizio, int
 // Funzione per ottenere il nome del giorno della settimana
 const char* get_nome_giorno(int giorno);
 
+int get_stato_fascia_oraria(FasciaOraria* fascia_oraria);
+int get_id_prenotazione_fascia(FasciaOraria* fascia_oraria);
+int get_id_veicolo_calendario(CalendarioVeicolo* calendario);
+FasciaOraria* get_fascia_oraria(CalendarioVeicolo* calendario, int giorno, int ora);
+
+void set_stato_fascia_oraria(FasciaOraria* fascia_oraria, int stato);   
+void set_id_prenotazione_fascia(FasciaOraria* fascia_oraria, int id_prenotazione);
+void set_id_veicolo_calendario(CalendarioVeicolo* calendario, int id_veicolo);
+void set_fascia_oraria(CalendarioVeicolo* calendario, int giorno, int ora, FasciaOraria* fascia);
 #endif /* fasce_orarie_H */

@@ -1,6 +1,12 @@
 #include "data_sistema.h"
 #include <stdio.h>
 
+// Struttura per rappresentare la data e ora del sistema
+typedef struct {
+    int giorno;     // 0-6 (Lunedì-Domenica)
+    int ora;        // 0-23
+} DataSistema;
+
 // Variabile statica per mantenere la data di sistema
 static DataSistema data_corrente = {0, 0};  // Inizializza a Lunedì 00:00
 
@@ -63,4 +69,30 @@ const char* get_nome_giorno(int giorno) {
         return giorni[giorno];
     }
     return "Giorno non valido";
+}
+
+// Getter functions for DataSistema struct fields
+int get_giorno_sistema(DataSistema* data) {
+    if (data == NULL) return -1;
+    return data->giorno;
+}
+
+int get_ora_sistema(DataSistema* data) {
+    if (data == NULL) return -1;
+    return data->ora;
+}
+
+// Helper function to get current system day
+int get_giorno_corrente() {
+    return data_corrente.giorno;
+}
+
+// Helper function to get current system hour
+int get_ora_corrente() {
+    return data_corrente.ora;
+}
+
+// Helper function to get current system timestamp
+int get_timestamp_corrente() {
+    return converti_data_in_timestamp(data_corrente);
 } 

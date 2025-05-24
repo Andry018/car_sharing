@@ -4,6 +4,15 @@
 #include "utenti.h"
 #include "hash.h"
 
+typedef struct {
+    int id;
+    char username[30];
+    char nome_completo[50];
+    char password[MAX_PASSWORD_LENGTH];  // Campo per la password
+    int isAdmin;
+} Utente;
+
+
 static Utente* tabellaUtenti[TABLE_SIZE];
 
 int carica_ultimo_id_utente() {
@@ -230,3 +239,86 @@ void stampa_utenti() {
         }
     }
 }
+
+int get_id_utente(const char* username) {
+    Utente* utente = cerca_utente(username);
+    if (utente != NULL) {
+        return utente->id;
+    }
+    return -1;  // Utente non trovato
+}
+
+char* get_nome_utente(const char* username) {
+    Utente* utente = cerca_utente(username);
+    if (utente != NULL) {
+        return utente->nome_completo;
+    }
+    return NULL;  // Utente non trovato
+}
+
+char get_username_utente(const char* username) {
+    Utente* utente = cerca_utente(username);
+    if (utente != NULL) {
+        return utente->username;
+    }
+    return NULL;  // Utente non trovato
+}   
+
+char get_password_utente(const char* username) {
+    Utente* utente = cerca_utente(username);
+    if (utente != NULL) {
+        return utente->password;
+    }
+    return NULL;  // Utente non trovato
+}   
+
+int get_isAdmin_utente(const char* username) {
+    Utente* utente = cerca_utente(username);
+    if (utente != NULL) {
+        return utente->isAdmin;
+    }
+    return -1;  // Utente non trovato
+}   
+
+void set_id_utente(int id, const char* username) {
+    Utente* utente = cerca_utente(username);
+
+    if (utente != NULL) {
+        if (id == 0) {
+            printf("ID non valido! L'ID non può essere 0.\n");
+            return;
+        }
+        utente->id = id;
+    }
+}
+
+void set_nome_utente(const char* username, const char* nome_completo) {
+    Utente* utente = cerca_utente(username);
+    if (utente != NULL) {
+        strcpy(utente->nome_completo, nome_completo);
+    }
+}
+
+void set_username_utente( const char* new_username) {
+    Utente* utente = cerca_utente(new_username);
+    if (utente != NULL) {
+        // Controlla se l'username è già in uso
+        Utente* esistente = cerca_utente(new_username);
+        if (esistente == NULL) {
+            strcpy(utente->username, new_username);
+        } else {
+            printf("Username già in uso!\n");
+        }
+    }
+    if (utente != NULL) {
+        strcpy(utente->username, new_username);
+    }
+}
+
+void set_password_utente(const char* username, const char* password) {
+    Utente* utente = cerca_utente(username);
+    if (utente != NULL) {
+        strcpy(utente->password, password);
+    }
+}
+

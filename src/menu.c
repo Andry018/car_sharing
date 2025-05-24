@@ -64,13 +64,16 @@ void gestione_veicoli() {
                     set_color(7); // Bianco
                 } else {
                     while(temp != NULL) {
-                        stampa_veicolo(temp->veicoli);
-                        if (temp->next != NULL) {
-                            set_color(11); // Ciano
-                            printf("-------------------------------------\n");
-                            set_color(7); // Bianco
+                        veicolo v = get_veicolo_da_lista(&temp);
+                        if (!v) continue;
+                        int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                        if (get_disponibilita_veicolo(id, get_lista_veicoli()) == 0) {
+                            stampa_veicolo(v);
+                            int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                            printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
                         }
-                        temp = temp->next;
+                        free(v);
+                        temp = get_next_node(temp);
                     }
                 }
                 
@@ -158,12 +161,16 @@ void prenota_auto(Utente* current_user) {
                 printf("\nVeicoli disponibili:\n");
                 list temp = get_lista_veicoli();
                 while(temp != NULL) {
-                    if(temp->veicoli.disponibile) {
-                        stampa_veicolo(temp->veicoli);
-                        printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(temp->veicoli.tipo));
-                        printf("-------------------\n");
+                    veicolo v = get_veicolo_da_lista(&temp);
+                    if (!v) continue;
+                    int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                    if (get_disponibilita_veicolo(id, get_lista_veicoli()) == 0) {
+                        stampa_veicolo(v);
+                        int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                        printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
                     }
-                    temp = temp->next;
+                    free(v);
+                    temp = get_next_node(temp);
                 }
                 
                 // Mostra informazioni sugli sconti disponibili
@@ -174,12 +181,12 @@ void prenota_auto(Utente* current_user) {
                 printf("\nInserisci i dati della prenotazione:\n");
                 
                 // Gestione ID utente in base ai permessi
-                if (current_user->isAdmin) {
+                if (get_isAdmin_utente(get_username_utente(current_user)) == 0) {
                     do {
                         printf("ID Utente (0 per usare il tuo ID): ");
                         scanf("%d", &id_utente);
                         if (id_utente == 0) {
-                            id_utente = current_user->id;
+                             set_id_utente(id_utente, current_user);
                             break;
                         }
                         
@@ -191,12 +198,12 @@ void prenota_auto(Utente* current_user) {
                             printf("Inserisci un ID valido o 0 per usare il tuo ID\n");
                             set_color(7); // Bianco
                         } else {
-                            printf("Prenotazione per: %s\n", utente_prenotazione->nome_completo);
+                            printf("Prenotazione per: %s\n", get_nome_utente(get_username_utente(utente_prenotazione)));
                             break;
                         }
                     } while (1);
                 } else {
-                    id_utente = current_user->id;
+                    id_utente = get_id_utente(current_user);
                     printf("ID Utente: %d (il tuo ID)\n", id_utente);
                 }
 
@@ -207,11 +214,15 @@ void prenota_auto(Utente* current_user) {
                 temp = get_lista_veicoli();
                 veicolo* veicolo_selezionato = NULL;
                 while(temp != NULL) {
-                    if(temp->veicoli.id == id_veicolo) {
-                        veicolo_selezionato = &(temp->veicoli);
+                    veicolo v = get_veicolo_da_lista(&temp);
+                    if (!v) continue;
+                    int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                    if (id == id_veicolo) {
+                        veicolo_selezionato = v;
                         break;
                     }
-                    temp = temp->next;
+                    free(v);
+                    temp = get_next_node(temp);
                 }
                 
                 if(veicolo_selezionato == NULL) {
@@ -222,6 +233,9 @@ void prenota_auto(Utente* current_user) {
                     svuota_buffer();
                     break;
                 }
+                
+                int id = get_id_veicolo(get_targa_veicolo(veicolo_selezionato, get_lista_veicoli()), get_lista_veicoli());
+                int tipo = get_tipo_veicolo(id, get_lista_veicoli());
                 
                 printf("Giorno inizio (0-6, Lun-Dom): ");
                 scanf("%d", &giorno_inizio);
@@ -307,9 +321,7 @@ void prenota_auto(Utente* current_user) {
                 }
                 
                 // Calcola e mostra il costo stimato
-                double costo_base = calcola_tariffa_prenotazione(veicolo_selezionato->tipo, 
-                                                              giorno_ora_inizio, 
-                                                              giorno_ora_fine);
+                double costo_base = calcola_tariffa_prenotazione(tipo, giorno_ora_inizio, giorno_ora_fine);
                 
                 // Calcola il numero di prenotazioni dell'utente per lo sconto fedeltà
                 int num_prenotazioni = conta_prenotazioni_completate(coda_prenotazioni, id_utente);
@@ -320,8 +332,8 @@ void prenota_auto(Utente* current_user) {
                 
                 set_color(14); // Giallo
                 printf("\nRiepilogo prenotazione:\n");
-                printf("Veicolo: %s (ID: %d)\n", veicolo_selezionato->modello, veicolo_selezionato->id);
-                printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(veicolo_selezionato->tipo));
+                printf("Veicolo: %s (ID: %d)\n", get_modello_veicolo(id, get_lista_veicoli()), id);
+                printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
                 printf("Data inizio: %s ore %02d:00\n", get_nome_giorno(giorno_inizio), ora_inizio);
                 printf("Data fine: %s ore %02d:00\n", get_nome_giorno(giorno_fine), ora_fine);
                 printf("Costo base: %.2f euro\n", costo_base);
@@ -349,12 +361,22 @@ void prenota_auto(Utente* current_user) {
                 }
                 
                 // La priorità viene calcolata automaticamente in base al tempo
-                Prenotazione nuova = crea_prenotazione(id_utente, id_veicolo, 
+                Prenotazione* nuova = crea_prenotazione(id_utente, id_veicolo, 
                                                      giorno_inizio, ora_inizio,
                                                      giorno_fine, ora_fine, 
                                                      -1);  // -1 indica di usare la priorità automatica
                 
+                if (nuova == NULL) {
+                    set_color(12); // Rosso
+                    printf("\nErrore nella creazione della prenotazione!\n");
+                    set_color(7); // Bianco
+                    printf("Premi INVIO per continuare...");
+                    svuota_buffer();
+                    break;
+                }
+                
                 int risultato = aggiungi_prenotazione(coda_prenotazioni, nuova);
+                free(nuova);  // Libera la memoria dopo l'uso
                 
                 if (risultato == 0) {
                     set_color(10); // Verde
@@ -375,21 +397,24 @@ void prenota_auto(Utente* current_user) {
             }
             case 2: {
                 printf("\nPrenotazioni attive:\n");
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
-                    Prenotazione p = coda_prenotazioni->heap[i];
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
+                    Prenotazione p = get_prenotazione_coda(coda_prenotazioni, i);
                     stampa_prenotazione(p);
                     
                     // Trova il veicolo per mostrare il costo
                     list temp = get_lista_veicoli();
                     while(temp != NULL) {
-                        if(temp->veicoli.id == p.id_veicolo) {
-                            double costo = calcola_tariffa_prenotazione(temp->veicoli.tipo,
-                                                                      p.giorno_ora_inizio,
-                                                                      p.giorno_ora_fine);
-                            printf("Costo totale: %.2f euro\n", costo);
+                        veicolo v = get_veicolo_da_lista(&temp);
+                        if (!v) continue;
+                        int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                        if (id == get_id_veicolo_prenotazione(p)) {
+                            int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                            double costo = calcola_tariffa_prenotazione(tipo, get_ora_inizio_prenotazione(p), get_ora_fine_prenotazione(p));
+                            printf("Costo stimato: %.2f euro\n", costo);
                             break;
                         }
-                        temp = temp->next;
+                        free(v);
+                        temp = get_next_node(temp);
                     }
                     printf("-------------------\n");
                 }
@@ -406,8 +431,8 @@ void prenota_auto(Utente* current_user) {
                 Prenotazione* prenotazione = cerca_prenotazione(coda_prenotazioni, id_prenotazione);
                 if (prenotazione != NULL) {
                     // Verifica che l'utente possa cancellare questa prenotazione
-                    if (current_user->isAdmin || prenotazione->id_utente == current_user->id) {
-                        prenotazione->stato = CANCELLATA;
+                    if (get_isAdmin_utente(current_user) || get_id_utente_prenotazione(prenotazione) == get_id_utente(current_user)) {
+                        set_stato_prenotazione(3, prenotazione);
                         salva_prenotazioni_su_file(coda_prenotazioni);
                         set_color(10); // Verde
                         printf("\nPrenotazione cancellata con successo!\n");
@@ -426,7 +451,7 @@ void prenota_auto(Utente* current_user) {
             }
             case 4: {
                 // Solo gli admin possono modificare lo stato delle prenotazioni
-                if (!current_user->isAdmin) {
+                if (!get_isAdmin_utente(get_username_utente(current_user))) {
                     set_color(12); // Rosso
                     printf("\nSolo gli amministratori possono modificare lo stato delle prenotazioni!\n");
                     set_color(7); // Bianco
@@ -509,17 +534,17 @@ void visualizza_prenotazioni() {
     stampa_separatore();
     
     CodaPrenotazioni* coda = get_coda_prenotazioni();
-    if (coda == NULL || coda->dimensione == 0) {
+    if (coda == NULL || get_dimensione_coda(coda) == 0) {
         set_color(12); // Rosso
         printf("  Nessuna prenotazione presente\n");
         set_color(7); // Bianco
     } else {
-        for (int i = 0; i < coda->dimensione; i++) {
-            Prenotazione p = coda->heap[i];
+        for (int i = 0; i <get_dimensione_coda(coda); i++) {
+            Prenotazione p = get_prenotazione_coda(coda, i);
             
             // Intestazione prenotazione
             set_color(14); // Giallo
-            printf("  Prenotazione #%d\n", p.id_prenotazione);
+            printf("  Prenotazione #%d\n", get_id_prenotazione(p));
             set_color(7); // Bianco
             
             // Dettagli prenotazione
@@ -528,17 +553,20 @@ void visualizza_prenotazioni() {
             // Trova il veicolo per mostrare il costo
             list temp = get_lista_veicoli();
             while(temp != NULL) {
-                if(temp->veicoli.id == p.id_veicolo) {
-                    double costo = calcola_tariffa_prenotazione(temp->veicoli.tipo,
-                                                              p.giorno_ora_inizio,
-                                                              p.giorno_ora_fine);
-                    printf("  Costo: %.2f euro\n", costo);
+                veicolo v = get_veicolo_da_lista(&temp);
+                if (!v) continue;
+                int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                if (id == get_id_veicolo_prenotazione(p)) {
+                    int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                    double costo = calcola_tariffa_prenotazione(tipo, get_ora_inizio_prenotazione(p), get_ora_fine_prenotazione(p));
+                    printf("Costo stimato: %.2f euro\n", costo);
                     break;
                 }
-                temp = temp->next;
+                free(v);
+                temp = get_next_node(temp);
             }
             
-            if (i < coda->dimensione - 1) {
+            if (i <get_dimensione_coda(coda) - 1) {
                 stampa_separatore();
             }
         }
@@ -626,33 +654,37 @@ void visualizza_disponibilita() {
         while(temp != NULL) {
             // Inizializza e aggiorna il calendario per questo veicolo
             CalendarioVeicolo cal_temp;
-            inizializza_calendario(&cal_temp, temp->veicoli.id);
+            veicolo v = get_veicolo_da_lista(&temp);
+            if (!v) continue;
+            int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+            inizializza_calendario(&cal_temp, id);
             aggiorna_calendario(&cal_temp, coda_prenotazioni);
             
             // Ottieni il giorno e l'ora corrente dal sistema
             DataSistema data_corrente = get_data_sistema();
-            int giorno_corrente = data_corrente.giorno;
-            int ora_corrente = data_corrente.ora;
+            int giorno_corrente = estrai_giorno(converti_data_in_timestamp(data_corrente));
+            int ora_corrente = estrai_ora(converti_data_in_timestamp(data_corrente));
             
             // Controlla se il veicolo è attualmente occupato
-            int occupato_ora = cal_temp.calendario[giorno_corrente][ora_corrente].occupato;
+            int occupato_ora = get_occupato_calendario(&cal_temp, giorno_corrente, ora_corrente);
             
             // Salva il valore originale di disponibile
-            int disponibile_orig = temp->veicoli.disponibile;
+            int disponibile_orig = get_disponibilita_veicolo(id, get_lista_veicoli());
             
             // Imposta temporaneamente disponibile in base all'occupazione attuale
-            temp->veicoli.disponibile = !occupato_ora;
+            set_disponibilita_veicolo(id, get_lista_veicoli(), !occupato_ora);
             
             // Stampa il veicolo
-            stampa_veicolo(temp->veicoli);
+            stampa_veicolo(v);
             
             // Ripristina il valore originale di disponibile
-            temp->veicoli.disponibile = disponibile_orig;
+            set_disponibilita_veicolo(id, get_lista_veicoli(), disponibile_orig);
             
-            if (temp->next != NULL) {
+            if (get_next_node(temp) != NULL) {
                 stampa_separatore();
             }
-            temp = temp->next;
+            free(v);
+            temp = get_next_node(temp);
         }
     }
     
@@ -714,7 +746,7 @@ void visualizza_tariffe(Utente* current_user) {
 
     // Mostra il numero di noleggi completati dell'utente corrente
     if (current_user != NULL) {
-        int noleggi_completati = conta_prenotazioni_completate(get_coda_prenotazioni(), current_user->id);
+        int noleggi_completati = conta_prenotazioni_completate(get_coda_prenotazioni(), get_id_utente(current_user));
         printf("\nNoleggi completati: %d\n", noleggi_completati);
     }
 
@@ -730,7 +762,7 @@ void mostra_menu_cliente(Utente* current_user) {
     
     set_color(13);  // Magenta
     printf("        SISTEMA DI CAR SHARING\n");
-    printf("        Benvenuto, %s\n", current_user->nome_completo);
+    printf("        Benvenuto, %s\n", get_nome_utente(current_user));
     
     stampa_separatore();
     
@@ -768,7 +800,7 @@ void mostra_menu_admin(Utente* current_user) {
     set_color(13);  // Magenta
     printf("      SISTEMA DI CAR SHARING\n");
     printf("      PANNELLO AMMINISTRATORE\n");
-    printf("      Benvenuto, %s\n", current_user->nome_completo);
+    printf("      Benvenuto, %s\n", get_nome_utente(current_user));
     
     stampa_separatore();
     
@@ -834,22 +866,25 @@ void gestione_prenotazioni_admin() {
         switch(scelta) {
             case 1: {
                 printf("\nElenco di tutte le prenotazioni:\n");
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
-                    Prenotazione p = coda_prenotazioni->heap[i];
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
+                    Prenotazione p = get_prenotazione_coda(coda_prenotazioni, i);
                     printf("\n--- Prenotazione %d ---\n", i + 1);
                     stampa_prenotazione(p);
                     
                     // Trova il veicolo per mostrare il costo
                     list temp = get_lista_veicoli();
                     while(temp != NULL) {
-                        if(temp->veicoli.id == p.id_veicolo) {
-                            double costo = calcola_tariffa_prenotazione(temp->veicoli.tipo,
-                                                                      p.giorno_ora_inizio,
-                                                                      p.giorno_ora_fine);
+                        veicolo v = get_veicolo_da_lista(&temp);
+                        if (!v) continue;
+                        int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                        if (id == get_id_veicolo_prenotazione(p)) {
+                            int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                            double costo = calcola_tariffa_prenotazione(tipo, get_ora_inizio_prenotazione(p), get_ora_fine_prenotazione(p));
                             printf("Costo: %.2f euro\n", costo);
                             break;
                         }
-                        temp = temp->next;
+                        free(v);
+                        temp = get_next_node(temp);
                     }
                     printf("------------------------\n");
                 }
@@ -865,11 +900,12 @@ void gestione_prenotazioni_admin() {
                 
                 printf("\nPrenotazioni dell'utente %d:\n", id_utente);
                 int trovate = 0;
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
-                    if (coda_prenotazioni->heap[i].id_utente == id_utente) {
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
+                    Prenotazione p = get_prenotazione_coda(coda_prenotazioni, i);
+                    if (get_id_utente_prenotazione(p) == id_utente) {
                         trovate++;
                         printf("\n--- Prenotazione %d ---\n", trovate);
-                        stampa_prenotazione(coda_prenotazioni->heap[i]);
+                        stampa_prenotazione(p);
                         printf("------------------------\n");
                     }
                 }
@@ -888,11 +924,12 @@ void gestione_prenotazioni_admin() {
                 
                 printf("\nPrenotazioni del veicolo %d:\n", id_veicolo);
                 int trovate = 0;
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
-                    if (coda_prenotazioni->heap[i].id_veicolo == id_veicolo) {
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
+                    Prenotazione p = get_prenotazione_coda(coda_prenotazioni, i);
+                    if (get_id_veicolo_prenotazione(p) == id_veicolo) {
                         trovate++;
                         printf("\n--- Prenotazione %d ---\n", trovate);
-                        stampa_prenotazione(coda_prenotazioni->heap[i]);
+                        stampa_prenotazione(p);
                         printf("------------------------\n");
                     }
                 }
@@ -911,11 +948,12 @@ void gestione_prenotazioni_admin() {
                 
                 printf("\nPrenotazioni con stato %d:\n", stato);
                 int trovate = 0;
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
-                    if ((int)coda_prenotazioni->heap[i].stato == stato) {
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
+                    Prenotazione p = get_prenotazione_coda(coda_prenotazioni, i);
+                    if ((int)get_stato_prenotazione(p) == stato) {
                         trovate++;
                         printf("\n--- Prenotazione %d ---\n", trovate);
-                        stampa_prenotazione(coda_prenotazioni->heap[i]);
+                        stampa_prenotazione(p);
                         printf("------------------------\n");
                     }
                 }
@@ -946,21 +984,21 @@ void gestione_prenotazioni_admin() {
             }
             case 6: {
                 // Creiamo un array temporaneo per ordinare le prenotazioni per data
-                Prenotazione* temp = malloc(sizeof(Prenotazione) * coda_prenotazioni->dimensione);
+                Prenotazione* temp = malloc(sizeof(Prenotazione) * get_dimensione_coda(coda_prenotazioni));
                 if (temp == NULL) {
                     printf("Errore di allocazione memoria.\n");
                     break;
                 }
                 
                 // Copiamo le prenotazioni nell'array temporaneo
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
-                    temp[i] = coda_prenotazioni->heap[i];
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
+                    temp[i] = get_prenotazione_coda(coda_prenotazioni, i);
                 }
                 
                 // Ordiniamo per data di inizio (bubble sort)
-                for (int i = 0; i < coda_prenotazioni->dimensione - 1; i++) {
-                    for (int j = 0; j < coda_prenotazioni->dimensione - i - 1; j++) {
-                        if (temp[j].giorno_ora_inizio > temp[j + 1].giorno_ora_inizio) {
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni) - 1; i++) {
+                    for (int j = 0; j < get_dimensione_coda(coda_prenotazioni) - i - 1; j++) {
+                        if (get_ora_inizio_prenotazione(temp[j]) > get_ora_inizio_prenotazione(temp[j + 1])) {
                             Prenotazione t = temp[j];
                             temp[j] = temp[j + 1];
                             temp[j + 1] = t;
@@ -970,7 +1008,7 @@ void gestione_prenotazioni_admin() {
                 
                 // Stampiamo le prenotazioni ordinate
                 printf("\nPrenotazioni ordinate per data:\n");
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
                     printf("\n--- Prenotazione %d ---\n", i + 1);
                     stampa_prenotazione(temp[i]);
                     printf("------------------------\n");
@@ -984,9 +1022,9 @@ void gestione_prenotazioni_admin() {
             case 7: {
                 // Le prenotazioni sono già ordinate per priorità nell'heap
                 printf("\nPrenotazioni ordinate per priorita':\n");
-                for (int i = 0; i < coda_prenotazioni->dimensione; i++) {
+                for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
                     printf("\n--- Prenotazione %d ---\n", i + 1);
-                    stampa_prenotazione(coda_prenotazioni->heap[i]);
+                    stampa_prenotazione(get_prenotazione_coda(coda_prenotazioni, i));
                     printf("------------------------\n");
                 }
                 printf("\nPremi INVIO per continuare...");
