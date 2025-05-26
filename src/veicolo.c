@@ -7,19 +7,19 @@
 #include "f_utili.h"
 
 // Definizioni private delle strutture
-struct veicolo {
+ struct Veicolo{
     int id;
     int tipo;
     char modello[50];
     char targa[10];
     char posizione[50];
     int disponibilita;
-};
+} ;
 
-struct node {
-    veicolo v;
+typedef struct node {
+    Veicolo v;
     struct node* next;
-};
+}node;
 
 // Variabile statica per la lista dei veicoli
 static list listaVeicoli = NULL;
@@ -34,61 +34,61 @@ void set_lista_veicoli(list nuovaLista) {
 }
 
 // Implementazione dei getter
-int get_id_veicolo(veicolo v) {
+int get_id_veicolo(Veicolo v) {
     return v->id;
 }
 
-int get_tipo_veicolo(veicolo v) {
+int get_tipo_veicolo(Veicolo v) {
     return v->tipo;
 }
 
-const char* get_modello_veicolo(veicolo v) {
+const char* get_modello_veicolo(Veicolo v) {
     return v->modello;
 }
 
-const char* get_targa_veicolo(veicolo v) {
+const char* get_targa_veicolo(Veicolo v) {
     return v->targa;
 }
 
-const char* get_posizione_veicolo(veicolo v) {
+const char* get_posizione_veicolo(Veicolo v) {
     return v->posizione;
 }
 
-int get_disponibilita_veicolo(veicolo v) {
+int get_disponibilita_veicolo(Veicolo v) {
     return v->disponibilita;
 }
 
 // Implementazione dei setter
-void set_id_veicolo(veicolo v, int id) {
+void set_id_veicolo(Veicolo v, int id) {
     v->id = id;
 }
 
-void set_tipo_veicolo(veicolo v, int tipo) {
+void set_tipo_veicolo(Veicolo v, int tipo) {
     v->tipo = tipo;
 }
 
-void set_modello_veicolo(veicolo v, const char* modello) {
+void set_modello_veicolo(Veicolo v, const char* modello) {
     strncpy(v->modello, modello, sizeof(v->modello) - 1);
     v->modello[sizeof(v->modello) - 1] = '\0';
 }
 
-void set_targa_veicolo(veicolo v, const char* targa) {
+void set_targa_veicolo(Veicolo v, const char* targa) {
     strncpy(v->targa, targa, sizeof(v->targa) - 1);
     v->targa[sizeof(v->targa) - 1] = '\0';
 }
 
-void set_posizione_veicolo(veicolo v, const char* posizione) {
+void set_posizione_veicolo(Veicolo v, const char* posizione) {
     strncpy(v->posizione, posizione, sizeof(v->posizione) - 1);
     v->posizione[sizeof(v->posizione) - 1] = '\0';
 }
 
-void set_disponibilita_veicolo(veicolo v, int disponibilita) {
+void set_disponibilita_veicolo(Veicolo v, int disponibilita) {
     v->disponibilita = disponibilita;
 }
 
 // Funzioni di gestione veicoli
-veicolo crea_veicolo(void) {
-    veicolo v = (veicolo)malloc(sizeof(struct veicolo));
+Veicolo crea_veicolo(void) {
+    Veicolo v = malloc(sizeof(Veicolo));
     if (v == NULL) {
         return NULL;
     }
@@ -102,7 +102,7 @@ veicolo crea_veicolo(void) {
 }
 
 list aggiungi_veicolo(list l) {
-    veicolo v = crea_veicolo();
+    Veicolo v = crea_veicolo();
     if (v == NULL) {
         return l;
     }
@@ -126,7 +126,7 @@ list aggiungi_veicolo(list l) {
     v->id = carica_ultimo_id() + 1;
     v->disponibilita = 1;
 
-    list newNode = (list)malloc(sizeof(struct node));
+    list newNode = (list)malloc(sizeof( node));
     if (newNode == NULL) {
         free(v);
         return l;
@@ -163,7 +163,7 @@ list elimina_veicolo(list l, int id)
     return l;
 }
 
-void stampa_veicolo(veicolo v) {
+void stampa_veicolo(Veicolo v) {
     if (v == NULL) return;
     
     set_color(7); // Bianco
@@ -241,7 +241,7 @@ list carica_veicolo_file(list l)
     
     char line[256];
     while (fgets(line, sizeof(line), fp)) {
-        veicolo v = (veicolo)malloc(sizeof(struct veicolo));
+        Veicolo v =malloc(sizeof( Veicolo));
         if (v == NULL) {
             printf("Errore nell'allocazione della memoria.\n");
             continue;
@@ -308,11 +308,11 @@ list get_next_node(list l) {
     return l->next;
 }
 
-veicolo get_veicolo_da_lista(list *l) {
+Veicolo get_veicolo_da_lista(list *l) {
     if (*l == NULL) {
         return NULL;
     }
-    veicolo v = (*l)->v;
+    Veicolo v = (*l)->v;
     list temp = *l;
     *l = (*l)->next;
     free(temp);
@@ -320,7 +320,7 @@ veicolo get_veicolo_da_lista(list *l) {
 }
 
 // Funzioni di ricerca
-veicolo cerca_veicolo(list l, int id) {
+Veicolo cerca_veicolo(list l, int id) {
     while (l != NULL) {
         if (l->v->id == id) {
             return l->v;
@@ -331,7 +331,7 @@ veicolo cerca_veicolo(list l, int id) {
 }
 
 void modifica_veicolo(list l, int id) {
-    veicolo v = cerca_veicolo(l, id);
+    Veicolo v = cerca_veicolo(l, id);
     if (v == NULL) {
         printf("Veicolo non trovato\n");
         return;
@@ -738,5 +738,21 @@ void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, const c
     if (!trovato)
     {
         printf("Nessun veicolo di questo tipo %s in questa posizione.\n", disponibile ? "disponibile" : "non disponibile");
+    }
+}
+
+// Funzione per ottenere il nome del tipo di veicolo
+const char* get_nome_tipo_veicolo(int tipo) {
+    switch (tipo) {
+        case 0:
+            return "Utilitaria";
+        case 1:
+            return "SUV";
+        case 2:
+            return "Sportiva";
+        case 3:
+            return "Moto";
+        default:
+            return "Tipo non valido";
     }
 }

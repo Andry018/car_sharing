@@ -25,13 +25,13 @@ int estrai_giorno(int timestamp);
 int estrai_ora(int timestamp);
 
 // Funzione per ottenere la coda globale
-CodaPrenotazioni* get_coda_prenotazioni();
+CodaPrenotazioni get_coda_prenotazioni();
 
 // Funzione per inizializzare una nuova coda
-CodaPrenotazioni* inizializza_coda();
+CodaPrenotazioni inizializza_coda();
 
 // Funzione per creare una nuova prenotazione
-Prenotazione* crea_prenotazione(int id_utente, int id_veicolo, 
+Prenotazione crea_prenotazione(int id_utente, int id_veicolo, 
                               int giorno_inizio, int ora_inizio,
                               int giorno_fine, int ora_fine, 
                               int priorita);
@@ -40,79 +40,81 @@ Prenotazione* crea_prenotazione(int id_utente, int id_veicolo,
 int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);
 
 // Funzione per scambiare due prenotazioni
-void scambia_prenotazioni(Prenotazione* a, Prenotazione* b);
+void scambia_prenotazioni(struct Prenotazione* a,struct Prenotazione *b);
 
 // Funzione per fare bubble up nell'heap
-void bubble_up(CodaPrenotazioni* coda, int index);
+void bubble_up(CodaPrenotazioni coda, int index);
 
 // Funzione per fare bubble down nell'heap
-void bubble_down(CodaPrenotazioni* coda, int index);
+void bubble_down(CodaPrenotazioni coda, int index);
 
 // Funzione per aggiungere una prenotazione alla coda
-int aggiungi_prenotazione(CodaPrenotazioni* coda, Prenotazione* prenotazione);
+int aggiungi_prenotazione(CodaPrenotazioni coda, Prenotazione prenotazione);
 
 // Funzione per rimuovere la prenotazione con priorità più alta
-Prenotazione* rimuovi_prenotazione(CodaPrenotazioni* coda);
+Prenotazione rimuovi_prenotazione(CodaPrenotazioni coda);
 
 // Funzione per cercare una prenotazione per ID
-Prenotazione* cerca_prenotazione(CodaPrenotazioni* coda, int id_prenotazione);
+Prenotazione cerca_prenotazione(CodaPrenotazioni coda, int id_prenotazione);
 
 // Funzione per cercare prenotazioni per giorno e ora
-Prenotazione* cerca_prenotazione_per_orario(CodaPrenotazioni* coda, int giorno, int ora);
+Prenotazione cerca_prenotazione_per_orario(CodaPrenotazioni coda, int giorno, int ora);
 
 // Funzione per modificare lo stato di una prenotazione
-int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, 
+int modifica_stato_prenotazione(CodaPrenotazioni coda, int id_prenotazione, 
                               int nuovo_stato);
 
 // Funzione per stampare una prenotazione
-void stampa_prenotazione(Prenotazione* prenotazione);
+void stampa_prenotazione(Prenotazione prenotazione);
 
 // Funzione per salvare le prenotazioni su un file
-void salva_prenotazioni_su_file(CodaPrenotazioni* coda);
+void salva_prenotazioni_su_file(CodaPrenotazioni coda);
 
 // Funzione per caricare le prenotazioni da un file
-int carica_prenotazioni_da_file(CodaPrenotazioni* coda);
+int carica_prenotazioni_da_file(CodaPrenotazioni coda);
 
 // Funzione per caricare da file void
 void carica_prenotazioni();
 
 // Funzione per pulire la coda
-void pulisci_coda(CodaPrenotazioni* coda);
+void pulisci_coda(CodaPrenotazioni coda);
 
 // Funzione per liberare la memoria della coda
-void distruggi_coda(CodaPrenotazioni* coda);
+void distruggi_coda(CodaPrenotazioni coda);
 
 // Nuove funzioni per la gestione delle prenotazioni con data di sistema
-void aggiorna_priorita_prenotazioni(CodaPrenotazioni* coda);
-void rimuovi_prenotazioni_scadute(CodaPrenotazioni* coda);
+void aggiorna_priorita_prenotazioni(CodaPrenotazioni coda);
+void rimuovi_prenotazioni_scadute(CodaPrenotazioni coda);
 void stampa_data_sistema();
 
 // Nuove funzioni di validazione
 int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine);
-int verifica_sovrapposizioni(CodaPrenotazioni* coda, int id_veicolo, int giorno_ora_inizio, int giorno_ora_fine);
+int verifica_sovrapposizioni(CodaPrenotazioni coda, int id_veicolo, int giorno_ora_inizio, int giorno_ora_fine);
 
 // Getter functions for Prenotazione struct fields
-int get_id_prenotazione(Prenotazione* p);
-int get_id_utente_prenotazione(Prenotazione* p);
-int get_id_veicolo_prenotazione(Prenotazione* p);
-int get_giorno_ora_inizio(Prenotazione* p);
-int get_giorno_ora_fine(Prenotazione* p);
-int get_stato_prenotazione(Prenotazione* p);
-int get_priorita(Prenotazione* p);
+int get_id_prenotazione(Prenotazione p);
+int get_id_utente_prenotazione(Prenotazione p);
+int get_id_veicolo_prenotazione(Prenotazione p);
+int get_giorno_ora_inizio(Prenotazione p);
+int get_giorno_ora_fine(Prenotazione p);
+int get_stato_prenotazione(Prenotazione p);
+int get_priorita(Prenotazione p);
 
 // Helper functions to get specific time components
-int get_giorno_inizio(Prenotazione* p);
-int get_ora_inizio(Prenotazione* p);
-int get_giorno_fine(Prenotazione* p);
-int get_ora_fine(Prenotazione* p);
+int get_giorno_inizio(Prenotazione p);
+int get_ora_inizio(Prenotazione p);
+int get_giorno_fine(Prenotazione p);
+int get_ora_fine(Prenotazione p);
 
 // Setter functions for Prenotazione struct fields
-void set_id_prenotazione(int id_prenotazione, Prenotazione* p);
-void set_id_utente_prenotazione(int id_utente, Prenotazione* p);
-void set_id_veicolo_prenotazione(int id_veicolo, Prenotazione* p);
-void set_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione* p);
-void set_giorno_ora_fine(int giorno_ora_fine, Prenotazione* p);
-void set_stato_prenotazione(int stato, Prenotazione* p);
-void set_priorita(int priorita, Prenotazione* p);
+void set_id_prenotazione(int id_prenotazione, Prenotazione p);
+void set_id_utente_prenotazione(int id_utente, Prenotazione p);
+void set_id_veicolo_prenotazione(int id_veicolo, Prenotazione p);
+void set_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione p);
+void set_giorno_ora_fine(int giorno_ora_fine, Prenotazione p);
+void set_stato_prenotazione(int stato, Prenotazione p);
+void set_priorita(int priorita, Prenotazione p);
+
+Prenotazione get_heap_coda(CodaPrenotazioni coda);
 
 #endif // PRENOTAZIONI_H 

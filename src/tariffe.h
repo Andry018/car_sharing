@@ -18,7 +18,7 @@ typedef struct Tariffa *Tariffa;
 // Funzioni per il calcolo delle tariffe
 double calcola_tariffa(int tipo, int ore_totali);
 double calcola_tariffa_prenotazione(int tipo, int giorno_ora_inizio, int giorno_ora_fine);
-const char* get_nome_tipo_veicolo(int tipo);
+
 double get_tariffa_oraria(int tipo);
 
 // Nuove funzioni per gli sconti

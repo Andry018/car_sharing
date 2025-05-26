@@ -11,5 +11,10 @@ int converti_data_in_timestamp(DataSistema data);
 DataSistema converti_timestamp_in_data(int timestamp);
 int calcola_priorita_temporale(int timestamp_prenotazione);
 const char* get_nome_giorno(int giorno);
+int get_giorno_sistema(DataSistema data);
+int get_ora_sistema(DataSistema data); 
+int get_ora_corrente(void);
+int get_giorno_corrente(void);
+int get_timestamp_corrente(void);
 
 #endif /* DATA_SISTEMA_H */ 

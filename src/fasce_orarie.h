@@ -23,8 +23,6 @@ void visualizza_calendario(CalendarioVeicolo* calendario);
 // Funzione per verificare la disponibilità di un veicolo in una fascia oraria
 int verifica_disponibilita(CalendarioVeicolo* calendario, int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);
 
-// Funzione per ottenere il nome del giorno della settimana
-const char* get_nome_giorno(int giorno);
 
 int get_stato_fascia_oraria(FasciaOraria* fascia_oraria);
 int get_id_prenotazione_fascia(FasciaOraria* fascia_oraria);

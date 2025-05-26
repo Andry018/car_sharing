@@ -25,7 +25,7 @@ int main() {
     carica_prenotazioni();
     
     // Aggiorna le prenotazioni scadute
-    CodaPrenotazioni* coda = get_coda_prenotazioni();
+    CodaPrenotazioni coda = get_coda_prenotazioni();
     if (coda != NULL) {
         rimuovi_prenotazioni_scadute(coda);
         aggiorna_priorita_prenotazioni(coda);
@@ -61,6 +61,7 @@ int main() {
                     printf("             LOGIN\n");
                     stampa_separatore();
                     
+                    Utente temp_utente=NULL;
                     char username[30];
                     do {
                         set_color(7); // Bianco
@@ -85,7 +86,7 @@ int main() {
                     } else {
                         set_color(10); // Verde
                         printf("\nAccesso effettuato con successo!\n");
-                        printf("Benvenuto, %s!\n", get_nome_utente(username));
+                        printf("Benvenuto, %s!\n", get_nome_utente(temp_utente));
                         stato = 1;
                         strncpy(current_username, username, sizeof(current_username));
                         printf("\nPremi INVIO per continuare...");
@@ -175,9 +176,9 @@ int main() {
             pulisci_schermo();
             
             if (get_isAdmin_utente(current_username)) {
-                mostra_menu_admin(current_username);
+                mostra_menu_admin(cerca_utente(current_username));
             } else {
-                mostra_menu_cliente(current_username);
+                mostra_menu_cliente(cerca_utente(current_username));
             }
             
             printf("Scelta: ");
@@ -218,7 +219,7 @@ int main() {
                         svuota_buffer();
                         
                         avanza_tempo(ore);
-                        CodaPrenotazioni* coda = get_coda_prenotazioni();
+                        CodaPrenotazioni coda = get_coda_prenotazioni();
                         if (coda != NULL) {
                             rimuovi_prenotazioni_scadute(coda);
                             aggiorna_priorita_prenotazioni(coda);
@@ -253,7 +254,7 @@ int main() {
                 switch (scelta) {
                     case 1:
                         pulisci_schermo();
-                        prenota_auto(current_username);
+                        prenota_auto(cerca_utente(current_username));
                         break;
                     case 2:
                         pulisci_schermo();
@@ -265,7 +266,7 @@ int main() {
                         break;
                     case 4:
                         pulisci_schermo();
-                        visualizza_tariffe(current_username);
+                        visualizza_tariffe(cerca_utente(current_username));
                         break;
                     case 5:
                         stato = 0;  // Torna al menu di login

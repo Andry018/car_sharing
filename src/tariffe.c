@@ -1,13 +1,14 @@
 #include "tariffe.h"
+#include "veicolo.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 
 // Struttura per memorizzare le informazioni sulla tariffa
-typedef struct {
+struct Tariffa{
     int tipo; // 0: Utilitaria, 1: SUV, 2: Sportiva, 3: Moto
     double tariffa_oraria;
-} Tariffa;
+} ;
 
 // Funzione per ottenere la tariffa oraria in base al tipo di veicolo
 double get_tariffa_oraria(int tipo) {
@@ -25,35 +26,7 @@ double get_tariffa_oraria(int tipo) {
     }
 }
 
-int get_tipo_veicolo(char* tipo) {
-    if (strcmp(tipo, "Utilitaria") == 0) {
-        return 0;
-    } else if (strcmp(tipo, "SUV") == 0) {
-        return 1;
-    } else if (strcmp(tipo, "Sportiva") == 0) {
-        return 2;
-    } else if (strcmp(tipo, "Moto") == 0) {
-        return 3;
-    } else {
-        return -1; // Tipo non valido
-    }
-}
 
-// Funzione per ottenere il nome del tipo di veicolo
-const char* get_nome_tipo_veicolo(int tipo) {
-    switch (tipo) {
-        case 0:
-            return "Utilitaria";
-        case 1:
-            return "SUV";
-        case 2:
-            return "Sportiva";
-        case 3:
-            return "Moto";
-        default:
-            return "Tipo non valido";
-    }
-}
 
 // Funzione per applicare lo sconto fedeltà
 double applica_sconto_fedelta(double tariffa_base, int numero_noleggi) {

@@ -20,15 +20,15 @@ void hash_password(const char* input, char* output);
 
 // Getter functions
 int get_id_utente(const char* username);
-char* get_nome_utente(Utente* u);
+char* get_nome_utente(Utente u);
 char get_username_utente(const char* username);
 char get_password_utente(const char* username);
 int get_isAdmin_utente(const char* username);
 
 // Setter functions
-void set_id_utente(int id, Utente* u);
-void set_nome_utente(Utente* u, const char* nome_completo);
-void set_username_utente(Utente* u, const char* new_username);
-void set_password_utente(Utente* u, const char* password);
+void set_id_utente(int id, Utente u);
+void set_nome_utente(Utente u, const char* nome_completo);
+void set_username_utente(Utente u, const char* new_username);
+void set_password_utente(Utente u, const char* password);
 
 #endif // UTENTI_H

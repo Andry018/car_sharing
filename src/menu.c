@@ -64,12 +64,12 @@ void gestione_veicoli() {
                     set_color(7); // Bianco
                 } else {
                     while(temp != NULL) {
-                        veicolo v = get_veicolo_da_lista(&temp);
+                        Veicolo* v = get_veicolo_da_lista(&temp);
                         if (!v) continue;
-                        int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
-                        if (get_disponibilita_veicolo(id, get_lista_veicoli()) == 0) {
+                        int id = get_id_veicolo(get_targa_veicolo(v));
+                        if (get_disponibilita_veicolo(id) == 0) {
                             stampa_veicolo(v);
-                            int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                            int tipo = get_tipo_veicolo(v);
                             printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
                         }
                         free(v);
@@ -161,12 +161,12 @@ void prenota_auto(Utente* current_user) {
                 printf("\nVeicoli disponibili:\n");
                 list temp = get_lista_veicoli();
                 while(temp != NULL) {
-                    veicolo v = get_veicolo_da_lista(&temp);
+                    Veicolo* v = get_veicolo_da_lista(&temp);
                     if (!v) continue;
-                    int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
-                    if (get_disponibilita_veicolo(id, get_lista_veicoli()) == 0) {
+                    int id = get_id_veicolo(get_targa_veicolo(v));
+                    if (get_disponibilita_veicolo(id) == 0) {
                         stampa_veicolo(v);
-                        int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                        int tipo = get_tipo_veicolo(v);
                         printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
                     }
                     free(v);
@@ -212,11 +212,11 @@ void prenota_auto(Utente* current_user) {
                 
                 // Trova il veicolo per mostrare il costo orario
                 temp = get_lista_veicoli();
-                veicolo* veicolo_selezionato = NULL;
+                Veicolo* veicolo_selezionato = NULL;
                 while(temp != NULL) {
-                    veicolo v = get_veicolo_da_lista(&temp);
+                    Veicolo* v = get_veicolo_da_lista(&temp);
                     if (!v) continue;
-                    int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                    int id = get_id_veicolo(get_targa_veicolo(v));
                     if (id == id_veicolo) {
                         veicolo_selezionato = v;
                         break;
@@ -234,8 +234,8 @@ void prenota_auto(Utente* current_user) {
                     break;
                 }
                 
-                int id = get_id_veicolo(get_targa_veicolo(veicolo_selezionato, get_lista_veicoli()), get_lista_veicoli());
-                int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                int id = get_id_veicolo(get_targa_veicolo(veicolo_selezionato));
+                int tipo = get_tipo_veicolo(veicolo_selezionato);
                 
                 printf("Giorno inizio (0-6, Lun-Dom): ");
                 scanf("%d", &giorno_inizio);
@@ -332,7 +332,7 @@ void prenota_auto(Utente* current_user) {
                 
                 set_color(14); // Giallo
                 printf("\nRiepilogo prenotazione:\n");
-                printf("Veicolo: %s (ID: %d)\n", get_modello_veicolo(id, get_lista_veicoli()), id);
+                printf("Veicolo: %s (ID: %d)\n", get_modello_veicolo(id), id);
                 printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
                 printf("Data inizio: %s ore %02d:00\n", get_nome_giorno(giorno_inizio), ora_inizio);
                 printf("Data fine: %s ore %02d:00\n", get_nome_giorno(giorno_fine), ora_fine);
@@ -404,11 +404,11 @@ void prenota_auto(Utente* current_user) {
                     // Trova il veicolo per mostrare il costo
                     list temp = get_lista_veicoli();
                     while(temp != NULL) {
-                        veicolo v = get_veicolo_da_lista(&temp);
+                        Veicolo* v = get_veicolo_da_lista(&temp);
                         if (!v) continue;
-                        int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                        int id = get_id_veicolo(get_targa_veicolo(v));
                         if (id == get_id_veicolo_prenotazione(p)) {
-                            int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                            int tipo = get_tipo_veicolo(v);
                             double costo = calcola_tariffa_prenotazione(tipo, get_ora_inizio_prenotazione(p), get_ora_fine_prenotazione(p));
                             printf("Costo stimato: %.2f euro\n", costo);
                             break;
@@ -553,11 +553,11 @@ void visualizza_prenotazioni() {
             // Trova il veicolo per mostrare il costo
             list temp = get_lista_veicoli();
             while(temp != NULL) {
-                veicolo v = get_veicolo_da_lista(&temp);
+                Veicolo* v = get_veicolo_da_lista(&temp);
                 if (!v) continue;
-                int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                int id = get_id_veicolo(get_targa_veicolo(v));
                 if (id == get_id_veicolo_prenotazione(p)) {
-                    int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                    int tipo = get_tipo_veicolo(v);
                     double costo = calcola_tariffa_prenotazione(tipo, get_ora_inizio_prenotazione(p), get_ora_fine_prenotazione(p));
                     printf("Costo stimato: %.2f euro\n", costo);
                     break;
@@ -654,9 +654,9 @@ void visualizza_disponibilita() {
         while(temp != NULL) {
             // Inizializza e aggiorna il calendario per questo veicolo
             CalendarioVeicolo cal_temp;
-            veicolo v = get_veicolo_da_lista(&temp);
+            Veicolo* v = get_veicolo_da_lista(&temp);
             if (!v) continue;
-            int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+            int id = get_id_veicolo(get_targa_veicolo(v));
             inizializza_calendario(&cal_temp, id);
             aggiorna_calendario(&cal_temp, coda_prenotazioni);
             
@@ -669,16 +669,16 @@ void visualizza_disponibilita() {
             int occupato_ora = get_occupato_calendario(&cal_temp, giorno_corrente, ora_corrente);
             
             // Salva il valore originale di disponibile
-            int disponibile_orig = get_disponibilita_veicolo(id, get_lista_veicoli());
+            int disponibile_orig = get_disponibilita_veicolo(id);
             
             // Imposta temporaneamente disponibile in base all'occupazione attuale
-            set_disponibilita_veicolo(id, get_lista_veicoli(), !occupato_ora);
+            set_disponibilita_veicolo(id,!occupato_ora);
             
             // Stampa il veicolo
             stampa_veicolo(v);
             
             // Ripristina il valore originale di disponibile
-            set_disponibilita_veicolo(id, get_lista_veicoli(), disponibile_orig);
+            set_disponibilita_veicolo(id, disponibile_orig);
             
             if (get_next_node(temp) != NULL) {
                 stampa_separatore();
@@ -874,11 +874,11 @@ void gestione_prenotazioni_admin() {
                     // Trova il veicolo per mostrare il costo
                     list temp = get_lista_veicoli();
                     while(temp != NULL) {
-                        veicolo v = get_veicolo_da_lista(&temp);
+                        Veicolo* v = get_veicolo_da_lista(&temp);
                         if (!v) continue;
-                        int id = get_id_veicolo(get_targa_veicolo(v, get_lista_veicoli()), get_lista_veicoli());
+                        int id = get_id_veicolo(get_targa_veicolo(v));
                         if (id == get_id_veicolo_prenotazione(p)) {
-                            int tipo = get_tipo_veicolo(id, get_lista_veicoli());
+                            int tipo = get_tipo_veicolo(v);
                             double costo = calcola_tariffa_prenotazione(tipo, get_ora_inizio_prenotazione(p), get_ora_fine_prenotazione(p));
                             printf("Costo: %.2f euro\n", costo);
                             break;

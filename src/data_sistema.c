@@ -2,31 +2,31 @@
 #include <stdio.h>
 
 // Struttura per rappresentare la data e ora del sistema
-typedef struct {
+struct DataSistema {
     int giorno;     // 0-6 (Lunedì-Domenica)
     int ora;        // 0-23
-} DataSistema;
+} ;
 
 // Variabile statica per mantenere la data di sistema
 static DataSistema data_corrente = {0, 0};  // Inizializza a Lunedì 00:00
 
 void inizializza_data_sistema() {
     // Inizializza a Lunedì alle 8:00
-    data_corrente.giorno = 0;  // Lunedì
-    data_corrente.ora = 8;     // 8:00
+    data_corrente->giorno = 0;  // Lunedì
+    data_corrente->ora = 8;     // 8:00
 }
 
 void avanza_tempo(int ore) {
-    data_corrente.ora += ore;
+    data_corrente->ora += ore;
     
     // Gestisci il riporto delle ore
-    while (data_corrente.ora >= 24) {
-        data_corrente.ora -= 24;
-        data_corrente.giorno++;
+    while (data_corrente->ora >= 24) {
+        data_corrente->ora -= 24;
+        data_corrente->giorno++;
         
         // Gestisci il riporto dei giorni
-        if (data_corrente.giorno >= 7) {
-            data_corrente.giorno = 0;
+        if (data_corrente->giorno >= 7) {
+            data_corrente->giorno = 0;
         }
     }
 }
@@ -36,14 +36,14 @@ DataSistema get_data_sistema() {
 }
 
 int converti_data_in_timestamp(DataSistema data) {
-    return (data.giorno * 24) + data.ora;
+    return (data->giorno * 24) + data->ora;
 }
 
 DataSistema converti_timestamp_in_data(int timestamp) {
     DataSistema data;
     
-    data.giorno = timestamp / 24;
-    data.ora = timestamp % 24;
+    data->giorno = timestamp / 24;
+    data->ora = timestamp % 24;
     
     return data;
 }
@@ -72,24 +72,24 @@ const char* get_nome_giorno(int giorno) {
 }
 
 // Getter functions for DataSistema struct fields
-int get_giorno_sistema(DataSistema* data) {
+int get_giorno_sistema(DataSistema data) {
     if (data == NULL) return -1;
     return data->giorno;
 }
 
-int get_ora_sistema(DataSistema* data) {
+int get_ora_sistema(DataSistema data) {
     if (data == NULL) return -1;
     return data->ora;
 }
 
 // Helper function to get current system day
 int get_giorno_corrente() {
-    return data_corrente.giorno;
+    return data_corrente->giorno;
 }
 
 // Helper function to get current system hour
 int get_ora_corrente() {
-    return data_corrente.ora;
+    return data_corrente->ora;
 }
 
 // Helper function to get current system timestamp
