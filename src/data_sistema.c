@@ -1,5 +1,6 @@
 #include "data_sistema.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 // Struttura per rappresentare la data e ora del sistema
 struct DataSistema {
@@ -8,12 +9,20 @@ struct DataSistema {
 } ;
 
 // Variabile statica per mantenere la data di sistema
-static DataSistema data_corrente = {0, 0};  // Inizializza a Lunedì 00:00
+static DataSistema data_corrente = NULL;  // Inizializza a Lunedì 00:00
 
 void inizializza_data_sistema() {
+    if (data_corrente != NULL) {
+   
+    data_corrente = (DataSistema)malloc(sizeof(struct DataSistema));
+    if (data_corrente == NULL) {
+        fprintf(stderr, "Errore nell'allocazione della memoria per DataSistema.\n");
+        exit(EXIT_FAILURE);
+    }
     // Inizializza a Lunedì alle 8:00
     data_corrente->giorno = 0;  // Lunedì
     data_corrente->ora = 8;     // 8:00
+}
 }
 
 void avanza_tempo(int ore) {
@@ -40,7 +49,14 @@ int converti_data_in_timestamp(DataSistema data) {
 }
 
 DataSistema converti_timestamp_in_data(int timestamp) {
-    DataSistema data;
+    DataSistema data=get_data_sistema();
+    if (data == NULL) {
+        data = (DataSistema)malloc(sizeof(struct DataSistema));
+        if (data == NULL) {
+            fprintf(stderr, "Errore nell'allocazione della memoria per DataSistema.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
     
     data->giorno = timestamp / 24;
     data->ora = timestamp % 24;

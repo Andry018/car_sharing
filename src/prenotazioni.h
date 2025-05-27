@@ -90,6 +90,7 @@ void stampa_data_sistema();
 // Nuove funzioni di validazione
 int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine);
 int verifica_sovrapposizioni(CodaPrenotazioni coda, int id_veicolo, int giorno_ora_inizio, int giorno_ora_fine);
+Prenotazione get_prenotazione_in_coda(CodaPrenotazioni coda, int i);
 
 // Getter functions for Prenotazione struct fields
 int get_id_prenotazione(Prenotazione p);
@@ -116,5 +117,7 @@ void set_stato_prenotazione(int stato, Prenotazione p);
 void set_priorita(int priorita, Prenotazione p);
 
 Prenotazione get_heap_coda(CodaPrenotazioni coda);
+int get_dimensione_coda( CodaPrenotazioni coda);
+int conta_prenotazioni_completate(CodaPrenotazioni coda, int id_utente);
 
 #endif // PRENOTAZIONI_H 

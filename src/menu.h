@@ -12,15 +12,15 @@
 
 
 
-void visualizza_tariffe(Utente* current_user);
+void visualizza_tariffe(Utente current_user);
 void gestione_veicoli(void);
-void prenota_auto(Utente* current_user);
+void prenota_auto(Utente current_user);
 void visualizza_prenotazioni(void);
 void restituisci_auto(void);
 void visualizza_disponibilita(void);
 
-void mostra_menu_cliente(Utente* current_user);
-void mostra_menu_admin(Utente* current_user);
+void mostra_menu_cliente(Utente current_user);
+void mostra_menu_admin(Utente current_user);
 void gestione_prenotazioni_admin(void);
 void mostra_menu_iniziale();
 void mostra_logo();

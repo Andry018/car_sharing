@@ -587,3 +587,10 @@ void set_priorita(int priorita,  Prenotazione p) {
     if (p == NULL) return;
     p->priorita = priorita;
 }
+
+Prenotazione get_prenotazione_in_coda(CodaPrenotazioni coda, int i) {
+    if (coda == NULL || i < 0 || i >= coda->dimensione) {
+        return NULL;
+    }
+    return &coda->heap[i];
+}

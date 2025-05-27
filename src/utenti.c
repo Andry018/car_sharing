@@ -204,7 +204,7 @@ int inserisci_utente(const char* username, const char* nome_completo) {
     return 0;
 }
 
-Utente* cerca_utente(const char* username) {
+Utente cerca_utente(const char* username) {
     unsigned int index = hash_djb2(username) % TABLE_SIZE;
 
     for (int i = 0; i < TABLE_SIZE; i++) {
@@ -219,7 +219,7 @@ Utente* cerca_utente(const char* username) {
 }
 
 // Funzione per cercare un utente per ID
-Utente* cerca_utente_per_id(int id) {
+Utente cerca_utente_per_id(int id) {
     for (int i = 0; i < TABLE_SIZE; i++) {
         if (tabellaUtenti[i] != NULL && tabellaUtenti[i]->id == id) {
             return tabellaUtenti[i];
@@ -250,29 +250,31 @@ int get_id_utente(const char* username) {
     return -1;  // Utente non trovato
 }
 
-char* get_nome_utente(const char* username) {
-    Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
-    if (utente != NULL) {
-        return utente->nome_completo;
+char* get_nome_utente(Utente u) {
+    if (u == NULL) {
+        return NULL;  // Utente non valido
     }
-    free(utente);
-    return NULL;  // Utente non trovato
-
+    char* nome_completo = malloc(sizeof(char) * 50);
+    if (nome_completo == NULL) {
+        return NULL;  // Errore di allocazione
+    }
+    strcpy(nome_completo, u->nome_completo);
+    return nome_completo;  // Restituisce il nome completo dell'utente
 }
 
-char get_username_utente(const char* username) {
-     Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
-    if (utente != NULL) {
-        return utente->username;
+char* get_username_utente(Utente u) {
+    if (u == NULL) {
+        return NULL;  // Utente non valido
     }
-    free(utente);
-    return NULL;  // Utente non trovato
-  
+    char* username = malloc(sizeof(char) * 30);
+    if (username == NULL) {
+        return NULL;  // Errore di allocazione
+    }
+    strcpy(username, u->username);
+    return username;  // Restituisce l'username dell'utente
 }   
 
-char get_password_utente(const char* username) {
+char* get_password_utente(const char* username) {
      Utente utente = malloc(sizeof(Utente));
     utente =cerca_utente(username);
     if (utente != NULL) {
@@ -295,25 +297,21 @@ int get_isAdmin_utente(const char* username) {
    
 }   
 
-void set_id_utente(int id, const char* username) {
-    Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
-    if (utente != NULL) {
-        if (id == 0) {
-            printf("ID non valido! L'ID non può essere 0.\n");
-            return;
-        }
-        utente->id = id;
-    } free(utente);
+void set_id_utente(int id, Utente u) {
+    if (u == NULL) {
+        printf("Utente non valido!\n");
+        return;
+    }
+    u->id = id;  // Imposta l'ID dell'utente     
 }
 
-void set_nome_utente(const char* username, const char* nome_completo) {
-  Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
-    if (utente != NULL) {
-        strcpy(utente->nome_completo, nome_completo);
-    }free(utente);
-    
+void set_nome_utente(const char* nome_completo, Utente u) {
+    if (u == NULL) {
+        printf("Utente non valido!\n");
+        return;
+    }
+    strncpy(u->nome_completo, nome_completo, sizeof(u->nome_completo) - 1);
+    u->nome_completo[sizeof(u->nome_completo) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
 }
 
 void set_username_utente( const char* new_username) {
@@ -333,26 +331,35 @@ void set_username_utente( const char* new_username) {
    
 }
 
-void set_password_utente(const char* username, const char* password) {
-    Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
-    if (utente != NULL) {
-        strcpy(utente->password, password);
-    } free(utente);
-  
+void set_password_utente(const char* username, Utente u) {
+    if (u == NULL) {
+        printf("Utente non valido!\n");
+        return;
+    }
     
+    char hashed_password[MAX_PASSWORD_LENGTH];
+    hash_password(username, hashed_password);
+    
+    // Imposta la password hashata
+    strncpy(u->password, hashed_password, sizeof(u->password) - 1);
+    u->password[sizeof(u->password) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
+   
 }
  
-int verifica_password(const char* username, const char* password) {
-    Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
-    if (utente != NULL) {
-        char hashed_password[MAX_PASSWORD_LENGTH];
-        hash_password(password, hashed_password);
-        return strcmp(utente->password, hashed_password) == 0;
+int verifica_password(const char* password, Utente u) {
+    if (u == NULL) {
+        return 0;  // Utente non valido
     }
-    free(utente);   
-    return 0;  // Utente non trovato o password errata
+    
+    char hashed_password[MAX_PASSWORD_LENGTH];
+    hash_password(password, hashed_password);
+    
+    // Confronta la password hashata con quella memorizzata
+    if (strcmp(u->password, hashed_password) == 0) {
+        return 1;  // Password corretta
+    }
+    
+    return 0;  // Password errata
    
 }
 
