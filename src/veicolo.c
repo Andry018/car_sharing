@@ -785,4 +785,11 @@ int carica_ultimo_id(){
     fclose(fp);
     return id;
 }
+
+Veicolo get_veicolo_senza_rimuovere(list l) {
+    if (l == NULL) {
+        return NULL;
+    }
+    return l->v;
+}
    

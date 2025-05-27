@@ -40,61 +40,9 @@ int carica_ultimo_id_utente() {
 
 void inizializza_tabella_utenti(void) {
     for (int index = 0; index < TABLE_SIZE; index++) {
-        tabellaUtenti[index] = malloc(sizeof(struct Utente));
-        if (tabellaUtenti[index] == NULL) {
-            printf("Errore nell'allocazione della memoria.\n");
-            return;
-        }
         tabellaUtenti[index] = NULL;
     }
-    
-    // Verifica se l'admin esiste già nel file
-    FILE* file = fopen("data/utenti.txt", "r");
-    int admin_exists = 0;
-    
-    if (file != NULL) {
-        char line[256];
-        while (fgets(line, sizeof(line), file)) {
-            char username[30];
-            if (sscanf(line, "%*d %s", username) == 1 && strcmp(username, "Admin") == 0) {
-                admin_exists = 1;
-                break;
-            }
-        }
-        fclose(file);
-    }
-    
-    // Crea automaticamente l'utente admin se non esiste
-    if (!admin_exists) {
-        unsigned int index = hash_djb2("Admin") % TABLE_SIZE;
-        tabellaUtenti[index] = malloc(sizeof(struct Utente));
-        if (tabellaUtenti[index] != NULL) {
-            tabellaUtenti[index]->id = 0;  // ID 0 per l'admin
-            strcpy(tabellaUtenti[index]->username, "Admin");
-            strcpy(tabellaUtenti[index]->nome_completo, "Administrator");
-            tabellaUtenti[index]->isAdmin = 1;
-            
-            // Salva l'admin nel file
-            FILE* write_file;
-            if (admin_exists == 0 && file == NULL) {
-                // Se il file non esiste, crealo
-                write_file = fopen("data/utenti.txt", "w");
-            } else {
-                // Altrimenti aggiungi in append
-                write_file = fopen("data/utenti.txt", "a");
-            }
-            
-            if (write_file != NULL) {
-                fprintf(write_file, "%d %s %s %d\n", 
-                        tabellaUtenti[index]->id,
-                        tabellaUtenti[index]->username,
-                        tabellaUtenti[index]->nome_completo,
-                        tabellaUtenti[index]->isAdmin);
-                fclose(write_file);
-                printf("Utente Admin creato con successo.\n");
-            }
-        }
-    }
+    printf("Tabella utenti inizializzata.\n");
 }
 
 void salva_utenti_file() {
@@ -118,49 +66,149 @@ void salva_utenti_file() {
 }
 
 int carica_utenti_file() {
+    printf("Tentativo di apertura del file utenti.txt...\n");
     FILE* file = fopen("data/utenti.txt", "r");
     if (file == NULL) {
-        printf("Errore nell'apertura del file utenti.txt\n");
+        printf("Errore nell'apertura del file utenti.txt. Tentativo di creazione...\n");
+        // Se il file non esiste, crealo con l'utente admin
+        file = fopen("data/utenti.txt", "w");
+        if (file == NULL) {
+            printf("Errore nella creazione del file utenti.txt. Verifica i permessi della directory.\n");
+            return 0;
+        }
+        
+        // Crea l'utente admin
+        if (fprintf(file, "0 Admin Administrator 1\n") < 0) {
+            printf("Errore nella scrittura del file utenti.txt\n");
+            fclose(file);
+            return 0;
+        }
+        fclose(file);
+        
+        // Riapri il file in lettura
+        file = fopen("data/utenti.txt", "r");
+        if (file == NULL) {
+            printf("Errore nella riapertura del file utenti.txt\n");
+            return 0;
+        }
+        
+        // Inizializza la tabella con l'admin
+        unsigned int index = hash_djb2("Admin") % TABLE_SIZE;
+        if (tabellaUtenti[index] == NULL) {
+            tabellaUtenti[index] = malloc(sizeof(struct Utente));
+            if (tabellaUtenti[index] != NULL) {
+                tabellaUtenti[index]->id = 0;
+                strcpy(tabellaUtenti[index]->username, "Admin");
+                strcpy(tabellaUtenti[index]->nome_completo, "Administrator");
+                tabellaUtenti[index]->isAdmin = 1;
+                printf("File utenti.txt creato con l'utente Admin.\n");
+                fclose(file);
+                return 1;
+            }
+        }
+        fclose(file);
         return 0;
     }
 
+    printf("File utenti.txt aperto con successo. Lettura in corso...\n");
     char line[256];
     int success = 1;
+    int count = 0;
+    int line_number = 0;
 
     while (fgets(line, sizeof(line), file)) {
-        char username[30];
-        char nome_completo[50];
-        char* token = strtok(line, " ");  // Legge ID
+        line_number++;
+        // Salta le righe vuote
+        if (line[0] == '\n' || line[0] == '\r' || line[0] == '\0') {
+            continue;
+        }
+
+        char username[30] = {0};
+        char nome_completo[50] = {0};
+        int id = -1, isAdmin = -1;
         
-        if (token != NULL) {
-            token = strtok(NULL, " ");  // Legge username
-            
-            if (token != NULL) {
-                strcpy(username, token);
-                token = strtok(NULL, "\n");  // Legge il resto della linea fino a \n
-                
-                if (token != NULL) {
-                    // Trova l'ultimo numero nella stringa (isAdmin)
-                    char* last_space = strrchr(token, ' ');
-                    if (last_space != NULL) {
-                        *last_space = '\0';  // Termina la stringa prima dell'isAdmin
-                        // Rimuovi spazi iniziali dal nome completo
-                        while (*token == ' ') token++;
-                        strcpy(nome_completo, token);
-                        
-                        if (!inserisci_utente(username, nome_completo)) {
-                            printf("Errore nell'inserimento dell'utente %s\n", username);
-                            success = 0;
-                        }
-                    }
-                }
-            }
+        // Leggi l'ID e l'username
+        char* token = strtok(line, " ");
+        if (token == NULL) {
+            printf("Errore nel formato della riga %d: ID mancante\n", line_number);
+            continue;
+        }
+        id = atoi(token);
+        
+        // Leggi l'username
+        token = strtok(NULL, " ");
+        if (token == NULL) {
+            printf("Errore nel formato della riga %d: username mancante\n", line_number);
+            continue;
+        }
+        strncpy(username, token, sizeof(username) - 1);
+        
+        // Leggi il nome completo (può contenere spazi)
+        token = strtok(NULL, "\n");
+        if (token == NULL) {
+            printf("Errore nel formato della riga %d: nome completo mancante\n", line_number);
+            continue;
+        }
+        
+        // Estrai isAdmin dal nome completo
+        char* last_space = strrchr(token, ' ');
+        if (last_space == NULL) {
+            printf("Errore nel formato della riga %d: isAdmin mancante\n", line_number);
+            continue;
+        }
+        isAdmin = atoi(last_space + 1);
+        *last_space = '\0';  // Termina il nome completo prima dell'isAdmin
+        
+        strncpy(nome_completo, token, sizeof(nome_completo) - 1);
+        
+        // Verifica che tutti i campi siano validi
+        if (id < 0 || strlen(username) == 0 || strlen(nome_completo) == 0 || isAdmin < 0) {
+            printf("Errore nel formato della riga %d: campi non validi\n", line_number);
+            continue;
+        }
+        
+        unsigned int index = hash_djb2(username) % TABLE_SIZE;
+        
+        // Se lo slot è vuoto, alloca nuova memoria
+        if (tabellaUtenti[index] == NULL) {
+            tabellaUtenti[index] = malloc(sizeof(struct Utente));
+        }
+        
+        if (tabellaUtenti[index] != NULL) {
+            tabellaUtenti[index]->id = id;
+            strcpy(tabellaUtenti[index]->username, username);
+            strcpy(tabellaUtenti[index]->nome_completo, nome_completo);
+            tabellaUtenti[index]->isAdmin = isAdmin;
+            count++;
+            printf("Caricato utente: %s (ID: %d)\n", username, id);
+        } else {
+            printf("Errore nell'allocazione della memoria per l'utente %s\n", username);
+            success = 0;
         }
     }
+    
     fclose(file);
     
+    if (count == 0) {
+        printf("Nessun utente trovato nel file. Creazione utente admin...\n");
+        // Se non ci sono utenti, crea l'admin
+        unsigned int index = hash_djb2("Admin") % TABLE_SIZE;
+        if (tabellaUtenti[index] == NULL) {
+            tabellaUtenti[index] = malloc(sizeof(struct Utente));
+            if (tabellaUtenti[index] != NULL) {
+                tabellaUtenti[index]->id = 0;
+                strcpy(tabellaUtenti[index]->username, "Admin");
+                strcpy(tabellaUtenti[index]->nome_completo, "Administrator");
+                tabellaUtenti[index]->isAdmin = 1;
+                salva_utenti_file();  // Salva l'admin nel file
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
     if (success) {
-        printf("Utenti caricati dal file data/utenti.txt\n");
+        printf("Caricati %d utenti dal file data/utenti.txt\n", count);
     } else {
         printf("Si sono verificati errori durante il caricamento degli utenti\n");
     }

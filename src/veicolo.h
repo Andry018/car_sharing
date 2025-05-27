@@ -34,6 +34,7 @@ const char* get_targa_veicolo(Veicolo v);
 const char* get_posizione_veicolo(Veicolo v);
 int get_disponibilita_veicolo(Veicolo v);
 Veicolo get_veicolo_da_lista(list *l);
+Veicolo get_veicolo_senza_rimuovere(list l);
 list get_next_node(list l);
 
 // Setter functions

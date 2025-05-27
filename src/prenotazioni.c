@@ -307,7 +307,7 @@ void salva_prenotazioni_su_file( CodaPrenotazioni coda) {
 }
 
 // Funzione per caricare le prenotazioni da un file
-int carica_prenotazioni_da_file( CodaPrenotazioni coda) {
+int carica_prenotazioni_da_file(CodaPrenotazioni coda) {
     if (coda == NULL) {
         printf("Errore: coda non inizializzata!\n");
         return -1;
@@ -364,8 +364,11 @@ void carica_prenotazioni() {
     }
     
     // Carica le prenotazioni dal file
-    if (carica_prenotazioni_da_file(coda_globale) == 0) {
+    int result = carica_prenotazioni_da_file(coda_globale);
+    if (result == 0) {
         printf("Prenotazioni caricate con successo.\n");
+    } else if (result == -1) {
+        printf("Nessuna prenotazione trovata nel file.\n");
     }
 }
 

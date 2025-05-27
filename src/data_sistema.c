@@ -12,17 +12,16 @@ struct DataSistema {
 static DataSistema data_corrente = NULL;  // Inizializza a Lunedì 00:00
 
 void inizializza_data_sistema() {
-    if (data_corrente != NULL) {
-   
-    data_corrente = (DataSistema)malloc(sizeof(struct DataSistema));
-    if (data_corrente == NULL) {
-        fprintf(stderr, "Errore nell'allocazione della memoria per DataSistema.\n");
-        exit(EXIT_FAILURE);
+    if (data_corrente == NULL) {  // Alloca solo se non è già stato allocato
+        data_corrente = (DataSistema)malloc(sizeof(struct DataSistema));
+        if (data_corrente == NULL) {
+            fprintf(stderr, "Errore nell'allocazione della memoria per DataSistema.\n");
+            exit(EXIT_FAILURE);
+        }
+        // Inizializza a Lunedì alle 8:00
+        data_corrente->giorno = 0;  // Lunedì
+        data_corrente->ora = 8;     // 8:00
     }
-    // Inizializza a Lunedì alle 8:00
-    data_corrente->giorno = 0;  // Lunedì
-    data_corrente->ora = 8;     // 8:00
-}
 }
 
 void avanza_tempo(int ore) {

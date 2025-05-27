@@ -41,7 +41,11 @@ int main() {
     
     // Inizializza e carica gli utenti
     inizializza_tabella_utenti();
-    carica_utenti_file();
+    if (!carica_utenti_file()) {
+        printf("Errore nel caricamento degli utenti. Il programma potrebbe non funzionare correttamente.\n");
+        printf("Premi INVIO per continuare...");
+        svuota_buffer();
+    }
 
     while (1) {
         pulisci_schermo();
@@ -61,7 +65,7 @@ int main() {
                     printf("             LOGIN\n");
                     stampa_separatore();
                     
-                    Utente temp_utente=NULL;
+                    Utente temp_utente = NULL;
                     char username[30];
                     do {
                         set_color(7); // Bianco
@@ -77,7 +81,8 @@ int main() {
                         }
                     } while (!valida_username(username));
                     
-                    if (cerca_utente(username) == NULL) {
+                    temp_utente = cerca_utente(username);
+                    if (temp_utente == NULL) {
                         set_color(12); // Rosso
                         printf("\nErrore: Utente non trovato!\n");
                         printf("Premi INVIO per tornare al menu principale...");
@@ -89,6 +94,7 @@ int main() {
                         printf("Benvenuto, %s!\n", get_nome_utente(temp_utente));
                         stato = 1;
                         strncpy(current_username, username, sizeof(current_username));
+                        salva_utenti_file();  // Salvo gli utenti dopo il login
                         printf("\nPremi INVIO per continuare...");
                         set_color(7); // Bianco
                         svuota_buffer();
@@ -147,12 +153,11 @@ int main() {
                         printf("\nRegistrazione completata con successo!\n");
                         stato = 1;
                         strncpy(current_username, username, sizeof(current_username));
+                        salva_utenti_file();  // Salvo gli utenti dopo la registrazione
                     } else {
                         set_color(12); // Rosso
                         printf("\nErrore: Registrazione fallita.\n");
                     }
-                    
-                    salva_utenti_file();
                     
                     printf("\nPremi INVIO per continuare...");
                     set_color(7); // Bianco

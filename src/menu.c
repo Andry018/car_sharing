@@ -167,16 +167,27 @@ void prenota_auto(Utente current_user) {
                 // Visualizza veicoli disponibili con tariffe
                 printf("\nVeicoli disponibili:\n");
                 list temp = get_lista_veicoli();
+                bool trovato = false;
                 while(temp != NULL) {
                     Veicolo v = get_veicolo_da_lista(&temp);
                     if (!v) continue;
-                    if (get_disponibilita_veicolo(v) == 0) {
+                    if (get_disponibilita_veicolo(v) == 1) {  // Mostra solo i veicoli disponibili
                         stampa_veicolo(v);
                         int tipo = get_tipo_veicolo(v);
                         printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
+                        trovato = true;
                     }
                     free(v);
                     temp = get_next_node(temp);
+                }
+                
+                if (!trovato) {
+                    set_color(12); // Rosso
+                    printf("Nessun veicolo disponibile al momento.\n");
+                    set_color(7); // Bianco
+                    printf("Premi INVIO per continuare...");
+                    svuota_buffer();
+                    continue;
                 }
                 
                 // Mostra informazioni sugli sconti disponibili
@@ -192,7 +203,7 @@ void prenota_auto(Utente current_user) {
                         printf("ID Utente (0 per usare il tuo ID): ");
                         scanf("%d", &id_utente);
                         if (id_utente == 0) {
-                             set_id_utente(id_utente, current_user);
+                            set_id_utente(id_utente, current_user);
                             break;
                         }
                         
@@ -267,9 +278,6 @@ void prenota_auto(Utente current_user) {
                     break;
                 }
 
-
-
-
                 printf("Giorno fine (0-6, Lun-Dom): ");
                 scanf("%d", &giorno_fine);
 
@@ -282,8 +290,6 @@ void prenota_auto(Utente current_user) {
                     break;
                 }
 
-
-
                 printf("Ora fine (0-23): ");
                 scanf("%d", &ora_fine);
 
@@ -295,7 +301,6 @@ void prenota_auto(Utente current_user) {
                     svuota_buffer();
                     break;
                 }
-
 
                 // Converti le date in timestamp
                 int giorno_ora_inizio = giorno_inizio * 24 + ora_inizio;
@@ -331,7 +336,6 @@ void prenota_auto(Utente current_user) {
                 
                 // Calcola il numero di prenotazioni dell'utente per lo sconto fedeltà
                 int num_prenotazioni = conta_prenotazioni_completate(coda_prenotazioni, id_utente);
-                
                 
                 // Applica lo sconto fedeltà se applicabile
                 double costo_finale = applica_sconto_fedelta(costo_base, num_prenotazioni);
@@ -545,7 +549,7 @@ void visualizza_prenotazioni() {
         printf("  Nessuna prenotazione presente\n");
         set_color(7); // Bianco
     } else {
-        for (int i = 0; i <get_dimensione_coda(coda); i++) {
+        for (int i = 0; i < get_dimensione_coda(coda); i++) {
             Prenotazione p = get_prenotazione_in_coda(coda, i);
             
             // Intestazione prenotazione
@@ -572,7 +576,7 @@ void visualizza_prenotazioni() {
                 temp = get_next_node(temp);
             }
             
-            if (i <get_dimensione_coda(coda) - 1) {
+            if (i < get_dimensione_coda(coda) - 1) {
                 stampa_separatore();
             }
         }
@@ -612,9 +616,17 @@ void restituisci_auto() {
 
 void visualizza_disponibilita() {
     list veicoli = get_lista_veicoli();
-    int id_veicolo=get_id_veicolo(get_veicolo_da_lista(&veicoli));
-    CalendarioVeicolo calendario=inizializza_calendario(id_veicolo);
-    CodaPrenotazioni coda_prenotazioni = NULL;
+    if (veicoli == NULL) {
+        pulisci_schermo();
+        stampa_bordo_superiore();
+        set_color(12); // Rosso
+        printf("  Nessun veicolo disponibile\n");
+        set_color(7); // Bianco
+        stampa_bordo_inferiore();
+        printf("Premi INVIO per continuare...");
+        svuota_buffer();
+        return;
+    }
     
     pulisci_schermo();
     stampa_bordo_superiore();
@@ -632,40 +644,19 @@ void visualizza_disponibilita() {
     
     stampa_separatore();
     
-    // Inizializza la coda delle prenotazioni
-    coda_prenotazioni = inizializza_coda();
-    if (coda_prenotazioni == NULL) {
-        set_color(12); // Rosso
-        printf("  Errore: Inizializzazione fallita\n");
-        set_color(7); // Bianco
-        stampa_bordo_inferiore();
-        printf("Premi INVIO per continuare...");
-        svuota_buffer();
-        return;
-    }
-    
-    // Carica le prenotazioni dal file
-    carica_prenotazioni_da_file(coda_prenotazioni);
-    
-    // Visualizza lista veicoli con stato attuale
-    set_color(10); // Verde
-    printf("       VEICOLI E STATO ATTUALE\n");
-    set_color(7); // Bianco
-    
-    list temp = get_lista_veicoli();
+    // Visualizza tutti i veicoli
+    list temp = veicoli;
     if (temp == NULL) {
         set_color(12); // Rosso
         printf("  Nessun veicolo disponibile\n");
         set_color(7); // Bianco
     } else {
         while(temp != NULL) {
-            // Inizializza e aggiorna il calendario per questo veicolo
-            Veicolo v = get_veicolo_da_lista(&temp);
-            if (!v) continue;
-            int id = get_id_veicolo(v);
-            CalendarioVeicolo cal_temp=inizializza_calendario(id);
-            aggiorna_calendario(cal_temp, coda_prenotazioni);
-           
+            Veicolo v = get_veicolo_senza_rimuovere(temp);
+            if (!v) {
+                temp = get_next_node(temp);
+                continue;
+            }
             
             // Controlla se il veicolo è attualmente occupato
             int occupato_ora = get_disponibilita_veicolo(v);
@@ -674,7 +665,7 @@ void visualizza_disponibilita() {
             int disponibile_orig = get_disponibilita_veicolo(v);
             
             // Imposta temporaneamente disponibile in base all'occupazione attuale
-            set_disponibilita_veicolo(v,!occupato_ora);
+            set_disponibilita_veicolo(v, !occupato_ora);
             
             // Stampa il veicolo
             stampa_veicolo(v);
@@ -685,7 +676,6 @@ void visualizza_disponibilita() {
             if (get_next_node(temp) != NULL) {
                 stampa_separatore();
             }
-            free(v);
             temp = get_next_node(temp);
         }
     }
@@ -693,11 +683,14 @@ void visualizza_disponibilita() {
     stampa_separatore();
     
     // Chiedi l'ID del veicolo
+    int id_veicolo;
     printf("Inserisci l'ID del veicolo: ");
     scanf("%d", &id_veicolo);
     svuota_buffer();
     
     // Inizializza e aggiorna il calendario
+    CalendarioVeicolo calendario = inizializza_calendario(id_veicolo);
+    CodaPrenotazioni coda_prenotazioni = get_coda_prenotazioni();
     aggiorna_calendario(calendario, coda_prenotazioni);
     
     stampa_separatore();
