@@ -6,6 +6,8 @@
 #include "data_sistema.h"
 #include "f_utili.h"
 
+#define INITIAL_CAPACITY 10
+
 // Stati possibili di una prenotazione
 
 
@@ -44,21 +46,21 @@ CodaPrenotazioni get_coda_prenotazioni() {
 }
 
 // Funzione per inizializzare una nuova coda
- CodaPrenotazioni inizializza_coda() {
-     CodaPrenotazioni coda =(CodaPrenotazioni) malloc(sizeof(CodaPrenotazioni));
+ CodaPrenotazioni inizializza_coda(void) {
+    CodaPrenotazioni coda = (CodaPrenotazioni)malloc(sizeof(struct CodaPrenotazioni));
     if (coda == NULL) {
         return NULL;
     }
     
-    coda->capacita = 10;  // Capacità iniziale
-    coda->dimensione = 0;
-    coda->heap = ( Prenotazione)malloc(sizeof(Prenotazione) * coda->capacita);
-    
+    // Initialize heap with initial capacity
+    coda->heap = (Prenotazione)malloc(sizeof(struct Prenotazione) * INITIAL_CAPACITY);
     if (coda->heap == NULL) {
         free(coda);
         return NULL;
     }
     
+    coda->capacita = INITIAL_CAPACITY;
+    coda->dimensione = 0;
     return coda;
 }
 
@@ -130,7 +132,7 @@ int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, i
                                      int giorno_inizio, int ora_inizio,
                                      int giorno_fine, int ora_fine, 
                                      int priorita) {
-     Prenotazione nuova = ( Prenotazione)malloc(sizeof( Prenotazione));
+     Prenotazione nuova = (Prenotazione)malloc(sizeof(struct Prenotazione));
     if (nuova == NULL) {
         return NULL;
     }

@@ -88,7 +88,7 @@ void set_disponibilita_veicolo(Veicolo v, int disponibilita) {
 
 // Funzioni di gestione veicoli
 Veicolo crea_veicolo(void) {
-    Veicolo v = malloc(sizeof(Veicolo));
+    Veicolo v = malloc(sizeof(struct Veicolo));
     if (v == NULL) {
         return NULL;
     }
@@ -126,7 +126,7 @@ list aggiungi_veicolo(list l) {
     v->id = carica_ultimo_id() + 1;
     v->disponibilita = 1;
 
-    list newNode = (list)malloc(sizeof( node));
+    list newNode = (list)malloc(sizeof( struct node));
     if (newNode == NULL) {
         free(v);
         return l;
@@ -137,7 +137,7 @@ list aggiungi_veicolo(list l) {
     return newNode;
 }
 
-list elimina_veicolo(list l, int id)
+list rimuovi_veicolo(list l, int id)
 {
     if (l == NULL) return NULL;
     
@@ -241,7 +241,7 @@ list carica_veicolo_file(list l)
     
     char line[256];
     while (fgets(line, sizeof(line), fp)) {
-        Veicolo v =malloc(sizeof( Veicolo));
+        Veicolo v = malloc(sizeof(struct Veicolo));
         if (v == NULL) {
             printf("Errore nell'allocazione della memoria.\n");
             continue;
@@ -287,7 +287,7 @@ list carica_veicolo_file(list l)
                             v->disponibilita = atoi(token);
                             
                             // Aggiunge il veicolo alla lista
-                            list nuovo = (list)malloc(sizeof(struct node));
+                            list nuovo = (list)malloc(sizeof( struct node));
                             if (nuovo != NULL) {
                                 nuovo->v = v;  // Copia il contenuto della struttura
                                 nuovo->next = l;
@@ -756,3 +756,33 @@ const char* get_nome_tipo_veicolo(int tipo) {
             return "Tipo non valido";
     }
 }
+
+void carica_lista_veicoli(void) {
+    listaVeicoli = carica_veicolo_file(listaVeicoli);
+}
+
+void salva_lista_veicoli(void) {
+    salva_veicolo_file(listaVeicoli);
+}
+
+void pulisci_lista_veicoli(void) {
+    list current = listaVeicoli;
+    while (current != NULL) {
+        list next = current->next;
+        free(current->v);
+        free(current);
+        current = next;
+    }
+    listaVeicoli = NULL;
+}
+int carica_ultimo_id(){
+    FILE *fp = fopen("data/veicoli.txt", "r");
+    int id = 0;
+    char line[256];
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        id++;
+    }
+    fclose(fp);
+    return id;
+}
+   

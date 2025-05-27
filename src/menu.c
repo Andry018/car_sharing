@@ -46,10 +46,15 @@ void gestione_veicoli() {
                 set_lista_veicoli(aggiungi_veicolo(get_lista_veicoli()));
                 salva_lista_veicoli();
                 break;
-            case 2:
-                set_lista_veicoli(rimuovi_veicolo(get_lista_veicoli()));
+            case 2: {
+                int id;
+                printf("Inserisci l'ID del veicolo da rimuovere: ");
+                scanf("%d", &id);
+                getchar(); // Consuma il newline
+                set_lista_veicoli(rimuovi_veicolo(get_lista_veicoli(), id));
                 salva_lista_veicoli();
                 break;
+            }
             case 3: {
                 pulisci_schermo();
                 stampa_bordo_superiore();

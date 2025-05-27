@@ -20,7 +20,7 @@ void pulisci_lista_veicoli(void);
 // Funzioni di gestione veicoli
 Veicolo crea_veicolo(void);
 list aggiungi_veicolo(list);
-list rimuovi_veicolo(list);
+list rimuovi_veicolo(list, int id);
 void stampa_veicolo(Veicolo v);
 void salva_veicolo_file(list);
 list carica_veicolo_file(list);

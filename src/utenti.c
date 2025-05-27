@@ -38,9 +38,14 @@ int carica_ultimo_id_utente() {
     return max_id;
 }
 
-void inizializza_tabella_utenti() {
-    for (int i = 0; i < TABLE_SIZE; i++) {
-        tabellaUtenti[i] = NULL;
+void inizializza_tabella_utenti(void) {
+    for (int index = 0; index < TABLE_SIZE; index++) {
+        tabellaUtenti[index] = malloc(sizeof(struct Utente));
+        if (tabellaUtenti[index] == NULL) {
+            printf("Errore nell'allocazione della memoria.\n");
+            return;
+        }
+        tabellaUtenti[index] = NULL;
     }
     
     // Verifica se l'admin esiste già nel file
@@ -62,7 +67,7 @@ void inizializza_tabella_utenti() {
     // Crea automaticamente l'utente admin se non esiste
     if (!admin_exists) {
         unsigned int index = hash_djb2("Admin") % TABLE_SIZE;
-        tabellaUtenti[index] = malloc(sizeof(Utente));
+        tabellaUtenti[index] = malloc(sizeof(struct Utente));
         if (tabellaUtenti[index] != NULL) {
             tabellaUtenti[index]->id = 0;  // ID 0 per l'admin
             strcpy(tabellaUtenti[index]->username, "Admin");
@@ -163,6 +168,14 @@ int carica_utenti_file() {
 }
 
 int inserisci_utente(const char* username, const char* nome_completo) {
+    int idx = hash_djb2(username) % TABLE_SIZE;
+    if (tabellaUtenti[idx] == NULL) {
+        tabellaUtenti[idx] = malloc(sizeof(struct Utente));
+        if (tabellaUtenti[idx] == NULL) {
+            return 0;
+        }
+    }
+    
     static int id_counter = 0;
     if (id_counter == 0) {
         id_counter = carica_ultimo_id_utente();
@@ -177,31 +190,11 @@ int inserisci_utente(const char* username, const char* nome_completo) {
         id_counter = 0;
     }
     
-    unsigned int index = hash_djb2(username) % TABLE_SIZE;
-
-    for (int i = 0; i < TABLE_SIZE; i++) {
-        int idx = (index + i) % TABLE_SIZE;
-
-        if (tabellaUtenti[idx] == NULL) {
-            tabellaUtenti[idx] = malloc(sizeof(Utente));
-            if (tabellaUtenti[idx] == NULL) {
-                return 0;
-            }
-            
-            // Se non è l'admin, incrementa l'ID
-            if (strcmp(username, "Admin") != 0) {
-                tabellaUtenti[idx]->id = id_counter++;
-            } else {
-                tabellaUtenti[idx]->id = 0;  // Admin sempre con ID 0
-            }
-            
-            strcpy(tabellaUtenti[idx]->username, username);
-            strcpy(tabellaUtenti[idx]->nome_completo, nome_completo);
-            tabellaUtenti[idx]->isAdmin = (strcmp(username, "Admin") == 0) ? 1 : 0;
-            return 1;
-        }
-    }
-    return 0;
+    tabellaUtenti[idx]->id = id_counter++;
+    strcpy(tabellaUtenti[idx]->username, username);
+    strcpy(tabellaUtenti[idx]->nome_completo, nome_completo);
+    tabellaUtenti[idx]->isAdmin = (strcmp(username, "Admin") == 0) ? 1 : 0;
+    return 1;
 }
 
 Utente cerca_utente(const char* username) {
@@ -241,8 +234,11 @@ void stampa_utenti() {
 }
 
 int get_id_utente(const char* username) {
-    Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
+    Utente utente = malloc(sizeof(struct Utente));
+    if (utente == NULL) {
+        return -1;
+    }
+    utente = cerca_utente(username);
     if (utente != NULL) {
         return utente->id;
     }
@@ -275,26 +271,29 @@ char* get_username_utente(Utente u) {
 }   
 
 char* get_password_utente(const char* username) {
-     Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
+    Utente utente = malloc(sizeof(struct Utente));
+    if (utente == NULL) {
+        return NULL;
+    }
+    utente = cerca_utente(username);
     if (utente != NULL) {
         return utente->password;
     }
     free(utente);
     return NULL;  // Utente non trovato
-     
 }   
 
 int get_isAdmin_utente(const char* username) {
-    Utente utente = malloc(sizeof(Utente));
-    utente =cerca_utente(username);
+    Utente utente = malloc(sizeof(struct Utente));
+    if (utente == NULL) {
+        return 0;
+    }
+    utente = cerca_utente(username);
     if (utente != NULL) {
-
         return utente->isAdmin;
     } 
     free(utente);
     return -1;  // Utente non trovato
-   
 }   
 
 void set_id_utente(int id, Utente u) {
@@ -314,21 +313,22 @@ void set_nome_utente(const char* nome_completo, Utente u) {
     u->nome_completo[sizeof(u->nome_completo) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
 }
 
-void set_username_utente( const char* new_username) {
-    Utente utente = malloc(sizeof(Utente));
-    if (utente != NULL) {
-        // Controlla se l'username è già in uso
-         cerca_utente(new_username);
-        if (utente == NULL) {
-            strcpy(utente->username, new_username);
-        } else {
-            printf("Username già in uso!\n");
-        }
+void set_username_utente(const char* new_username) {
+    Utente utente = malloc(sizeof(struct Utente));
+    if (utente == NULL) {
+        return;
+    }
+    // Controlla se l'username è già in uso
+    cerca_utente(new_username);
+    if (utente == NULL) {
+        strcpy(utente->username, new_username);
+    } else {
+        printf("Username già in uso!\n");
     }
     if (utente != NULL) {
         strcpy(utente->username, new_username);
-    }free(utente);
-   
+    }
+    free(utente);
 }
 
 void set_password_utente(const char* username, Utente u) {
@@ -343,7 +343,6 @@ void set_password_utente(const char* username, Utente u) {
     // Imposta la password hashata
     strncpy(u->password, hashed_password, sizeof(u->password) - 1);
     u->password[sizeof(u->password) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
-   
 }
  
 int verifica_password(const char* password, Utente u) {
@@ -360,7 +359,6 @@ int verifica_password(const char* password, Utente u) {
     }
     
     return 0;  // Password errata
-   
 }
 
 void hash_password(const char* input, char* output) {
