@@ -373,6 +373,7 @@ void prenota_auto(Utente current_user) {
                                                      giorno_fine, ora_fine, 
                                                      -1);  // -1 indica di usare la priorità automatica
                 
+                
                 if (nuova == NULL) {
                     set_color(12); // Rosso
                     printf("\nErrore nella creazione della prenotazione!\n");
@@ -416,7 +417,7 @@ void prenota_auto(Utente current_user) {
                         int id = get_id_veicolo(v);
                         if (id == get_id_veicolo_prenotazione(p)) {
                             int tipo = get_tipo_veicolo(v);
-                            double costo = calcola_tariffa_prenotazione(tipo, get_ora_inizio(p), get_ora_fine(p));
+                            double costo = calcola_tariffa_prenotazione(tipo, get_giorno_ora_inizio(p), get_giorno_ora_fine(p));
                             printf("Costo stimato: %.2f euro\n", costo);
                             break;
                         }
@@ -564,7 +565,8 @@ void visualizza_prenotazioni() {
                 int id = get_id_veicolo(v);
                 if (id == get_id_veicolo_prenotazione(p)) {
                     int tipo = get_tipo_veicolo(v);
-                    double costo = calcola_tariffa_prenotazione(tipo, get_ora_inizio(p), get_ora_fine(p));
+                    double costo = calcola_tariffa_prenotazione(tipo, get_giorno_ora_inizio(p), get_giorno_ora_fine(p));
+                    costo = applica_sconto_fedelta(costo, conta_prenotazioni_completate(coda, get_id_utente_prenotazione(p)));
                     printf("Costo stimato: %.2f euro\n", costo);
                     break;
                 }

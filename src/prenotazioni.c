@@ -173,7 +173,7 @@ int aggiungi_prenotazione( CodaPrenotazioni coda,  Prenotazione prenotazione) {
     if (coda->dimensione >= coda->capacita) {
         int nuova_capacita = coda->capacita * 2;
          Prenotazione nuovo_heap = ( Prenotazione)realloc(coda->heap, 
-                                                        sizeof( Prenotazione) * nuova_capacita);
+                                                        sizeof(struct Prenotazione) * nuova_capacita);
         if (nuovo_heap == NULL) {
             return -1;
         }

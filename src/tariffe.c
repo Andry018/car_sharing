@@ -1,5 +1,6 @@
 #include "tariffe.h"
 #include "veicolo.h"
+#include "prenotazioni.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -65,10 +66,10 @@ double calcola_tariffa(int tipo, int ore_totali) {
 // Funzione per calcolare la tariffa di una prenotazione
 double calcola_tariffa_prenotazione(int tipo, int giorno_ora_inizio, int giorno_ora_fine) {
     // Estrai il giorno e l'ora dall'intero che li rappresenta
-    int giorno_inizio = giorno_ora_inizio / 100;
-    int ora_inizio = giorno_ora_inizio % 100;
-    int giorno_fine = giorno_ora_fine / 100;
-    int ora_fine = giorno_ora_fine % 100;
+    int giorno_inizio = estrai_giorno(giorno_ora_inizio);
+    int ora_inizio = estrai_ora(giorno_ora_inizio);
+    int giorno_fine = estrai_giorno(giorno_ora_fine);
+    int ora_fine = estrai_ora(giorno_ora_fine);
     
     // Calcola il numero totale di ore
     int ore_totali = 0;
