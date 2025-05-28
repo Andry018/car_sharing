@@ -13,7 +13,7 @@ struct FasciaOraria {
 // Struttura per rappresentare il calendario di un veicolo
 struct CalendarioVeicolo {
     int id_veicolo;
-    FasciaOraria calendario[7][24];  // [giorno][ora]
+    struct FasciaOraria calendario[7][24];  // [giorno][ora]
 };
 
 // Funzione per inizializzare il calendario di un veicolo
@@ -29,19 +29,22 @@ CalendarioVeicolo inizializza_calendario(int id_veicolo) {
     // Inizializza tutte le fasce orarie come libere
     for (int giorno = 0; giorno < 7; giorno++) {
         for (int ora = 0; ora < 24; ora++) {
-            nuovo_calendario->calendario[giorno][ora]->occupato = 0;
-            nuovo_calendario->calendario[giorno][ora]->id_prenotazione = 0;
+            nuovo_calendario->calendario[giorno][ora].occupato = 0;
+            nuovo_calendario->calendario[giorno][ora].id_prenotazione = 0;
         }
     }
     return nuovo_calendario;
 }
 
 // Funzione per aggiornare il calendario con le prenotazioni dal file
-void aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotazioni coda) {
-    if (calendario == NULL || coda == NULL) return;
+CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotazioni coda) {
+    if (calendario == NULL || coda == NULL) {
+        fprintf(stderr, "Errore: calendario o coda delle prenotazioni non inizializzati.\n");
+        return NULL;
+    }
     
     // Prima inizializza il calendario
-    inizializza_calendario( calendario->id_veicolo);
+   CalendarioVeicolo nuovo_calendario= inizializza_calendario( calendario->id_veicolo);
     
     // Poi aggiorna con le prenotazioni attive
     for (int i = 0; i < get_dimensione_coda(coda); i++) {
@@ -58,33 +61,35 @@ void aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotazioni coda) {
             if (giorno_inizio == giorno_fine) {
                 // Prenotazione nello stesso giorno
                 for (int ora = ora_inizio; ora < ora_fine; ora++) {
-                   calendario->calendario[giorno_inizio][ora]->occupato = 1;
-                   calendario->calendario[giorno_inizio][ora]->id_prenotazione = get_id_prenotazione(p);
+                   nuovo_calendario->calendario[giorno_inizio][ora].occupato = 1;
+                   nuovo_calendario->calendario[giorno_inizio][ora].id_prenotazione = get_id_prenotazione(p);
                 }
             } else {
                 // Prenotazione su più giorni
                 // Primo giorno: da ora_inizio fino alla fine del giorno
                 for (int ora = ora_inizio; ora < 24; ora++) {
-                    calendario->calendario[giorno_inizio][ora]->occupato = 1;
-                    calendario->calendario[giorno_inizio][ora]->id_prenotazione = get_id_prenotazione(p);
+                    nuovo_calendario->calendario[giorno_inizio][ora].occupato = 1;
+                    nuovo_calendario->calendario[giorno_inizio][ora].id_prenotazione = get_id_prenotazione(p);
                 }
                 
                 // Giorni intermedi: tutto il giorno
                 for (int giorno = giorno_inizio + 1; giorno < giorno_fine; giorno++) {
                     for (int ora = 0; ora < 24; ora++) {
-                        calendario->calendario[giorno][ora]->occupato = 1;
-                        calendario->calendario[giorno][ora]->id_prenotazione = get_id_prenotazione(p);
+                        nuovo_calendario->calendario[giorno][ora].occupato = 1;
+                        nuovo_calendario->calendario[giorno][ora].id_prenotazione = get_id_prenotazione(p);
                     }
                 }
                 
                 // Ultimo giorno: dall'inizio fino a ora_fine
                 for (int ora = 0; ora < ora_fine; ora++) {
-                    calendario->calendario[giorno_fine][ora]->occupato = 1;
-                    calendario->calendario[giorno_fine][ora]->id_prenotazione = get_id_prenotazione(p);
+                    nuovo_calendario->calendario[giorno_fine][ora].occupato = 1;
+                    nuovo_calendario->calendario[giorno_fine][ora].id_prenotazione = get_id_prenotazione(p);
                 }
             }
         }
     }
+    free(calendario); // Libera la memoria del vecchio calendario
+    return nuovo_calendario;
 }
 
 // Funzione per visualizzare il calendario di un veicolo
@@ -108,7 +113,7 @@ void visualizza_calendario(CalendarioVeicolo calendario) {
         printf("%-10s  ||", get_nome_giorno(giorno));
         
         for (int ora = 0; ora < 24; ora++) {
-            if (calendario->calendario[giorno][ora]->occupato) {
+            if (calendario->calendario[giorno][ora].occupato) {
                 printf(" X ||");  // X indica occupato
             } else {
                 printf("   ||");  // Spazio vuoto indica libero
@@ -134,7 +139,7 @@ int verifica_disponibilita(CalendarioVeicolo calendario, int giorno_inizio, int 
     if (giorno_inizio == giorno_fine) {
         // Prenotazione nello stesso giorno
         for (int ora = ora_inizio; ora < ora_fine; ora++) {
-            if (calendario->calendario[giorno_inizio][ora]->occupato) {
+            if (calendario->calendario[giorno_inizio][ora].occupato) {
                 return 0;  // Non disponibile
             }
         }
@@ -142,7 +147,7 @@ int verifica_disponibilita(CalendarioVeicolo calendario, int giorno_inizio, int 
         // Prenotazione su più giorni
         // Verifica primo giorno
         for (int ora = ora_inizio; ora < 24; ora++) {
-            if (calendario->calendario[giorno_inizio][ora]->occupato) {
+            if (calendario->calendario[giorno_inizio][ora].occupato) {
                 return 0;
             }
         }
@@ -150,7 +155,7 @@ int verifica_disponibilita(CalendarioVeicolo calendario, int giorno_inizio, int 
         // Verifica giorni intermedi
         for (int giorno = giorno_inizio + 1; giorno < giorno_fine; giorno++) {
             for (int ora = 0; ora < 24; ora++) {
-                if (calendario->calendario[giorno][ora]->occupato) {
+                if (calendario->calendario[giorno][ora].occupato) {
                     return 0;
                 }
             }
@@ -158,7 +163,7 @@ int verifica_disponibilita(CalendarioVeicolo calendario, int giorno_inizio, int 
         
         // Verifica ultimo giorno
         for (int ora = 0; ora < ora_fine; ora++) {
-            if (calendario->calendario[giorno_fine][ora]->occupato) {
+            if (calendario->calendario[giorno_fine][ora].occupato) {
                 return 0;
             }
         }
@@ -182,11 +187,11 @@ int get_id_veicolo_calendario(CalendarioVeicolo calendario) {
     return calendario->id_veicolo;
 }
 
-FasciaOraria* get_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora) {
+FasciaOraria get_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora) {
     if (calendario == NULL) return NULL;
     if (giorno < 0 || giorno > 6) return NULL;
     if (ora < 0 || ora > 23) return NULL;
-    return &calendario->calendario[giorno][ora];
+    return &(calendario->calendario[giorno][ora]);
 }
 
 void set_stato_fascia_oraria(FasciaOraria fascia, int stato) {
@@ -209,7 +214,7 @@ void set_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora, Fascia
     if (giorno < 0 || giorno > 6) return;
     if (ora < 0 || ora > 23) return;
     
-    calendario->calendario[giorno][ora] = fascia;
+    calendario->calendario[giorno][ora] = *fascia;
 }
 
 

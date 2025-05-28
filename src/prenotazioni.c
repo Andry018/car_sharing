@@ -189,22 +189,53 @@ int aggiungi_prenotazione( CodaPrenotazioni coda,  Prenotazione prenotazione) {
 }
 
 // Funzione per rimuovere la prenotazione con priorità più alta
- Prenotazione rimuovi_prenotazione( CodaPrenotazioni coda) {
-     Prenotazione prenotazione_vuota = {0};
-    
+ CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda) {
     if (coda == NULL || coda->dimensione == 0) {
-        return prenotazione_vuota;
+        printf("Coda vuota, impossibile rimuovere la prenotazione.\n");
+        return NULL;  // Coda vuota
     }
-    
-     Prenotazione prenotazione = &coda->heap[0];
-    coda->heap[0] = coda->heap[coda->dimensione - 1];
+    // Trova l'indice della prenotazione da rimuovere
+    int index = -1;
+    for (int i = 0; i < coda->dimensione; i++) {
+        if (coda->heap[i].id_prenotazione == id_prenotazione) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) {
+        return NULL;  // Prenotazione non trovata
+    }
+    // Sostituisci la prenotazione da rimuovere con l'ultima prenotazione
+    coda->heap[index] = coda->heap[coda->dimensione - 1];
     coda->dimensione--;
-    
-    if (coda->dimensione > 0) {
-        bubble_down(coda, 0);
+    // Esegui bubble down per mantenere la proprietà dell'heap
+    if (index < coda->dimensione) {
+        bubble_down(coda, index);
     }
-    
-    return prenotazione;
+    // Ritorna la prenotazione rimossa
+    Prenotazione prenotazione_rimossa = (Prenotazione)malloc(sizeof(struct Prenotazione));
+    if (prenotazione_rimossa == NULL) {
+        return NULL;  // Errore di allocazione
+    }
+    *prenotazione_rimossa = coda->heap[index];
+    // Se l'heap è vuoto, ridimensiona l'array
+    if (coda->dimensione == 0) {
+        free(coda->heap);
+        coda->heap = NULL;
+        coda->capacita = 0;
+    } else if (coda->dimensione < coda->capacita / 4) {
+        int nuova_capacita = coda->capacita / 2;
+         Prenotazione nuovo_heap = ( Prenotazione)realloc(coda->heap, 
+                                                        sizeof( Prenotazione) * nuova_capacita);
+        if (nuovo_heap != NULL) {
+            coda->heap = nuovo_heap;
+            coda->capacita = nuova_capacita;
+        }
+    }
+    free(prenotazione_rimossa);  // Libera la memoria della prenotazione rimossa
+
+    return coda; 
+     
 }
 
 // Funzione per cercare una prenotazione per ID

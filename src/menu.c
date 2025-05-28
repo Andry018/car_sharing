@@ -350,9 +350,9 @@ void prenota_auto(Utente current_user) {
                     printf("Costo finale: %.2f euro\n", costo_finale);
                 }
                 
-                if (num_prenotazioni < NOLEGGI_PER_SCONTO) {
+                if (num_prenotazioni < 10) {
                     printf("\nNota: Ti mancano %d noleggi per ottenere lo sconto fedelta'!\n", 
-                           NOLEGGI_PER_SCONTO - num_prenotazioni);
+                           10 - num_prenotazioni);
                 }
                 
                 set_color(7); // Bianco
@@ -701,6 +701,7 @@ void visualizza_disponibilita() {
     printf("         CALENDARIO VEICOLO\n");
     set_color(7); // Bianco
     visualizza_calendario(calendario);
+    free(calendario); // Libera la memoria del calendario
     
     stampa_bordo_inferiore();
     printf("Premi INVIO per continuare...");
@@ -727,10 +728,10 @@ void visualizza_tariffe(Utente current_user) {
     // Sezione tariffe
     set_color(10); // Verde
     printf("      TARIFFE ORARIE VEICOLI\n");
-    printf("1. Utilitaria: %.2f euro/ora\n", TARIFFA_UTILITARIA);
-    printf("2. SUV: %.2f euro/ora\n", TARIFFA_SUV);
-    printf("3. Sportiva: %.2f euro/ora\n", TARIFFA_SPORTIVA);
-    printf("4. Moto: %.2f euro/ora\n", TARIFFA_MOTO);
+    printf("1. Utilitaria: %.2f euro/ora\n",get_tariffa_oraria(0));
+    printf("2. SUV: %.2f euro/ora\n", get_tariffa_oraria(1));
+    printf("3. Sportiva: %.2f euro/ora\n", get_tariffa_oraria(2));
+    printf("4. Moto: %.2f euro/ora\n", get_tariffa_oraria(3));
     
     stampa_separatore();
 

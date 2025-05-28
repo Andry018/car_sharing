@@ -111,3 +111,10 @@ int get_ora_corrente() {
 int get_timestamp_corrente() {
     return converti_data_in_timestamp(data_corrente);
 } 
+
+void distruggi_data_sistema() {
+    if (data_corrente != NULL) {
+        free(data_corrente);
+        data_corrente = NULL;  // Imposta a NULL per evitare dangling pointer
+    }
+}

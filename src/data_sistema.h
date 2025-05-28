@@ -16,5 +16,6 @@ int get_ora_sistema(DataSistema data);
 int get_ora_corrente(void);
 int get_giorno_corrente(void);
 int get_timestamp_corrente(void);
+void distruggi_data_sistema(void);
 
 #endif /* DATA_SISTEMA_H */ 

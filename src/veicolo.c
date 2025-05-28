@@ -774,6 +774,10 @@ void pulisci_lista_veicoli(void) {
 }
 int carica_ultimo_id(){
     FILE *fp = fopen("data/veicoli.txt", "r");
+    if (fp == NULL) {
+        printf("Il file non esiste.\n");
+        return 0; // Se il file non esiste, ritorna 0
+    }
     int id = 0;
     char line[256];
     while (fgets(line, sizeof(line), fp) != NULL) {

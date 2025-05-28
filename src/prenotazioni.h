@@ -52,7 +52,7 @@ void bubble_down(CodaPrenotazioni coda, int index);
 int aggiungi_prenotazione(CodaPrenotazioni coda, Prenotazione prenotazione);
 
 // Funzione per rimuovere la prenotazione con priorità più alta
-Prenotazione rimuovi_prenotazione(CodaPrenotazioni coda);
+CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda );
 
 // Funzione per cercare una prenotazione per ID
 Prenotazione cerca_prenotazione(CodaPrenotazioni coda, int id_prenotazione);

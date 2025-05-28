@@ -15,7 +15,7 @@ typedef struct CalendarioVeicolo *CalendarioVeicolo;
 CalendarioVeicolo inizializza_calendario(int id_veicolo);
 
 // Funzione per aggiornare il calendario con le prenotazioni dal file
-void aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotazioni coda);
+CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotazioni coda);
 
 // Funzione per visualizzare il calendario di un veicolo
 void visualizza_calendario(CalendarioVeicolo calendario);
@@ -24,13 +24,13 @@ void visualizza_calendario(CalendarioVeicolo calendario);
 int verifica_disponibilita(CalendarioVeicolo calendario, int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);
 
 
-int get_stato_fascia_oraria(FasciaOraria fascia_oraria);
-int get_id_prenotazione_fascia(FasciaOraria fascia_oraria);
+int get_stato_fascia_oraria(FasciaOraria fascia);
+int get_id_prenotazione_fascia(FasciaOraria fascia);
 int get_id_veicolo_calendario(CalendarioVeicolo calendario);
-FasciaOraria* get_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora);
+FasciaOraria get_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora);
 
-void set_stato_fascia_oraria(FasciaOraria fascia_oraria, int stato);   
-void set_id_prenotazione_fascia(FasciaOraria fascia_oraria, int id_prenotazione);
+void set_stato_fascia_oraria(FasciaOraria fascia, int stato);   
+void set_id_prenotazione_fascia(FasciaOraria fascia, int id_prenotazione);
 void set_id_veicolo_calendario(CalendarioVeicolo calendario, int id_veicolo);
 void set_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora, FasciaOraria fascia);
 #endif /* fasce_orarie_H */

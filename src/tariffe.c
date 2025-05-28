@@ -3,12 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Definizione delle tariffe orarie per tipo di veicolo (in euro)
+#define TARIFFA_UTILITARIA 5.0
+#define TARIFFA_SUV 8.0
+#define TARIFFA_SPORTIVA 12.50
+#define TARIFFA_MOTO 4.0
 
-// Struttura per memorizzare le informazioni sulla tariffa
-struct Tariffa{
-    int tipo; // 0: Utilitaria, 1: SUV, 2: Sportiva, 3: Moto
-    double tariffa_oraria;
-} ;
+// Definizione degli sconti
+#define SCONTO_FEDELTA 0.10  // 10% di sconto dopo 10 noleggi
+#define NOLEGGI_PER_SCONTO 10  // Numero di noleggi necessari per lo sconto fedeltà
+#define ORE_PER_PACCHETTO 5  // Numero di ore dopo le quali si ottiene un'ora gratuita
+
+
 
 // Funzione per ottenere la tariffa oraria in base al tipo di veicolo
 double get_tariffa_oraria(int tipo) {

@@ -282,11 +282,7 @@ void stampa_utenti() {
 }
 
 int get_id_utente(const char* username) {
-    Utente utente = malloc(sizeof(struct Utente));
-    if (utente == NULL) {
-        return -1;
-    }
-    utente = cerca_utente(username);
+   Utente utente = cerca_utente(username);
     if (utente != NULL) {
         return utente->id;
     }
@@ -294,36 +290,22 @@ int get_id_utente(const char* username) {
     return -1;  // Utente non trovato
 }
 
-char* get_nome_utente(Utente u) {
+const char* get_nome_utente(Utente u) {
     if (u == NULL) {
         return NULL;  // Utente non valido
     }
-    char* nome_completo = malloc(sizeof(char) * 50);
-    if (nome_completo == NULL) {
-        return NULL;  // Errore di allocazione
-    }
-    strcpy(nome_completo, u->nome_completo);
-    return nome_completo;  // Restituisce il nome completo dell'utente
+    return u->nome_completo;  // Restituisce il nome completo dell'utente
 }
 
-char* get_username_utente(Utente u) {
+const char* get_username_utente(Utente u) {
     if (u == NULL) {
         return NULL;  // Utente non valido
     }
-    char* username = malloc(sizeof(char) * 30);
-    if (username == NULL) {
-        return NULL;  // Errore di allocazione
-    }
-    strcpy(username, u->username);
-    return username;  // Restituisce l'username dell'utente
+    return u->username;  // Restituisce l'username dell'utente
 }   
 
-char* get_password_utente(const char* username) {
-    Utente utente = malloc(sizeof(struct Utente));
-    if (utente == NULL) {
-        return NULL;
-    }
-    utente = cerca_utente(username);
+const char* get_password_utente(const char* username) {
+   Utente utente = cerca_utente(username);
     if (utente != NULL) {
         return utente->password;
     }
@@ -332,11 +314,7 @@ char* get_password_utente(const char* username) {
 }   
 
 int get_isAdmin_utente(const char* username) {
-    Utente utente = malloc(sizeof(struct Utente));
-    if (utente == NULL) {
-        return 0;
-    }
-    utente = cerca_utente(username);
+   Utente utente = cerca_utente(username);
     if (utente != NULL) {
         return utente->isAdmin;
     } 
@@ -361,22 +339,18 @@ void set_nome_utente(const char* nome_completo, Utente u) {
     u->nome_completo[sizeof(u->nome_completo) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
 }
 
-void set_username_utente(const char* new_username) {
-    Utente utente = malloc(sizeof(struct Utente));
-    if (utente == NULL) {
+void set_username_utente(const char* new_username, Utente u) {
+    if (u == NULL) {
+        printf("Utente non valido!\n");
         return;
     }
-    // Controlla se l'username è già in uso
-    cerca_utente(new_username);
-    if (utente == NULL) {
-        strcpy(utente->username, new_username);
-    } else {
-        printf("Username già in uso!\n");
+    if (cerca_utente(new_username) != NULL) {
+        printf("Username già esistente!\n");
+        return;  // Username già in uso
     }
-    if (utente != NULL) {
-        strcpy(utente->username, new_username);
-    }
-    free(utente);
+    strcpy(u->username, new_username);  // Imposta il nuovo username
+    
+   
 }
 
 void set_password_utente(const char* username, Utente u) {
