@@ -4,20 +4,10 @@
 #include "data_sistema.h"
 #include <stdbool.h>
 
-// Definizione delle costanti per lo stato della prenotazione
-#define STATO_IN_ATTESA 0
-#define STATO_CONFERMATA 1
-#define STATO_COMPLETATA 2
-#define STATO_CANCELLATA 3
 
 // Forward declarations per information hiding
 typedef struct Prenotazione *Prenotazione;
 typedef struct CodaPrenotazioni *CodaPrenotazioni;
-
-// Funzioni di utilità per l'heap
-#define GENITORE(i) ((i - 1) / 2)
-#define FIGLIO_SINISTRO(i) (2 * i + 1)
-#define FIGLIO_DESTRO(i) (2 * i + 2)
 
 // Funzioni di utilità per i timestamp
 int converti_in_timestamp(int giorno, int ora);

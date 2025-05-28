@@ -692,7 +692,7 @@ void visualizza_disponibilita() {
     }
     
     CodaPrenotazioni coda_prenotazioni = get_coda_prenotazioni();
-    aggiorna_calendario(calendario, coda_prenotazioni);
+    CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, coda_prenotazioni);
     
     stampa_separatore();
     
@@ -700,8 +700,8 @@ void visualizza_disponibilita() {
     set_color(14); // Giallo
     printf("         CALENDARIO VEICOLO\n");
     set_color(7); // Bianco
-    visualizza_calendario(calendario);
-    free(calendario); // Libera la memoria del calendario
+    visualizza_calendario(nuovo_calendario);
+    free(nuovo_calendario); // Libera la memoria del calendario
     
     stampa_bordo_inferiore();
     printf("Premi INVIO per continuare...");

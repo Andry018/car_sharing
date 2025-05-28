@@ -18,7 +18,7 @@ struct CalendarioVeicolo {
 
 // Funzione per inizializzare il calendario di un veicolo
 CalendarioVeicolo inizializza_calendario(int id_veicolo) {
-   CalendarioVeicolo nuovo_calendario= (CalendarioVeicolo)malloc(sizeof(struct CalendarioVeicolo));
+   CalendarioVeicolo nuovo_calendario = (CalendarioVeicolo)malloc(sizeof(struct CalendarioVeicolo));
     if (nuovo_calendario == NULL) {
         fprintf(stderr, "Errore nell'allocazione della memoria per il calendario del veicolo.\n");
         exit(EXIT_FAILURE);
@@ -44,15 +44,17 @@ CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotaz
     }
     
     // Prima inizializza il calendario
-   CalendarioVeicolo nuovo_calendario= inizializza_calendario( calendario->id_veicolo);
-    
+   CalendarioVeicolo nuovo_calendario = inizializza_calendario(calendario->id_veicolo);
+    int dimensione = get_dimensione_coda(coda);
     // Poi aggiorna con le prenotazioni attive
-    for (int i = 0; i < get_dimensione_coda(coda); i++) {
+    for (int i = 0; i < dimensione; i++) {
         Prenotazione p = get_prenotazione_in_coda(coda, i);
-        
+        int id_v_prenotazione = get_id_veicolo_prenotazione(p);
+        int stato_prenotazione = get_stato_prenotazione(p);
         // Aggiorna solo se la prenotazione è per questo veicolo e non è cancellata
-        if (get_id_prenotazione(p)== calendario->id_veicolo && get_stato_prenotazione(p) != 0) {
+        if (id_v_prenotazione == calendario->id_veicolo && stato_prenotazione != 0) {
             int giorno_inizio = estrai_giorno(get_giorno_ora_inizio(p));
+            printf("Giorno inizio: %d\n", giorno_inizio);
             int ora_inizio = estrai_ora(get_giorno_ora_inizio(p));
             int giorno_fine = estrai_giorno(get_giorno_ora_fine(p));
             int ora_fine = estrai_ora(get_giorno_ora_inizio(p));

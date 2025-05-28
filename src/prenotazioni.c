@@ -8,6 +8,7 @@
 
 #define INITIAL_CAPACITY 10
 
+
 // Stati possibili di una prenotazione
 
 
