@@ -7,19 +7,19 @@
 #include "f_utili.h"
 
 // Definizioni private delle strutture
- struct Veicolo{
+struct Veicolo {
     int id;
     int tipo;
     char modello[50];
     char targa[10];
     char posizione[50];
     int disponibilita;
-} ;
+};
 
 typedef struct node {
     Veicolo v;
     struct node* next;
-}node;
+} node;
 
 // Variabile statica per la lista dei veicoli
 static list listaVeicoli = NULL;
@@ -144,7 +144,8 @@ list rimuovi_veicolo(list l, int id)
     if (l->v->id == id)
     {
         list temp = l->next;
-        free(l);
+        free(l->v);  // Libera la memoria del veicolo
+        free(l);     // Libera la memoria del nodo della lista
         return temp;
     }
     
@@ -153,9 +154,10 @@ list rimuovi_veicolo(list l, int id)
     {
         if (temp->next->v->id == id)
         {
-            list to_delete = temp->next;
+            list da_rimuovere = temp->next;
             temp->next = temp->next->next;
-            free(to_delete);
+            free(da_rimuovere->v);  // Libera la memoria del veicolo
+            free(da_rimuovere);     // Libera la memoria del nodo della lista
             return l;
         }
         temp = temp->next;
@@ -217,7 +219,8 @@ void salva_veicolo_file(list l)
     list temp = l;
     while (temp != NULL)
     {
-        fprintf(fp, "%d %d %s %s %s %d\n", 
+        // Uso il carattere '|' come separatore per evitare problemi con gli spazi
+        fprintf(fp, "%d|%d|%s|%s|%s|%d\n", 
             temp->v->id,
             temp->v->tipo,
             temp->v->modello,
@@ -247,58 +250,52 @@ list carica_veicolo_file(list l)
             continue;
         }
         
-        char* token = strtok(line, " ");  // Legge ID
-        
+        // Uso '|' come separatore
+        char* token = strtok(line, "|");
         if (token != NULL) {
             v->id = atoi(token);
             
-            // Legge tipo veicolo
-            token = strtok(NULL, " ");
+            token = strtok(NULL, "|");
             if (token != NULL) {
-                v->tipo = (int)atoi(token);
+                v->tipo = atoi(token);
                 
-                // Legge modello (può contenere spazi)
-                token = strtok(NULL, " ");
+                token = strtok(NULL, "|");
                 if (token != NULL) {
-                    char temp_modello[30] = "";
-                    while (token != NULL) {
-                        // Cerca la targa (che inizia sempre con una lettera)
-                        if (strlen(token) == 7 && ((token[0] >= 'A' && token[0] <= 'Z') || (token[0] >= 'a' && token[0] <= 'z'))) {
-                            strcpy(v->targa, token);
-                            break;
-                        }
-                        // Altrimenti è parte del modello
-                        if (strlen(temp_modello) > 0) {
-                            strcat(temp_modello, " ");
-                        }
-                        strcat(temp_modello, token);
-                        token = strtok(NULL, " ");
-                    }
-                    strcpy(v->modello, temp_modello);
+                    strncpy(v->modello, token, sizeof(v->modello) - 1);
+                    v->modello[sizeof(v->modello) - 1] = '\0';
                     
-                    // Legge posizione
-                    token = strtok(NULL, " ");
+                    token = strtok(NULL, "|");
                     if (token != NULL) {
-                        strcpy(v->posizione, token);
+                        strncpy(v->targa, token, sizeof(v->targa) - 1);
+                        v->targa[sizeof(v->targa) - 1] = '\0';
                         
-                        // Legge disponibilità
-                        token = strtok(NULL, " ");
+                        token = strtok(NULL, "|");
                         if (token != NULL) {
-                            v->disponibilita = atoi(token);
+                            strncpy(v->posizione, token, sizeof(v->posizione) - 1);
+                            v->posizione[sizeof(v->posizione) - 1] = '\0';
                             
-                            // Aggiunge il veicolo alla lista
-                            list nuovo = (list)malloc(sizeof( struct node));
-                            if (nuovo != NULL) {
-                                nuovo->v = v;  // Copia il contenuto della struttura
-                                nuovo->next = l;
-                                l = nuovo;
+                            token = strtok(NULL, "|");
+                            if (token != NULL) {
+                                v->disponibilita = atoi(token);
+                                
+                                // Aggiunge il veicolo alla lista
+                                list nuovo = (list)malloc(sizeof(struct node));
+                                if (nuovo != NULL) {
+                                    nuovo->v = v;
+                                    nuovo->next = l;
+                                    l = nuovo;
+                                } else {
+                                    free(v);  // Libera il veicolo solo se non è stato aggiunto alla lista
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        free(v);  // Libera la memoria del veicolo temporaneo
+        if (v != NULL && l == NULL) {  // Se il veicolo non è stato aggiunto alla lista
+            free(v);
+        }
     }
     fclose(fp);
     return l;
@@ -315,8 +312,8 @@ Veicolo get_veicolo_da_lista(list *l) {
     Veicolo v = (*l)->v;
     list temp = *l;
     *l = (*l)->next;
-    free(temp);
-    return v;
+    free(temp);     // Libera solo la memoria del nodo
+    return v;       // Restituisce il veicolo senza liberarlo
 }
 
 // Funzioni di ricerca

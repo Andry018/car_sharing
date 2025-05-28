@@ -71,7 +71,7 @@ void gestione_veicoli() {
                     set_color(7); // Bianco
                 } else {
                     while(temp != NULL) {
-                        Veicolo v = get_veicolo_da_lista(&temp);
+                        Veicolo v = get_veicolo_senza_rimuovere(temp);
                         if (!v) continue;
                        
                         if (get_disponibilita_veicolo(v) == 0) {
@@ -79,7 +79,6 @@ void gestione_veicoli() {
                             int tipo = get_tipo_veicolo(v);
                             printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
                         }
-                        free(v);
                         temp = get_next_node(temp);
                     }
                 }
@@ -169,7 +168,7 @@ void prenota_auto(Utente current_user) {
                 list temp = get_lista_veicoli();
                 bool trovato = false;
                 while(temp != NULL) {
-                    Veicolo v = get_veicolo_da_lista(&temp);
+                    Veicolo v = get_veicolo_senza_rimuovere(temp);
                     if (!v) continue;
                     if (get_disponibilita_veicolo(v) == 1) {  // Mostra solo i veicoli disponibili
                         stampa_veicolo(v);
@@ -177,7 +176,6 @@ void prenota_auto(Utente current_user) {
                         printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
                         trovato = true;
                     }
-                    free(v);
                     temp = get_next_node(temp);
                 }
                 
@@ -231,14 +229,13 @@ void prenota_auto(Utente current_user) {
                 temp = get_lista_veicoli();
                 Veicolo veicolo_selezionato = NULL;
                 while(temp != NULL) {
-                    Veicolo v = get_veicolo_da_lista(&temp);
+                    Veicolo v = get_veicolo_senza_rimuovere(temp);
                     if (!v) continue;
                     int id = get_id_veicolo(v);
                     if (id == id_veicolo) {
                         veicolo_selezionato = v;
                         break;
                     }
-                    free(v);
                     temp = get_next_node(temp);
                 }
                 
@@ -414,7 +411,7 @@ void prenota_auto(Utente current_user) {
                     // Trova il veicolo per mostrare il costo
                     list temp = get_lista_veicoli();
                     while(temp != NULL) {
-                        Veicolo v = get_veicolo_da_lista(&temp);
+                        Veicolo v = get_veicolo_senza_rimuovere(temp);
                         if (!v) continue;
                         int id = get_id_veicolo(v);
                         if (id == get_id_veicolo_prenotazione(p)) {
@@ -423,7 +420,6 @@ void prenota_auto(Utente current_user) {
                             printf("Costo stimato: %.2f euro\n", costo);
                             break;
                         }
-                        free(v);
                         temp = get_next_node(temp);
                     }
                     printf("-------------------\n");
@@ -563,7 +559,7 @@ void visualizza_prenotazioni() {
             // Trova il veicolo per mostrare il costo
             list temp = get_lista_veicoli();
             while(temp != NULL) {
-                Veicolo v = get_veicolo_da_lista(&temp);
+                Veicolo v = get_veicolo_senza_rimuovere(temp);
                 if (!v) continue;
                 int id = get_id_veicolo(v);
                 if (id == get_id_veicolo_prenotazione(p)) {
@@ -572,7 +568,6 @@ void visualizza_prenotazioni() {
                     printf("Costo stimato: %.2f euro\n", costo);
                     break;
                 }
-                free(v);
                 temp = get_next_node(temp);
             }
             
@@ -646,50 +641,56 @@ void visualizza_disponibilita() {
     
     // Visualizza tutti i veicoli
     list temp = veicoli;
-    if (temp == NULL) {
+    bool trovato = false;
+    while(temp != NULL) {
+        Veicolo v = get_veicolo_senza_rimuovere(temp);
+        if (!v) {
+            temp = get_next_node(temp);
+            continue;
+        }
+        
+        stampa_veicolo(v);
+        trovato = true;
+        
+        if (get_next_node(temp) != NULL) {
+            stampa_separatore();
+        }
+        temp = get_next_node(temp);
+    }
+    
+    if (!trovato) {
         set_color(12); // Rosso
         printf("  Nessun veicolo disponibile\n");
         set_color(7); // Bianco
-    } else {
-        while(temp != NULL) {
-            Veicolo v = get_veicolo_senza_rimuovere(temp);
-            if (!v) {
-                temp = get_next_node(temp);
-                continue;
-            }
-            
-            // Controlla se il veicolo è attualmente occupato
-            int occupato_ora = get_disponibilita_veicolo(v);
-            
-            // Salva il valore originale di disponibile
-            int disponibile_orig = get_disponibilita_veicolo(v);
-            
-            // Imposta temporaneamente disponibile in base all'occupazione attuale
-            set_disponibilita_veicolo(v, !occupato_ora);
-            
-            // Stampa il veicolo
-            stampa_veicolo(v);
-            
-            // Ripristina il valore originale di disponibile
-            set_disponibilita_veicolo(v, disponibile_orig);
-            
-            if (get_next_node(temp) != NULL) {
-                stampa_separatore();
-            }
-            temp = get_next_node(temp);
-        }
     }
     
     stampa_separatore();
     
     // Chiedi l'ID del veicolo
     int id_veicolo;
-    printf("Inserisci l'ID del veicolo: ");
+    printf("Inserisci l'ID del veicolo per visualizzare il calendario (0 per uscire): ");
     scanf("%d", &id_veicolo);
     svuota_buffer();
     
+    if (id_veicolo == 0) {
+        stampa_bordo_inferiore();
+        printf("Premi INVIO per continuare...");
+        svuota_buffer();
+        return;
+    }
+    
     // Inizializza e aggiorna il calendario
     CalendarioVeicolo calendario = inizializza_calendario(id_veicolo);
+    if (calendario == NULL) {
+        set_color(12); // Rosso
+        printf("  Veicolo non trovato!\n");
+        set_color(7); // Bianco
+        stampa_bordo_inferiore();
+        printf("Premi INVIO per continuare...");
+        svuota_buffer();
+        return;
+    }
+    
     CodaPrenotazioni coda_prenotazioni = get_coda_prenotazioni();
     aggiorna_calendario(calendario, coda_prenotazioni);
     
@@ -868,7 +869,7 @@ void gestione_prenotazioni_admin() {
                     // Trova il veicolo per mostrare il costo
                     list temp = get_lista_veicoli();
                     while(temp != NULL) {
-                        Veicolo v = get_veicolo_da_lista(&temp);
+                        Veicolo v = get_veicolo_senza_rimuovere(temp);
                         if (!v) continue;
                         int id = get_id_veicolo(v);
                         if (id == get_id_veicolo_prenotazione(p)) {
@@ -877,7 +878,6 @@ void gestione_prenotazioni_admin() {
                             printf("Costo: %.2f euro\n", costo);
                             break;
                         }
-                        free(v);
                         temp = get_next_node(temp);
                     }
                     printf("------------------------\n");
