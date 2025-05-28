@@ -566,7 +566,8 @@ void visualizza_prenotazioni() {
                 if (id == get_id_veicolo_prenotazione(p)) {
                     int tipo = get_tipo_veicolo(v);
                     double costo = calcola_tariffa_prenotazione(tipo, get_giorno_ora_inizio(p), get_giorno_ora_fine(p));
-                    costo = applica_sconto_fedelta(costo, conta_prenotazioni_completate(coda, get_id_utente_prenotazione(p)));
+                    int completate_prima= conta_prenotazioni_completate_prima_di(coda,get_id_utente_prenotazione(p), get_id_prenotazione(p));
+                    costo = applica_sconto_fedelta(costo, completate_prima);
                     printf("Costo stimato: %.2f euro\n", costo);
                     break;
                 }

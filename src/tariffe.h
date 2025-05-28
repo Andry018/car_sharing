@@ -10,7 +10,7 @@ double calcola_tariffa_prenotazione(int tipo, int giorno_ora_inizio, int giorno_
 double get_tariffa_oraria(int tipo);
 
 // Nuove funzioni per gli sconti
-double applica_sconto_fedelta(double tariffa_base, int numero_noleggi);
+double applica_sconto_fedelta(double tariffa_base, int id_prenotazione);
 double applica_sconto_pacchetto_ore(double tariffa_base, int ore_totali);
 int calcola_ore_gratuite(int ore_totali);
 void stampa_info_sconti(void);

@@ -36,8 +36,8 @@ double get_tariffa_oraria(int tipo) {
 
 
 // Funzione per applicare lo sconto fedeltà
-double applica_sconto_fedelta(double tariffa_base, int numero_noleggi) {
-    if (numero_noleggi >= NOLEGGI_PER_SCONTO) {
+double applica_sconto_fedelta(double tariffa_base, int noleggi_completati) {
+    if (noleggi_completati == NOLEGGI_PER_SCONTO) {
         return tariffa_base * (1.0 - SCONTO_FEDELTA);
     } else {
         return tariffa_base;

@@ -109,5 +109,6 @@ void set_priorita(int priorita, Prenotazione p);
 Prenotazione get_heap_coda(CodaPrenotazioni coda);
 int get_dimensione_coda( CodaPrenotazioni coda);
 int conta_prenotazioni_completate(CodaPrenotazioni coda, int id_utente);
+int conta_prenotazioni_completate_prima_di(CodaPrenotazioni coda, int id_utente, int id_prenotazione_corrente);
 
 #endif // PRENOTAZIONI_H 

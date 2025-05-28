@@ -631,3 +631,15 @@ Prenotazione get_prenotazione_in_coda(CodaPrenotazioni coda, int i) {
     }
     return &coda->heap[i];
 }
+
+int conta_prenotazioni_completate_prima_di(CodaPrenotazioni coda, int id_utente, int id_prenotazione_corrente) {
+    if (coda == NULL) return 0;
+    int conteggio = 0;
+    for (int i = 0; i < coda->dimensione; i++) {
+        Prenotazione p = &coda->heap[i];
+        if (p->id_utente == id_utente && p->stato == 2 && p->id_prenotazione < id_prenotazione_corrente) {
+            conteggio++;
+        }
+    }
+    return conteggio;
+}
