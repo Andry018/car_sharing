@@ -25,6 +25,7 @@ void gestione_prenotazioni_admin(void);
 void mostra_menu_iniziale();
 void mostra_logo();
 void mostra_menu_login();
+void gestione_utenti_admin(void);
 
 
 

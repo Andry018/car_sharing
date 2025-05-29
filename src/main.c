@@ -237,14 +237,11 @@ int main() {
                         break;
                     case 3:
                         pulisci_schermo();
-                        visualizza_prenotazioni(cerca_utente(current_username));
+                        gestione_utenti_admin();
                         break;
                     case 4:
                         pulisci_schermo();
-                        // TODO: Implementare gestione_utenti();
-                        printf("Funzionalita' in sviluppo...\n");
-                        printf("Premi INVIO per continuare...");
-                        svuota_buffer();
+                        visualizza_prenotazioni(cerca_utente(current_username));
                         break;
                     case 5:
                         pulisci_schermo();

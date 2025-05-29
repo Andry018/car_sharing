@@ -3,6 +3,8 @@
 #include <string.h>
 #include "utenti.h"
 #include "hash.h"
+#include <ctype.h>
+#include "prenotazioni.h"
 
 struct Utente {
     int id;
@@ -293,7 +295,7 @@ void stampa_utenti() {
                    tabellaUtenti[i]->id,
                    tabellaUtenti[i]->username,
                    tabellaUtenti[i]->nome_completo,
-                   tabellaUtenti[i]->isAdmin ? "Sì" : "No");
+                   tabellaUtenti[i]->isAdmin ? "Si" : "No");
         }
     }
 }
@@ -430,3 +432,17 @@ int valida_nome_completo(const char* nome) {
     return 1;
 }
 
+int rimuovi_utente(int id) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (tabellaUtenti[i] != NULL && tabellaUtenti[i]->id == id) {
+            // Elimina tutte le prenotazioni dell'utente
+            CodaPrenotazioni coda = get_coda_prenotazioni();
+            rimuovi_prenotazioni_utente(coda, id);
+
+            free(tabellaUtenti[i]);
+            tabellaUtenti[i] = NULL;
+            return 1;
+        }
+    }
+    return 0;
+}

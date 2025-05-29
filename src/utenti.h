@@ -15,8 +15,8 @@ int inserisci_utente(const char* username, const char* nome_completo, const char
 Utente cerca_utente(const char* username);
 Utente cerca_utente_per_id(int id);
 void stampa_utenti();
-int verifica_password(const char* password, Utente u);
-void hash_password(const char* input, char* output);
+
+int rimuovi_utente(int id);
 
 // Getter functions
 int get_id_utente(Utente u);
@@ -34,5 +34,7 @@ void set_password_utente(const char* password, Utente u);
 // Funzioni per validare
 int valida_username(const char* username);
 int valida_nome_completo(const char* nome);
+int verifica_password(const char* password, Utente u);
+void hash_password(const char* input, char* output);
 
 #endif // UTENTI_H

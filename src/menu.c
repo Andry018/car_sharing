@@ -954,14 +954,6 @@ void visualizza_prenotazioni(Utente current_user) {
     } else if (is_admin) {
         for (int i = 0; i < get_dimensione_coda(coda); i++) {
             Prenotazione p = get_prenotazione_in_coda(coda, i);
-            if (!p) continue;
-        
-            // Intestazione prenotazione
-            set_color(14); // Giallo
-            printf("  Prenotazione #%d\n", get_id_prenotazione(p));
-            set_color(7); // Bianco
-            
-            // Dettagli prenotazione
             stampa_prenotazione(p);
             
             // Trova il veicolo per mostrare il costo
@@ -1379,6 +1371,7 @@ void mostra_menu_admin(Utente current_user) {
     set_color(7);   // Bianco
     printf("1. Gestione Veicoli\n");
     printf("2. Gestione Prenotazioni\n");
+    printf("3. Gestione Utenti\n"); // <-- Spostato qui
     
     stampa_separatore();
     
@@ -1386,8 +1379,8 @@ void mostra_menu_admin(Utente current_user) {
     set_color(10);  // Verde
     printf("          MONITORAGGIO\n");
     set_color(7);   // Bianco
-    printf("3. Visualizza prenotazioni\n");
-    printf("4. Gestione Utenti\n");
+    printf("4. Visualizza prenotazioni\n");
+    //printf("3. Gestione Utenti\n");
     printf("5. Visualizza disponibilita'\n");
     
     stampa_separatore();
@@ -1747,6 +1740,87 @@ void gestione_prenotazioni_admin() {
                 break;
         }
     } while (scelta != 0);
+}
+
+void gestione_utenti_admin() {
+    int scelta;
+    do {
+        pulisci_schermo();
+        stampa_bordo_superiore();
+
+        set_color(13); // Magenta
+        printf("      GESTIONE UTENTI\n");
+        stampa_separatore();
+        set_color(10); // Verde
+        printf("1. Visualizza tutti gli utenti\n");
+        printf("2. Cancella utente\n");
+        printf("0. Torna al menu admin\n");
+        stampa_bordo_inferiore();
+        printf("Scelta: ");
+        if(scanf("%d", &scelta) != 1) {
+            scelta = -999;
+        }
+        svuota_buffer();
+
+        switch(scelta) {
+            case 1:
+                pulisci_schermo();
+                stampa_bordo_superiore();
+                set_color(13); // Magenta
+                printf("      ELENCO UTENTI\n");
+                stampa_separatore();
+                stampa_utenti(); // Funzione già esistente
+                stampa_bordo_inferiore();
+                printf("Premi INVIO per continuare...");
+                svuota_buffer();
+                break;
+            case 2: {
+                // Mostra la lista degli utenti prima di chiedere quale eliminare
+                pulisci_schermo();
+                stampa_bordo_superiore();
+                set_color(13); // Magenta
+                printf("      ELENCO UTENTI\n");
+                stampa_separatore();
+                stampa_utenti(); // Funzione già esistente che mostra tutti gli utenti
+                stampa_bordo_inferiore();
+
+                int id;
+                printf("Inserisci l'ID dell'utente da cancellare: ");
+                if(scanf("%d", &id) != 1) {
+                    svuota_buffer();
+                    set_color(12); // Rosso
+                    printf("Errore: Inserisci un numero valido!\n");
+                    set_color(7); // Bianco
+                    printf("Premi INVIO per continuare...");
+                    svuota_buffer();
+                    break;
+                }
+                svuota_buffer();
+                if (id == 0) {
+                    set_color(12); // Rosso
+                    printf("Non puoi cancellare l'utente Admin!\n");
+                    set_color(7); // Bianco
+                } else if (rimuovi_utente(id)) {
+                    set_color(10); // Verde
+                    printf("Utente cancellato con successo!\n");
+                    salva_utenti_file();
+                } else {
+                    set_color(12); // Rosso
+                    printf("Utente non trovato!\n");
+                }
+                printf("Premi INVIO per continuare...");
+                svuota_buffer();
+                break;
+            }
+            case 0:
+                break;
+            default:
+                set_color(12); // Rosso
+                printf("Scelta non valida. Premi INVIO per riprovare...");
+                set_color(7); // Bianco
+                svuota_buffer();
+        }
+    } while(scelta != 0);
 }
 
 void mostra_logo() {

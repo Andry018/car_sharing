@@ -634,3 +634,18 @@ int conta_prenotazioni_completate_prima_di(CodaPrenotazioni coda, int id_utente,
     }
     return conteggio;
 }
+
+void rimuovi_prenotazioni_utente(CodaPrenotazioni coda, int id_utente) {
+    if (coda == NULL) return;
+    for (int i = 0; i < coda->dimensione; ) {
+        if (coda->heap[i].id_utente == id_utente) {
+            // Rimuovi la prenotazione (sposta l'ultima qui e riduci la dimensione)
+            coda->heap[i] = coda->heap[coda->dimensione - 1];
+            coda->dimensione--;
+            // Mantieni la proprietà dell'heap
+            bubble_down(coda, i);
+        } else {
+            i++;
+        }
+    }
+}

@@ -75,6 +75,7 @@ void distruggi_coda(CodaPrenotazioni coda);
 // Nuove funzioni per la gestione delle prenotazioni con data di sistema
 void aggiorna_priorita_prenotazioni(CodaPrenotazioni coda);
 void rimuovi_prenotazioni_scadute(CodaPrenotazioni coda);
+void rimuovi_prenotazioni_utente(CodaPrenotazioni coda, int id_utente);
 
 // Nuove funzioni di validazione
 int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine);
@@ -110,4 +111,4 @@ int get_dimensione_coda( CodaPrenotazioni coda);
 int conta_prenotazioni_completate(CodaPrenotazioni coda, int id_utente);
 int conta_prenotazioni_completate_prima_di(CodaPrenotazioni coda, int id_utente, int id_prenotazione_corrente);
 
-#endif // PRENOTAZIONI_H 
+#endif // PRENOTAZIONI_H
