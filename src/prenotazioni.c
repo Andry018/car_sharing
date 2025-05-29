@@ -283,7 +283,21 @@ int modifica_stato_prenotazione( CodaPrenotazioni coda, int id_prenotazione, int
     }
     
     prenotazione->stato = nuovo_stato;
+    // Se la prenotazione è stata completata, aggiorna la posizione del veicolo
+    if (nuovo_stato == 2) { // 2 = Completata
+        // Recupera il veicolo associato
+        list veicoli = get_lista_veicoli();
+        while (veicoli != NULL) {
+            Veicolo v = get_veicolo_senza_rimuovere(veicoli);
+            if (v && get_id_veicolo(v) == prenotazione->id_veicolo) {
+                set_posizione_veicolo(v, prenotazione->posizione_riconsegna);
+                break;
+            }
+            veicoli = get_next_node(veicoli);
+        }
     return 0;
+}
+return 0;
 }
 
 // Funzione per stampare una prenotazione
