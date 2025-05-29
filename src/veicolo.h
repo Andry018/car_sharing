@@ -31,7 +31,7 @@ int get_id_veicolo(Veicolo v);
 int get_tipo_veicolo(Veicolo v);
 const char* get_modello_veicolo(Veicolo v);
 const char* get_targa_veicolo(Veicolo v);
-const char* get_posizione_veicolo(Veicolo v);
+int get_posizione_veicolo(Veicolo v);
 int get_disponibilita_veicolo(Veicolo v);
 Veicolo get_veicolo_da_lista(list *l);
 Veicolo get_veicolo_senza_rimuovere(list l);
@@ -42,7 +42,7 @@ void set_id_veicolo(Veicolo v, int id);
 void set_tipo_veicolo(Veicolo v, int tipo);
 void set_modello_veicolo(Veicolo v, const char* modello);
 void set_targa_veicolo(Veicolo v, const char* targa);
-void set_posizione_veicolo(Veicolo v, const char* posizione);
+void set_posizione_veicolo(Veicolo v, int posizione);
 void set_disponibilita_veicolo(Veicolo v, int disponibilita);
 
 // Funzioni di ricerca
@@ -54,15 +54,16 @@ void stampa_lista_veicoli(list l);
 void stampa_veicoli_disponibili(list l);
 void stampa_veicoli_non_disponibili(list l);
 void stampa_veicoli_per_tipo(list l, int tipo);
-void stampa_veicoli_per_posizione(list l, const char* posizione);
+void stampa_veicoli_per_posizione(list l,int posizione);
 void stampa_veicoli_per_modello(list l, const char* modello);
 void stampa_veicoli_per_targa(list l, const char* targa);
 void stampa_veicoli_per_id(list l, int id);
-void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, const char* posizione);
+void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione);
 void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile);
-void stampa_veicoli_per_posizione_e_disponibilita(list l, const char* posizione, bool disponibile);
-void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, const char* posizione, bool disponibile);
+void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool disponibile);
+void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int posizione, bool disponibile);
 
 const char* get_nome_tipo_veicolo(int tipo);
+const char* get_nome_posizione_veicolo(int posizione);
 
 #endif

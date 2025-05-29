@@ -12,7 +12,7 @@ struct Veicolo {
     int tipo;
     char modello[50];
     char targa[10];
-    char posizione[50];
+    int posizione;
     int disponibilita;
 };
 
@@ -50,7 +50,7 @@ const char* get_targa_veicolo(Veicolo v) {
     return v->targa;
 }
 
-const char* get_posizione_veicolo(Veicolo v) {
+int get_posizione_veicolo(Veicolo v) {
     return v->posizione;
 }
 
@@ -77,9 +77,8 @@ void set_targa_veicolo(Veicolo v, const char* targa) {
     v->targa[sizeof(v->targa) - 1] = '\0';
 }
 
-void set_posizione_veicolo(Veicolo v, const char* posizione) {
-    strncpy(v->posizione, posizione, sizeof(v->posizione) - 1);
-    v->posizione[sizeof(v->posizione) - 1] = '\0';
+void set_posizione_veicolo(Veicolo v, int posizione) {
+   v->posizione = posizione;
 }
 
 void set_disponibilita_veicolo(Veicolo v, int disponibilita) {
@@ -97,7 +96,7 @@ Veicolo crea_veicolo(void) {
     v->disponibilita = 1;
     memset(v->modello, 0, sizeof(v->modello));
     memset(v->targa, 0, sizeof(v->targa));
-    memset(v->posizione, 0, sizeof(v->posizione));
+    v->posizione = 0; 
     return v;
 }
 
@@ -149,9 +148,7 @@ list aggiungi_veicolo(list l) {
     v->targa[strcspn(v->targa, "\n")] = 0;
 
     // Input posizione
-    printf("Posizione: ");
-    fgets(v->posizione, sizeof(v->posizione), stdin);
-    v->posizione[strcspn(v->posizione, "\n")] = 0;
+    v->posizione = 0; // Inizializza a 0
 
     v->id = carica_ultimo_id() + 1;
     v->disponibilita = 1;
@@ -203,25 +200,9 @@ void stampa_veicolo(Veicolo v) {
     printf("  Modello: %s\n", v->modello);
     printf("  Targa: %s\n", v->targa);
     
-    printf("  Tipo: ");
-    switch(v->tipo) {
-        case 0:
-            set_color(10); // Verde
-            printf("%s", "Utilitaria");
-            break;
-        case 1:
-            set_color(14); // Giallo
-            printf("%s", "SUV");
-            break;
-        case 2:
-            set_color(12); // Rosso
-            printf("%s", "Sportiva");
-            break;
-        case 3:
-            set_color(11); // Ciano
-            printf("%s", "Moto");
-            break;
-    }
+    set_color(10); // Verde
+    printf("  Tipo: %s\n", get_nome_tipo_veicolo(v->tipo));
+    
     set_color(7); // Bianco
     printf("\n");
     
@@ -233,6 +214,9 @@ void stampa_veicolo(Veicolo v) {
         set_color(12); // Rosso
         printf("Non disponibile");
     }
+
+    set_color(14); // Giallo
+    printf("  Posizione: %s\n", get_nome_posizione_veicolo(v->posizione)); 
     set_color(7); // Bianco
     printf("\n");
 }
@@ -250,7 +234,7 @@ void salva_veicolo_file(list l)
     while (temp != NULL)
     {
         // Uso il carattere '|' come separatore per evitare problemi con gli spazi
-        fprintf(fp, "%d|%d|%s|%s|%s|%d\n", 
+        fprintf(fp, "%d|%d|%s|%s|%d|%d\n", 
             temp->v->id,
             temp->v->tipo,
             temp->v->modello,
@@ -301,8 +285,7 @@ list carica_veicolo_file(list l)
                         
                         token = strtok(NULL, "|");
                         if (token != NULL) {
-                            strncpy(v->posizione, token, sizeof(v->posizione) - 1);
-                            v->posizione[sizeof(v->posizione) - 1] = '\0';
+                            v->posizione = atoi(token);
                             
                             token = strtok(NULL, "|");
                             if (token != NULL) {
@@ -383,10 +366,10 @@ void modifica_veicolo(list l, int id) {
     targa[strcspn(targa, "\n")] = 0;
     set_targa_veicolo(v, targa);
 
-    printf("Nuova posizione: ");
-    char posizione[50];
-    fgets(posizione, sizeof(posizione), stdin);
-    posizione[strcspn(posizione, "\n")] = 0;
+    printf("Nuova posizione: (0: Deposito, 1: Posizione B, 2: Posizione C, 3: Posizione D): ");
+    int posizione;
+    scanf("%d", &posizione);
+    getchar();
     set_posizione_veicolo(v, posizione);
 }
 
@@ -505,7 +488,7 @@ void stampa_veicoli_per_tipo(list l, int tipo)
     }
 }
 
-void stampa_veicoli_per_posizione(list l, const char* posizione)
+void stampa_veicoli_per_posizione(list l, int posizione)
 {
     if (l == NULL)
     {
@@ -513,12 +496,12 @@ void stampa_veicoli_per_posizione(list l, const char* posizione)
         return;
     }
     
-    printf("\nVeicoli nella posizione %s:\n", posizione);
+    printf("\nVeicoli nella posizione %s:\n", get_nome_posizione_veicolo(posizione));
     list temp = l;
     bool trovato = false;
     while (temp != NULL)
     {
-        if (strcmp(temp->v->posizione, posizione) == 0)
+        if (temp->v->posizione == posizione)
         {
             stampa_veicolo(temp->v);
             trovato = true;
@@ -613,7 +596,7 @@ void stampa_veicoli_per_id(list l, int id)
     }
 }
 
-void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, const char* posizione)
+void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione)
 {
     if (l == NULL)
     {
@@ -621,28 +604,15 @@ void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, const char* posizione
         return;
     }
     
-    printf("\nVeicoli di tipo ");
-    switch(tipo) {
-        case 0:
-            printf("Utilitaria");
-            break;
-        case 1:
-            printf("SUV");
-            break;
-        case 2:
-            printf("Sportiva");
-            break;
-        case 3:
-            printf("Moto");
-            break;
-    }
-    printf(" nella posizione %s:\n", posizione);
+    printf("\nVeicoli di tipo %s", get_nome_tipo_veicolo(tipo));
+    
+    printf(" nella posizione %s:\n", get_nome_posizione_veicolo(posizione));
     
     list temp = l;
     bool trovato = false;
     while (temp != NULL)
     {
-        if (temp->v->tipo == tipo && strcmp(temp->v->posizione, posizione) == 0)
+        if (temp->v->tipo == tipo && temp->v->posizione == posizione)
         {
             stampa_veicolo(temp->v);
             trovato = true;
@@ -664,21 +634,8 @@ void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile)
         return;
     }
     
-    printf("\nVeicoli di tipo ");
-    switch(tipo) {
-        case 0:
-            printf("Utilitaria");
-            break;
-        case 1:
-            printf("SUV");
-            break;
-        case 2:
-            printf("Sportiva");
-            break;
-        case 3:
-            printf("Moto");
-            break;
-    }
+    printf("\nVeicoli di tipo %s", get_nome_tipo_veicolo(tipo));
+   
     printf(" %s:\n", disponibile ? "disponibili" : "non disponibili");
     
     list temp = l;
@@ -699,7 +656,7 @@ void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile)
     }
 }
 
-void stampa_veicoli_per_posizione_e_disponibilita(list l, const char* posizione, bool disponibile)
+void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool disponibile)
 {
     if (l == NULL)
     {
@@ -707,12 +664,12 @@ void stampa_veicoli_per_posizione_e_disponibilita(list l, const char* posizione,
         return;
     }
     
-    printf("\nVeicoli nella posizione %s %s:\n", posizione, disponibile ? "disponibili" : "non disponibili");
+    printf("\nVeicoli nella posizione %s %s:\n", get_nome_posizione_veicolo(posizione), disponibile ? "disponibili" : "non disponibili");
     list temp = l;
     bool trovato = false;
     while (temp != NULL)
     {
-        if (strcmp(temp->v->posizione, posizione) == 0 && temp->v->disponibilita == disponibile)
+        if (temp->v->posizione == posizione && temp->v->disponibilita == disponibile)
         {
             stampa_veicolo(temp->v);
             trovato = true;
@@ -726,7 +683,7 @@ void stampa_veicoli_per_posizione_e_disponibilita(list l, const char* posizione,
     }
 }
 
-void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, const char* posizione, bool disponibile)
+void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int posizione, bool disponibile)
 {
     if (l == NULL)
     {
@@ -734,28 +691,16 @@ void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, const c
         return;
     }
     
-    printf("\nVeicoli di tipo ");
-    switch(tipo) {
-        case 0:
-            printf("Utilitaria");
-            break;
-        case 1:
-            printf("SUV");
-            break;
-        case 2:
-            printf("Sportiva");
-            break;
-        case 3:
-            printf("Moto");
-            break;
-    }
-    printf(" nella posizione %s %s:\n", posizione, disponibile ? "disponibili" : "non disponibili");
+    printf("\nVeicoli di tipo %s", get_nome_tipo_veicolo(tipo));
+    
+    
+    printf(" nella posizione %s %s:\n", get_nome_posizione_veicolo(posizione), disponibile ? "disponibili" : "non disponibili");
     
     list temp = l;
     bool trovato = false;
     while (temp != NULL)
     {
-        if (temp->v->tipo == tipo && strcmp(temp->v->posizione, posizione) == 0 && temp->v->disponibilita == disponibile)
+        if (temp->v->tipo == tipo && temp->v->posizione == posizione && temp->v->disponibilita == disponibile)
         {
             stampa_veicolo(temp->v);
             trovato = true;
@@ -824,4 +769,19 @@ Veicolo get_veicolo_senza_rimuovere(list l) {
     }
     return l->v;
 }
-   
+  
+const char* get_nome_posizione_veicolo(int posizione) {
+    switch (posizione) {
+        case 0:
+            return "Deposito";
+        case 1:
+            return "Posizione B";
+        case 2:
+            return "Posizione C";
+        case 3:
+            return "Posizione D";
+        default:
+            return "Posizione sconosciuta";
+    }
+    
+}

@@ -924,7 +924,7 @@ void visualizza_prenotazioni(Utente current_user) {
                                    
             // Intestazione prenotazione
             set_color(14); // Giallo
-            printf("  Prenotazione #%d\n", get_id_prenotazione(p));
+            printf("  Prenotazione #%d\n", trovate);
             set_color(7); // Bianco
             
             // Dettagli prenotazione
@@ -1258,7 +1258,7 @@ void mostra_menu_cliente(Utente current_user) {
     
     set_color(13);  // Magenta
     printf("        SISTEMA DI CAR SHARING\n");
-    printf("        Benvenuto, %s\n", get_nome_utente(current_user));
+    printf("        Benvenuto/a, %s\n", get_nome_utente(current_user));
     
     stampa_separatore();
     
@@ -1296,7 +1296,7 @@ void mostra_menu_admin(Utente current_user) {
     set_color(13);  // Magenta
     printf("      SISTEMA DI CAR SHARING\n");
     printf("      PANNELLO AMMINISTRATORE\n");
-    printf("      Benvenuto, %s\n", get_nome_utente(current_user));
+    printf("      Benvenuto/a, %s\n", get_nome_utente(current_user));
     
     stampa_separatore();
     
@@ -1797,7 +1797,7 @@ void mostra_menu_login() {
     stampa_separatore();
     
     set_color(13); // Magenta
-    printf("             BENVENUTO\n");
+    printf("             BENVENUTO/A\n");
     stampa_separatore();
     
     set_color(10); // Verde
