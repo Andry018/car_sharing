@@ -5,6 +5,7 @@
 #include "prenotazioni.h"
 #include "data_sistema.h"
 #include "f_utili.h"
+#include "veicolo.h"
 
 #define INITIAL_CAPACITY 10
 
@@ -21,6 +22,7 @@ struct Prenotazione {
     int giorno_ora_fine;    // Formato: giorno*24*60 + ora*60 
     int stato;              //0: In attesa, 1: Confermata, 2: Completata, 3: Cancellata
     int priorita;          // Campo per la priorità (più basso = più prioritario)
+    int posizione_riconsegna;
 } ;
 
 // Struttura della coda con priorità
@@ -132,7 +134,7 @@ int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, i
  Prenotazione crea_prenotazione(int id_utente, int id_veicolo, 
                                      int giorno_inizio, int ora_inizio,
                                      int giorno_fine, int ora_fine, 
-                                     int priorita) {
+                                     int priorita, int posizione_riconsegna) {
      Prenotazione nuova = (Prenotazione)malloc(sizeof(struct Prenotazione));
     if (nuova == NULL) {
         return NULL;
@@ -144,6 +146,7 @@ int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, i
     nuova->giorno_ora_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
     nuova->giorno_ora_fine = converti_in_timestamp(giorno_fine, ora_fine);
     nuova->stato = 0;  // In attesa
+    nuova->posizione_riconsegna = posizione_riconsegna;
     
     if (priorita < 0) {
         // Se non è specificata una priorità, la calcoliamo in base al tempo
@@ -313,6 +316,8 @@ void stampa_prenotazione(Prenotazione p) {
             break;
     }
     printf("%s\n", stati[get_stato_prenotazione(p)]);
+    printf("Posizione riconsegna: %s\n", get_nome_posizione_veicolo(p->posizione_riconsegna));
+    
     set_color(7);  // Bianco
 }
 
@@ -325,14 +330,15 @@ void salva_prenotazioni_su_file( CodaPrenotazioni coda) {
     }
     
     for (int i = 0; i < coda->dimensione; i++) {
-        fprintf(file, "%d %d %d %d %d %d %d\n",
+        fprintf(file, "%d %d %d %d %d %d %d %d\n",
                 coda->heap[i].id_prenotazione,
                 coda->heap[i].id_utente,
                 coda->heap[i].id_veicolo,
                 coda->heap[i].giorno_ora_inizio,
                 coda->heap[i].giorno_ora_fine,
                 coda->heap[i].stato,
-                coda->heap[i].priorita);
+                coda->heap[i].priorita,
+                coda->heap[i].posizione_riconsegna);
     }
     
     fclose(file);
@@ -354,14 +360,15 @@ int carica_prenotazioni_da_file(CodaPrenotazioni coda) {
     int stato_temp;
     while (!feof(file)) {
          struct Prenotazione prenotazione;
-        if (fscanf(file, "%d %d %d %d %d %d %d\n",
+        if (fscanf(file, "%d %d %d %d %d %d %d %d\n",
                &prenotazione.id_prenotazione,
                &prenotazione.id_utente,
                &prenotazione.id_veicolo,
                &prenotazione.giorno_ora_inizio,
                &prenotazione.giorno_ora_fine,
                &stato_temp,
-               &prenotazione.priorita) == 7) {
+               &prenotazione.priorita,
+               &prenotazione.posizione_riconsegna) == 8) {
             
             // Aggiorna il contatore globale se necessario
             if (prenotazione.id_prenotazione > id_counter) {

@@ -24,7 +24,7 @@ CodaPrenotazioni inizializza_coda();
 Prenotazione crea_prenotazione(int id_utente, int id_veicolo, 
                               int giorno_inizio, int ora_inizio,
                               int giorno_fine, int ora_fine, 
-                              int priorita);
+                              int priorita, int posizione_riconsegna);
 
 // Funzione per verificare se una fascia oraria è valida
 int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);

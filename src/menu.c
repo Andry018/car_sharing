@@ -678,6 +678,27 @@ void prenota_auto(Utente current_user) {
                 } while (!data_fine_valida);
                 
                 stampa_bordo_inferiore();
+
+                // Richiesta posizione di riconsegna
+                printf("\nDove vuoi lasciare il veicolo?\n");
+                for (int i = 0; i <= 3; i++) {
+                    printf("%d. %s\n", i, get_nome_posizione_veicolo(i));
+                }
+                int posizione_riconsegna;
+                do {
+                    printf("Scegli la posizione di riconsegna (0-3): ");
+                    if (scanf("%d", &posizione_riconsegna) != 1 || posizione_riconsegna < 0 || posizione_riconsegna > 3) {
+                        set_color(12); // Rosso
+                        printf("Scelta non valida!\n");
+                        set_color(7); // Bianco
+                        svuota_buffer();
+                    } else {
+                        svuota_buffer();
+                        break;
+                    }
+                } while (1);
+
+                
                 
                 // Verifica sovrapposizioni
                 if (verifica_sovrapposizioni(coda_prenotazioni, id_veicolo, giorno_ora_inizio, giorno_ora_fine) == 1) {
@@ -705,6 +726,7 @@ void prenota_auto(Utente current_user) {
                 printf("Data inizio: %s ore %02d:00\n", get_nome_giorno(giorno_inizio), ora_inizio);
                 printf("Data fine: %s ore %02d:00\n", get_nome_giorno(giorno_fine), ora_fine);
                 printf("Costo base: %.2f euro\n", costo_base);
+                printf("Hai scelto di lasciare il veicolo in: %s\n", get_nome_posizione_veicolo(posizione_riconsegna));
                 
                 if (costo_finale < costo_base) {
                     printf("Sconto fedelta' applicato: %.2f euro\n", costo_base - costo_finale);
@@ -742,7 +764,8 @@ void prenota_auto(Utente current_user) {
                 Prenotazione nuova = crea_prenotazione(id_utente, id_veicolo, 
                                                      giorno_inizio, ora_inizio,
                                                      giorno_fine, ora_fine, 
-                                                     -1);  // -1 indica di usare la priorità automatica
+                                                     -1,
+                                                    posizione_riconsegna);  // -1 indica di usare la priorità automatica
                 
                 if (nuova == NULL) {
                     set_color(12); // Rosso
