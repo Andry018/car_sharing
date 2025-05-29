@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "veicolo.h"
 #include "prenotazioni.h"
+#include "utenti.h"
 
 
 
@@ -56,6 +57,7 @@ void salvataggio() {
     // Salva i dati prima di chiudere
     salva_lista_veicoli();
     salva_prenotazioni_su_file(get_coda_prenotazioni());
+    salva_utenti_file();
     
     // Libera la memoria
     pulisci_lista_veicoli();

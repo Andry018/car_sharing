@@ -1,42 +1,43 @@
 #include "tariffe.h"
+#include "veicolo.h"
+#include "prenotazioni.h"
 #include <stdio.h>
 #include <stdlib.h>
 
+// Definizione delle tariffe orarie per tipo di veicolo (in euro)
+#define TARIFFA_UTILITARIA 5.0
+#define TARIFFA_SUV 8.0
+#define TARIFFA_SPORTIVA 12.50
+#define TARIFFA_MOTO 4.0
+
+// Definizione degli sconti
+#define SCONTO_FEDELTA 0.10  // 10% di sconto dopo 10 noleggi
+#define NOLEGGI_PER_SCONTO 10  // Numero di noleggi necessari per lo sconto fedeltà
+#define ORE_PER_PACCHETTO 5  // Numero di ore dopo le quali si ottiene un'ora gratuita
+
+
+
 // Funzione per ottenere la tariffa oraria in base al tipo di veicolo
-double get_tariffa_oraria(TipoVeicolo tipo) {
+double get_tariffa_oraria(int tipo) {
     switch (tipo) {
-        case UTILITARIA:
+        case 0:
             return TARIFFA_UTILITARIA;
-        case SUV:
+        case 1:
             return TARIFFA_SUV;
-        case SPORTIVA:
+        case 2:
             return TARIFFA_SPORTIVA;
-        case MOTO:
+        case 3:
             return TARIFFA_MOTO;
         default:
             return 0.0; // In caso di tipo non valido
     }
 }
 
-// Funzione per ottenere il nome del tipo di veicolo
-const char* get_nome_tipo_veicolo(TipoVeicolo tipo) {
-    switch (tipo) {
-        case UTILITARIA:
-            return "Utilitaria";
-        case SUV:
-            return "SUV";
-        case SPORTIVA:
-            return "Sportiva";
-        case MOTO:
-            return "Moto";
-        default:
-            return "Tipo non valido";
-    }
-}
+
 
 // Funzione per applicare lo sconto fedeltà
-double applica_sconto_fedelta(double tariffa_base, int numero_noleggi) {
-    if (numero_noleggi >= NOLEGGI_PER_SCONTO) {
+double applica_sconto_fedelta(double tariffa_base, int noleggi_completati) {
+    if (noleggi_completati == NOLEGGI_PER_SCONTO) {
         return tariffa_base * (1.0 - SCONTO_FEDELTA);
     } else {
         return tariffa_base;
@@ -56,19 +57,19 @@ double applica_sconto_pacchetto_ore(double tariffa_base, int ore_totali) {
 }
 
 // Funzione per calcolare la tariffa totale dato il tipo di veicolo e le ore totali
-double calcola_tariffa(TipoVeicolo tipo, int ore_totali) {
+double calcola_tariffa(int tipo, int ore_totali) {
     double tariffa_oraria = get_tariffa_oraria(tipo);
     // Applica lo sconto pacchetto ore (1 ora gratis ogni 5 ore)
     return applica_sconto_pacchetto_ore(tariffa_oraria, ore_totali);
 }
 
 // Funzione per calcolare la tariffa di una prenotazione
-double calcola_tariffa_prenotazione(TipoVeicolo tipo, int giorno_ora_inizio, int giorno_ora_fine) {
+double calcola_tariffa_prenotazione(int tipo, int giorno_ora_inizio, int giorno_ora_fine) {
     // Estrai il giorno e l'ora dall'intero che li rappresenta
-    int giorno_inizio = giorno_ora_inizio / 100;
-    int ora_inizio = giorno_ora_inizio % 100;
-    int giorno_fine = giorno_ora_fine / 100;
-    int ora_fine = giorno_ora_fine % 100;
+    int giorno_inizio = estrai_giorno(giorno_ora_inizio);
+    int ora_inizio = estrai_ora(giorno_ora_inizio);
+    int giorno_fine = estrai_giorno(giorno_ora_fine);
+    int ora_fine = estrai_ora(giorno_ora_fine);
     
     // Calcola il numero totale di ore
     int ore_totali = 0;

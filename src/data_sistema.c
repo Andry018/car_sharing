@@ -1,26 +1,40 @@
 #include "data_sistema.h"
 #include <stdio.h>
+#include <stdlib.h>
+
+// Struttura per rappresentare la data e ora del sistema
+struct DataSistema {
+    int giorno;     // 0-6 (Lunedì-Domenica)
+    int ora;        // 0-23
+} ;
 
 // Variabile statica per mantenere la data di sistema
-static DataSistema data_corrente = {0, 0};  // Inizializza a Lunedì 00:00
+static DataSistema data_corrente = NULL;  // Inizializza a Lunedì 00:00
 
 void inizializza_data_sistema() {
-    // Inizializza a Lunedì alle 8:00
-    data_corrente.giorno = 0;  // Lunedì
-    data_corrente.ora = 8;     // 8:00
+    if (data_corrente == NULL) {  // Alloca solo se non è già stato allocato
+        data_corrente = (DataSistema)malloc(sizeof(struct DataSistema));
+        if (data_corrente == NULL) {
+            fprintf(stderr, "Errore nell'allocazione della memoria per DataSistema.\n");
+            exit(EXIT_FAILURE);
+        }
+        // Inizializza a Lunedì alle 8:00
+        data_corrente->giorno = 0;  // Lunedì
+        data_corrente->ora = 8;     // 8:00
+    }
 }
 
 void avanza_tempo(int ore) {
-    data_corrente.ora += ore;
+    data_corrente->ora += ore;
     
     // Gestisci il riporto delle ore
-    while (data_corrente.ora >= 24) {
-        data_corrente.ora -= 24;
-        data_corrente.giorno++;
+    while (data_corrente->ora >= 24) {
+        data_corrente->ora -= 24;
+        data_corrente->giorno++;
         
         // Gestisci il riporto dei giorni
-        if (data_corrente.giorno >= 7) {
-            data_corrente.giorno = 0;
+        if (data_corrente->giorno >= 7) {
+            data_corrente->giorno = 0;
         }
     }
 }
@@ -30,14 +44,21 @@ DataSistema get_data_sistema() {
 }
 
 int converti_data_in_timestamp(DataSistema data) {
-    return (data.giorno * 24) + data.ora;
+    return (data->giorno * 24) + data->ora;
 }
 
 DataSistema converti_timestamp_in_data(int timestamp) {
-    DataSistema data;
+    DataSistema data=get_data_sistema();
+    if (data == NULL) {
+        data = (DataSistema)malloc(sizeof(struct DataSistema));
+        if (data == NULL) {
+            fprintf(stderr, "Errore nell'allocazione della memoria per DataSistema.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
     
-    data.giorno = timestamp / 24;
-    data.ora = timestamp % 24;
+    data->giorno = timestamp / 24;
+    data->ora = timestamp % 24;
     
     return data;
 }
@@ -63,4 +84,37 @@ const char* get_nome_giorno(int giorno) {
         return giorni[giorno];
     }
     return "Giorno non valido";
+}
+
+// Getter functions for DataSistema struct fields
+int get_giorno_sistema(DataSistema data) {
+    if (data == NULL) return -1;
+    return data->giorno;
+}
+
+int get_ora_sistema(DataSistema data) {
+    if (data == NULL) return -1;
+    return data->ora;
+}
+
+// Helper function to get current system day
+int get_giorno_corrente() {
+    return data_corrente->giorno;
+}
+
+// Helper function to get current system hour
+int get_ora_corrente() {
+    return data_corrente->ora;
+}
+
+// Helper function to get current system timestamp
+int get_timestamp_corrente() {
+    return converti_data_in_timestamp(data_corrente);
 } 
+
+void distruggi_data_sistema() {
+    if (data_corrente != NULL) {
+        free(data_corrente);
+        data_corrente = NULL;  // Imposta a NULL per evitare dangling pointer
+    }
+}

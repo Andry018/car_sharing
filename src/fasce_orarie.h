@@ -7,31 +7,30 @@
 #include "prenotazioni.h"
 #include "veicolo.h"
 
-// Struttura per rappresentare una fascia oraria
-typedef struct {
-    int occupato;          // 0 = libero, 1 = occupato
-    int id_prenotazione;   // ID della prenotazione che occupa questa fascia
-} FasciaOraria;
+typedef struct FasciaOraria *FasciaOraria;
 
-// Struttura per rappresentare il calendario di un veicolo
-typedef struct {
-    int id_veicolo;
-    FasciaOraria calendario[7][24];  // [giorno][ora]
-} CalendarioVeicolo;
+typedef struct CalendarioVeicolo *CalendarioVeicolo;
 
 // Funzione per inizializzare il calendario di un veicolo
-void inizializza_calendario(CalendarioVeicolo* calendario, int id_veicolo);
+CalendarioVeicolo inizializza_calendario(int id_veicolo);
 
 // Funzione per aggiornare il calendario con le prenotazioni dal file
-void aggiorna_calendario(CalendarioVeicolo* calendario, CodaPrenotazioni* coda);
+CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotazioni coda);
 
 // Funzione per visualizzare il calendario di un veicolo
-void visualizza_calendario(CalendarioVeicolo* calendario);
+void visualizza_calendario(CalendarioVeicolo calendario);
 
 // Funzione per verificare la disponibilità di un veicolo in una fascia oraria
-int verifica_disponibilita(CalendarioVeicolo* calendario, int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);
+int verifica_disponibilita(CalendarioVeicolo calendario, int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);
 
-// Funzione per ottenere il nome del giorno della settimana
-const char* get_nome_giorno(int giorno);
 
+int get_stato_fascia_oraria(FasciaOraria fascia);
+int get_id_prenotazione_fascia(FasciaOraria fascia);
+int get_id_veicolo_calendario(CalendarioVeicolo calendario);
+FasciaOraria get_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora);
+
+void set_stato_fascia_oraria(FasciaOraria fascia, int stato);   
+void set_id_prenotazione_fascia(FasciaOraria fascia, int id_prenotazione);
+void set_id_veicolo_calendario(CalendarioVeicolo calendario, int id_veicolo);
+void set_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora, FasciaOraria fascia);
 #endif /* fasce_orarie_H */
