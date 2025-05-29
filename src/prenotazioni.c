@@ -455,10 +455,9 @@ void rimuovi_prenotazioni_scadute( CodaPrenotazioni coda) {
 }
 
 int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine) {
-   
     int timestamp_corrente = converti_in_timestamp(get_giorno_corrente(), get_ora_corrente());
     
-    // Controlla se la data di inizio è nel passato
+    // Controlla se la data di inizio è nel passato rispetto alla data sistema
     if (giorno_ora_inizio < timestamp_corrente) {
         return -1;  // Data nel passato
     }
@@ -466,6 +465,15 @@ int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine) {
     // Controlla se la data di fine è prima della data di inizio
     if (giorno_ora_fine <= giorno_ora_inizio) {
         return -2;  // Date non valide
+    }
+     // Controlla se la data di inizio è nello stesso giorno della data di sistema
+    int giorno_inizio = estrai_giorno(giorno_ora_inizio);
+    int ora_inizio = estrai_ora(giorno_ora_inizio);
+    int giorno_corrente = get_giorno_corrente();
+    int ora_corrente = get_ora_corrente();
+    
+    if (giorno_inizio == giorno_corrente && ora_inizio < ora_corrente) {
+        return -1;  // Data nel passato (stesso giorno ma ora precedente)
     }
     
     return 0;  // Date valide
