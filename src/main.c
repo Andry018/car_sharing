@@ -89,15 +89,29 @@ int main() {
                         set_color(7); // Bianco
                         svuota_buffer();
                     } else {
-                        set_color(10); // Verde
-                        printf("\nAccesso effettuato con successo!\n");
-                        printf("Benvenuto, %s!\n", get_nome_utente(temp_utente));
-                        stato = 1;
-                        strncpy(current_username, username, sizeof(current_username));
-                        salva_utenti_file();  // Salvo gli utenti dopo il login
-                        printf("\nPremi INVIO per continuare...");
+                        char password[MAX_PASSWORD_LENGTH];
                         set_color(7); // Bianco
-                        svuota_buffer();
+                        printf("Password: ");
+                        fgets(password, sizeof(password), stdin);
+                        strtok(password, "\n");
+
+                        if (verifica_password(password, temp_utente)) {
+                            set_color(10); // Verde
+                            printf("\nAccesso effettuato con successo!\n");
+                            printf("Benvenuto, %s!\n", get_nome_utente(temp_utente));
+                            stato = 1;
+                            strncpy(current_username, username, sizeof(current_username));
+                            salva_utenti_file();
+                            printf("\nPremi INVIO per continuare...");
+                            set_color(7); // Bianco
+                            svuota_buffer();
+                        } else {
+                            set_color(12); // Rosso
+                            printf("\nPassword errata!\n");
+                            printf("Premi INVIO per tornare al menu principale...");
+                            set_color(7); // Bianco
+                            svuota_buffer();
+                        }
                     }
                     break;
                 }
@@ -148,7 +162,23 @@ int main() {
                     } while (!valida_username(username) || 
                             cerca_utente(username) != NULL);
                     
-                    if (inserisci_utente(username, nome_completo)) {
+                    char password[MAX_PASSWORD_LENGTH];
+                    do {
+                        set_color(7); // Bianco
+                        printf("Password: ");
+                        fgets(password, sizeof(password), stdin);
+                        strtok(password, "\n");
+                        if (strlen(password) < 4) {
+                            set_color(12); // Rosso
+                            printf("Password troppo corta! Minimo 4 caratteri.\n");
+                            set_color(7); // Bianco
+                        }
+                    } while (strlen(password) < 4);
+
+                    char hashed[MAX_PASSWORD_LENGTH];
+                    hash_password(password, hashed);
+
+                    if (inserisci_utente(username, nome_completo, hashed)) {
                         set_color(10); // Verde
                         printf("\nRegistrazione completata con successo!\n");
                         stato = 1;

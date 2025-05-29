@@ -55,9 +55,10 @@ void salva_utenti_file() {
 
     for (int i = 0; i < TABLE_SIZE; i++) {
         if (tabellaUtenti[i] != NULL) {
-            fprintf(file, "%d %s %s %d\n", 
+            fprintf(file, "%d %s %s %s %d\n", 
                    tabellaUtenti[i]->id, 
                    tabellaUtenti[i]->username, 
+                   tabellaUtenti[i]->password,
                    tabellaUtenti[i]->nome_completo,
                    tabellaUtenti[i]->isAdmin);
         }
@@ -80,12 +81,14 @@ int carica_utenti_file() {
         }
         
         // Crea l'utente admin
-        if (fprintf(file, "0 Admin Administrator 1\n") < 0) {
+        char admin_password_hash[MAX_PASSWORD_LENGTH];
+        hash_password("admin", admin_password_hash);
+        if (fprintf(file, "0 Admin %s Administrator 1\n", admin_password_hash) < 0) {
             printf("Errore nella scrittura del file utenti.txt\n");
             fclose(file);
             return 0;
         }
-        fclose(file);
+       // fclose(file);
         
         // Riapri il file in lettura
         file = fopen("data/utenti.txt", "r");
@@ -101,6 +104,9 @@ int carica_utenti_file() {
             if (tabellaUtenti[index] != NULL) {
                 tabellaUtenti[index]->id = 0;
                 strcpy(tabellaUtenti[index]->username, "Admin");
+                char admin_password_hash[MAX_PASSWORD_LENGTH];
+                hash_password("admin", admin_password_hash);
+                strcpy(tabellaUtenti[index]->password, admin_password_hash);   
                 strcpy(tabellaUtenti[index]->nome_completo, "Administrator");
                 tabellaUtenti[index]->isAdmin = 1;
                 printf("File utenti.txt creato con l'utente Admin.\n");
@@ -127,6 +133,7 @@ int carica_utenti_file() {
 
         char username[30] = {0};
         char nome_completo[50] = {0};
+        char password[MAX_PASSWORD_LENGTH] = {0};
         int id = -1, isAdmin = -1;
         
         // Leggi l'ID e l'username
@@ -144,6 +151,14 @@ int carica_utenti_file() {
             continue;
         }
         strncpy(username, token, sizeof(username) - 1);
+
+        // Leggi la password
+        token = strtok(NULL, " ");
+        if (token == NULL) {
+            printf("Errore nel formato della riga %d: password mancante\n", line_number);
+            continue;
+        }
+        strncpy(password, token, sizeof(password) - 1);
         
         // Leggi il nome completo (può contenere spazi)
         token = strtok(NULL, "\n");
@@ -163,6 +178,7 @@ int carica_utenti_file() {
         
         strncpy(nome_completo, token, sizeof(nome_completo) - 1);
         
+        
         // Verifica che tutti i campi siano validi
         if (id < 0 || strlen(username) == 0 || strlen(nome_completo) == 0 || isAdmin < 0) {
             printf("Errore nel formato della riga %d: campi non validi\n", line_number);
@@ -179,6 +195,7 @@ int carica_utenti_file() {
         if (tabellaUtenti[index] != NULL) {
             tabellaUtenti[index]->id = id;
             strcpy(tabellaUtenti[index]->username, username);
+            strcpy(tabellaUtenti[index]->password, password);  
             strcpy(tabellaUtenti[index]->nome_completo, nome_completo);
             tabellaUtenti[index]->isAdmin = isAdmin;
             count++;
@@ -205,6 +222,7 @@ int carica_utenti_file() {
             if (tabellaUtenti[index] != NULL) {
                 tabellaUtenti[index]->id = 0;
                 strcpy(tabellaUtenti[index]->username, "Admin");
+                strcpy(tabellaUtenti[index]->password, "admin"); 
                 strcpy(tabellaUtenti[index]->nome_completo, "Administrator");
                 tabellaUtenti[index]->isAdmin = 1;
                 salva_utenti_file();  // Salva l'admin nel file
@@ -222,7 +240,7 @@ int carica_utenti_file() {
     return success;
 }
 
-int inserisci_utente(const char* username, const char* nome_completo) {
+int inserisci_utente(const char* username, const char* nome_completo, const char* password) {
     int idx = hash_djb2(username) % TABLE_SIZE;
     if (tabellaUtenti[idx] == NULL) {
         tabellaUtenti[idx] = malloc(sizeof(struct Utente));
@@ -239,6 +257,7 @@ int inserisci_utente(const char* username, const char* nome_completo) {
     tabellaUtenti[idx]->id = id_counter++;
     strcpy(tabellaUtenti[idx]->username, username);
     strcpy(tabellaUtenti[idx]->nome_completo, nome_completo);
+    strcpy(tabellaUtenti[idx]->password, password); // Salva la password hashata
     tabellaUtenti[idx]->isAdmin = (strcmp(username, "Admin") == 0) ? 1 : 0;
     return 1;
 }

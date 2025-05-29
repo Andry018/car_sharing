@@ -11,7 +11,7 @@ int carica_ultimo_id_utente();
 void inizializza_tabella_utenti();
 void salva_utenti_file();
 int carica_utenti_file();
-int inserisci_utente(const char* username, const char* nome_completo);
+int inserisci_utente(const char* username, const char* nome_completo, const char* password);
 Utente cerca_utente(const char* username);
 Utente cerca_utente_per_id(int id);
 void stampa_utenti();
