@@ -108,6 +108,7 @@ void gestione_veicoli() {
                 printf("Premi INVIO per continuare...");
                 svuota_buffer();
                 break;
+                free(nuova_lista);
             }
             case 2: {
                 pulisci_schermo();
@@ -201,6 +202,7 @@ void gestione_veicoli() {
                     }
                     
                     id_valido = true;
+                    free(temp2);
                 } while (!id_valido);
                 
                 list nuova_lista = rimuovi_veicolo(get_lista_veicoli(), id);
@@ -212,12 +214,15 @@ void gestione_veicoli() {
                 } else {
                     set_color(12); // Rosso
                     printf("\nErrore: Veicolo non trovato!\n");
+                    free(nuova_lista);
                 }
                 set_color(7); // Bianco
                 stampa_bordo_inferiore();
                 printf("Premi INVIO per continuare...");
                 svuota_buffer();
                 break;
+                free(temp);
+                free(nuova_lista);
             }
             case 3: {
                 pulisci_schermo();
@@ -241,7 +246,7 @@ void gestione_veicoli() {
                             continue;
                         }
                        
-                        if (get_disponibilita_veicolo(v) == 0) {
+                        if (get_disponibilita_veicolo(v) == 1) {
                             stampa_veicolo(v);
                             int tipo = get_tipo_veicolo(v);
                             printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
@@ -253,6 +258,7 @@ void gestione_veicoli() {
                 stampa_bordo_inferiore();
                 printf("Premi INVIO per continuare...");
                 svuota_buffer();
+                free(temp);
                 break;
             }
             case 0:
@@ -263,6 +269,8 @@ void gestione_veicoli() {
                 set_color(7); // Bianco
                 svuota_buffer();
         }
+        svuota_buffer();
+        
     } while(scelta != 0);
 }
 
@@ -1783,30 +1791,3 @@ void mostra_menu_login() {
     stampa_bordo_inferiore();
 }
 
-int valida_username(const char* username) {
-    if (strlen(username) < 3 || strlen(username) > 29) {
-        return 0;
-    }
-    
-    // Verifica che contenga solo caratteri alfanumerici e underscore
-    for (int i = 0; username[i]; i++) {
-        if (!isalnum(username[i]) && username[i] != '_') {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-int valida_nome_completo(const char* nome) {
-    if (strlen(nome) < 3 || strlen(nome) > 49) {
-        return 0;
-    }
-    
-    // Verifica che contenga solo lettere, spazi e alcuni caratteri speciali
-    for (int i = 0; nome[i]; i++) {
-        if (!isalpha(nome[i]) && nome[i] != ' ' && nome[i] != '\'' && nome[i] != '-') {
-            return 0;
-        }
-    }
-    return 1;
-}

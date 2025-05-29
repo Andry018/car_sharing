@@ -31,4 +31,8 @@ void set_nome_utente( const char* nome_completo, Utente u);
 void set_username_utente(const char* new_username, Utente u);
 void set_password_utente(const char* password, Utente u);
 
+// Funzioni per validare
+int valida_username(const char* username);
+int valida_nome_completo(const char* nome);
+
 #endif // UTENTI_H

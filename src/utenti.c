@@ -401,3 +401,32 @@ void hash_password(const char* input, char* output) {
     unsigned long hash = hash_djb2(input);
     snprintf(output, MAX_PASSWORD_LENGTH, "%lu", hash);
 }
+
+int valida_username(const char* username) {
+    if (strlen(username) < 3 || strlen(username) > 29) {
+        return 0;
+    }
+    
+    // Verifica che contenga solo caratteri alfanumerici e underscore
+    for (int i = 0; username[i]; i++) {
+        if (!isalnum(username[i]) && username[i] != '_') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int valida_nome_completo(const char* nome) {
+    if (strlen(nome) < 3 || strlen(nome) > 49) {
+        return 0;
+    }
+    
+    // Verifica che contenga solo lettere, spazi e alcuni caratteri speciali
+    for (int i = 0; nome[i]; i++) {
+        if (!isalpha(nome[i]) && nome[i] != ' ' && nome[i] != '\'' && nome[i] != '-') {
+            return 0;
+        }
+    }
+    return 1;
+}
+

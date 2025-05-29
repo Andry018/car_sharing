@@ -25,8 +25,7 @@ void gestione_prenotazioni_admin(void);
 void mostra_menu_iniziale();
 void mostra_logo();
 void mostra_menu_login();
-int valida_username(const char* username);
-int valida_nome_completo(const char* nome);
+
 
 
 #endif // MENU_H
