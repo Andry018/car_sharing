@@ -180,7 +180,7 @@ int main() {
         } else {
             pulisci_schermo();
             
-            if (get_isAdmin_utente(current_username)) {
+            if (get_isAdmin_utente(cerca_utente(current_username))) {
                 mostra_menu_admin(cerca_utente(current_username));
             } else {
                 mostra_menu_cliente(cerca_utente(current_username));
@@ -190,7 +190,7 @@ int main() {
             scanf("%d", &scelta);
             svuota_buffer();
 
-            if (get_isAdmin_utente(current_username)) {
+            if (get_isAdmin_utente(cerca_utente(current_username))) {
                 // Menu Admin
                 switch (scelta) {
                     case 1:
@@ -203,7 +203,7 @@ int main() {
                         break;
                     case 3:
                         pulisci_schermo();
-                        visualizza_prenotazioni();
+                        visualizza_prenotazioni(cerca_utente(current_username));
                         break;
                     case 4:
                         pulisci_schermo();
@@ -263,7 +263,7 @@ int main() {
                         break;
                     case 2:
                         pulisci_schermo();
-                        visualizza_prenotazioni();
+                        visualizza_prenotazioni(cerca_utente(current_username));
                         break;
                     case 3:
                         pulisci_schermo();

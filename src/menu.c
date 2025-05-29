@@ -196,7 +196,7 @@ void prenota_auto(Utente current_user) {
                 printf("\nInserisci i dati della prenotazione:\n");
                 
                 // Gestione ID utente in base ai permessi
-                if (get_isAdmin_utente(get_username_utente(current_user)) == 0) {
+                if (get_isAdmin_utente(current_user) == 0) {
                     do {
                         printf("ID Utente (0 per usare il tuo ID): ");
                         scanf("%d", &id_utente);
@@ -218,7 +218,7 @@ void prenota_auto(Utente current_user) {
                         }
                     } while (1);
                 } else {
-                    id_utente = get_id_utente(get_username_utente(current_user));
+                    id_utente = get_id_utente(current_user);
                     printf("ID Utente: %d (il tuo ID)\n", id_utente);
                 }
 
@@ -438,7 +438,7 @@ void prenota_auto(Utente current_user) {
                 Prenotazione prenotazione = cerca_prenotazione(coda_prenotazioni, id_prenotazione);
                 if (prenotazione != NULL) {
                     // Verifica che l'utente possa cancellare questa prenotazione
-                    if (get_isAdmin_utente(get_username_utente(current_user)) || get_id_utente_prenotazione(prenotazione) == get_id_utente(get_username_utente(current_user))) {
+                    if (get_isAdmin_utente(current_user) || get_id_utente_prenotazione(prenotazione) == get_id_utente(current_user)) {
                         set_stato_prenotazione(3, prenotazione);
                         salva_prenotazioni_su_file(coda_prenotazioni);
                         set_color(10); // Verde
@@ -458,7 +458,7 @@ void prenota_auto(Utente current_user) {
             }
             case 4: {
                 // Solo gli admin possono modificare lo stato delle prenotazioni
-                if (!get_isAdmin_utente(get_username_utente(current_user))) {
+                if (!get_isAdmin_utente(current_user)) {
                     set_color(12); // Rosso
                     printf("\nSolo gli amministratori possono modificare lo stato delle prenotazioni!\n");
                     set_color(7); // Bianco
@@ -523,10 +523,9 @@ void prenota_auto(Utente current_user) {
     } while(scelta != 0);
 }
 
-void visualizza_prenotazioni() {
+void visualizza_prenotazioni(Utente current_user) {
     pulisci_schermo();
     stampa_bordo_superiore();
-    
     set_color(13); // Magenta
     printf("       ELENCO PRENOTAZIONI\n");
     
@@ -541,14 +540,17 @@ void visualizza_prenotazioni() {
     stampa_separatore();
     
     CodaPrenotazioni coda = get_coda_prenotazioni();
+    int id_utente = get_id_utente(current_user);
+    int is_admin = get_isAdmin_utente(current_user);
+
     if (coda == NULL || get_dimensione_coda(coda) == 0) {
         set_color(12); // Rosso
         printf("  Nessuna prenotazione presente\n");
         set_color(7); // Bianco
-    } else {
+    } else if (is_admin) {
         for (int i = 0; i < get_dimensione_coda(coda); i++) {
             Prenotazione p = get_prenotazione_in_coda(coda, i);
-            
+        
             // Intestazione prenotazione
             set_color(14); // Giallo
             printf("  Prenotazione #%d\n", get_id_prenotazione(p));
@@ -566,7 +568,7 @@ void visualizza_prenotazioni() {
                 if (id == get_id_veicolo_prenotazione(p)) {
                     int tipo = get_tipo_veicolo(v);
                     double costo = calcola_tariffa_prenotazione(tipo, get_giorno_ora_inizio(p), get_giorno_ora_fine(p));
-                    int completate_prima= conta_prenotazioni_completate_prima_di(coda,get_id_utente_prenotazione(p), get_id_prenotazione(p));
+                    int completate_prima = conta_prenotazioni_completate_prima_di(coda,get_id_utente_prenotazione(p), get_id_prenotazione(p));
                     costo = applica_sconto_fedelta(costo, completate_prima);
                     printf("Costo stimato: %.2f euro\n", costo);
                     break;
@@ -577,8 +579,51 @@ void visualizza_prenotazioni() {
             if (i < get_dimensione_coda(coda) - 1) {
                 stampa_separatore();
             }
-        }
-    }
+            }
+        } else {
+
+            int trovate = 0;
+            for(int i = 0; i < get_dimensione_coda(coda); i++) {
+                Prenotazione p = get_prenotazione_in_coda(coda, i);
+                if(get_id_utente_prenotazione(p)!= id_utente) continue;
+                trovate++;
+                                   
+                    // Intestazione prenotazione
+                    set_color(14); // Giallo
+                    printf("  Prenotazione #%d\n", get_id_prenotazione(p));
+                    set_color(7); // Bianco
+                    
+                    // Dettagli prenotazione
+                    stampa_prenotazione(p);
+                    
+                    // Trova il veicolo per mostrare il costo
+                    list temp = get_lista_veicoli();
+                    while(temp != NULL) {
+                        Veicolo v = get_veicolo_senza_rimuovere(temp);
+                        if (!v) continue;
+                        int id = get_id_veicolo(v);
+                        if (id == get_id_veicolo_prenotazione(p)) {
+                            int tipo = get_tipo_veicolo(v);
+                            double costo = calcola_tariffa_prenotazione(tipo, get_giorno_ora_inizio(p), get_giorno_ora_fine(p));
+                            int completate_prima = conta_prenotazioni_completate_prima_di(coda,get_id_utente_prenotazione(p), get_id_prenotazione(p));
+                            costo = applica_sconto_fedelta(costo, completate_prima);
+                            printf("Costo stimato: %.2f euro\n", costo);
+                            break;
+                        }
+                        temp = get_next_node(temp);
+                    }
+                    
+                    if (i < get_dimensione_coda(coda) - 1) {
+                        stampa_separatore();
+                    }
+                }
+                if(trovate == 0) {
+                    set_color(12); // Rosso
+                    printf("  Nessuna prenotazione trovata per l'utente corrente\n");
+                    set_color(7); // Bianco
+            }
+        }   
+    
     
     stampa_bordo_inferiore();
     printf("Premi INVIO per continuare...");
@@ -745,7 +790,7 @@ void visualizza_tariffe(Utente current_user) {
 
     // Mostra il numero di noleggi completati dell'utente corrente
     if (current_user != NULL) {
-        int noleggi_completati = conta_prenotazioni_completate(get_coda_prenotazioni(), get_id_utente(get_username_utente(current_user)));
+        int noleggi_completati = conta_prenotazioni_completate(get_coda_prenotazioni(), get_id_utente(current_user));
         printf("\nNoleggi completati: %d\n", noleggi_completati);
     }
 

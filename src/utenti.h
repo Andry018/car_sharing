@@ -19,11 +19,11 @@ int verifica_password(const char* password, Utente u);
 void hash_password(const char* input, char* output);
 
 // Getter functions
-int get_id_utente(const char* username);
+int get_id_utente(Utente u);
 const char* get_nome_utente(Utente u);
 const char* get_username_utente(Utente u);
 const char* get_password_utente(const char* username);
-int get_isAdmin_utente(const char* username);
+int get_isAdmin_utente(Utente u);
 
 // Setter functions
 void set_id_utente(int id, Utente u);

@@ -14,6 +14,7 @@ struct Utente {
 
 
 static Utente tabellaUtenti[TABLE_SIZE];
+static int id_counter = 0;
 
 int carica_ultimo_id_utente() {
     FILE* file = fopen("data/utenti.txt", "r");
@@ -66,6 +67,7 @@ void salva_utenti_file() {
 }
 
 int carica_utenti_file() {
+    int max_id = carica_ultimo_id_utente();
     printf("Tentativo di apertura del file utenti.txt...\n");
     FILE* file = fopen("data/utenti.txt", "r");
     if (file == NULL) {
@@ -185,6 +187,11 @@ int carica_utenti_file() {
             printf("Errore nell'allocazione della memoria per l'utente %s\n", username);
             success = 0;
         }
+        if(count > 0) {
+            id_counter = max_id + 1;
+        } else {
+            id_counter = 1;  // Inizializza il contatore se non ci sono utenti
+        }
     }
     
     fclose(file);
@@ -221,15 +228,6 @@ int inserisci_utente(const char* username, const char* nome_completo) {
         tabellaUtenti[idx] = malloc(sizeof(struct Utente));
         if (tabellaUtenti[idx] == NULL) {
             return 0;
-        }
-    }
-    
-    static int id_counter = 0;
-    if (id_counter == 0) {
-        id_counter = carica_ultimo_id_utente();
-        // Se non ci sono altri utenti oltre all'admin, parti da 1
-        if (id_counter == 0) {
-            id_counter = 1;
         }
     }
     
@@ -281,13 +279,11 @@ void stampa_utenti() {
     }
 }
 
-int get_id_utente(const char* username) {
-   Utente utente = cerca_utente(username);
-    if (utente != NULL) {
-        return utente->id;
+int get_id_utente(Utente u) {
+    if (u == NULL) {
+        return -1;  // Utente non valido
     }
-    free(utente);
-    return -1;  // Utente non trovato
+    return u->id;  // Restituisce l'ID dell'utente
 }
 
 const char* get_nome_utente(Utente u) {
@@ -313,13 +309,11 @@ const char* get_password_utente(const char* username) {
     return NULL;  // Utente non trovato
 }   
 
-int get_isAdmin_utente(const char* username) {
-   Utente utente = cerca_utente(username);
-    if (utente != NULL) {
-        return utente->isAdmin;
-    } 
-    free(utente);
-    return -1;  // Utente non trovato
+int get_isAdmin_utente(Utente u) {
+    if (u == NULL) {
+        return -1;  // Utente non valido
+    }
+    return u->isAdmin;  // Restituisce lo stato di amministratore dell'utente
 }   
 
 void set_id_utente(int id, Utente u) {

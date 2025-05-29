@@ -15,7 +15,7 @@
 void visualizza_tariffe(Utente current_user);
 void gestione_veicoli(void);
 void prenota_auto(Utente current_user);
-void visualizza_prenotazioni(void);
+void visualizza_prenotazioni(Utente current_user);
 void restituisci_auto(void);
 void visualizza_disponibilita(void);
 
