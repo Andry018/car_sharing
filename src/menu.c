@@ -196,14 +196,11 @@ void prenota_auto(Utente current_user) {
                 printf("\nInserisci i dati della prenotazione:\n");
                 
                 // Gestione ID utente in base ai permessi
-                if (get_isAdmin_utente(current_user) == 0) {
+                if (get_isAdmin_utente(current_user) == 1) {
                     do {
                         printf("ID Utente (0 per usare il tuo ID): ");
                         scanf("%d", &id_utente);
-                        if (id_utente == 0) {
-                            set_id_utente(id_utente, current_user);
-                            break;
-                        }
+                       
                         
                         // Verifica che l'utente esista
                         Utente utente_prenotazione = cerca_utente_per_id(id_utente);
@@ -222,101 +219,236 @@ void prenota_auto(Utente current_user) {
                     printf("ID Utente: %d (il tuo ID)\n", id_utente);
                 }
 
-                printf("ID Veicolo: ");
-                scanf("%d", &id_veicolo);
-                
-                // Trova il veicolo per mostrare il costo orario
-                temp = get_lista_veicoli();
+                bool id_valido = false;
                 Veicolo veicolo_selezionato = NULL;
-                while(temp != NULL) {
-                    Veicolo v = get_veicolo_senza_rimuovere(temp);
-                    if (!v) continue;
-                    int id = get_id_veicolo(v);
-                    if (id == id_veicolo) {
-                        veicolo_selezionato = v;
+                do {
+                    pulisci_schermo();
+                    stampa_bordo_superiore();
+                    
+                    set_color(13); // Magenta
+                    printf("         NUOVA PRENOTAZIONE\n");
+                    
+                    stampa_separatore();
+                    
+                    // Mostra la data di sistema corrente
+                    set_color(14); // Giallo
+                    printf("         DATA DI SISTEMA\n");
+                    set_color(7); // Bianco
+                    stampa_data_sistema();
+                    
+                    stampa_separatore();
+                    
+                    // Visualizza veicoli disponibili con tariffe
+                    set_color(10); // Verde
+                    printf("     VEICOLI DISPONIBILI\n");
+                    set_color(7); // Bianco
+                    temp = get_lista_veicoli();
+                    bool trovato = false;
+                    while(temp != NULL) {
+                        Veicolo v = get_veicolo_senza_rimuovere(temp);
+                        if (!v) continue;
+                        if (get_disponibilita_veicolo(v) == 1) {  // Mostra solo i veicoli disponibili
+                            stampa_veicolo(v);
+                            int tipo = get_tipo_veicolo(v);
+                            printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
+                            trovato = true;
+                        }
+                        temp = get_next_node(temp);
+                    }
+                    
+                    if (!trovato) {
+                        set_color(12); // Rosso
+                        printf("Nessun veicolo disponibile al momento.\n");
+                        set_color(7); // Bianco
+                        printf("Premi INVIO per continuare...");
+                        svuota_buffer();
                         break;
                     }
-                    temp = get_next_node(temp);
-                }
-                
-                if(veicolo_selezionato == NULL) {
-                    set_color(12); // Rosso
-                    printf("Errore: Veicolo non trovato!\n");
-                    set_color(7); // Bianco
-                    printf("Premi INVIO per continuare...");
-                    svuota_buffer();
-                    break;
-                }
+                    
+                    stampa_separatore();
+                    
+                    printf("ID Veicolo: ");
+                    scanf("%d", &id_veicolo);
+                    
+                    // Trova il veicolo per mostrare il costo
+                    temp = get_lista_veicoli();
+                    veicolo_selezionato = NULL;  // Reset della variabile
+                    while(temp != NULL) {
+                        Veicolo v = get_veicolo_senza_rimuovere(temp);
+                        if (!v) continue;
+                        int id = get_id_veicolo(v);
+                        if (id == id_veicolo) {
+                            veicolo_selezionato = v;
+                            break;
+                        }
+                        temp = get_next_node(temp);
+                    }
+                    
+                    if(veicolo_selezionato == NULL) {
+                        svuota_buffer();
+                        set_color(12); // Rosso
+                        printf("Errore: Veicolo non trovato!\n");
+                        set_color(7); // Bianco
+                        printf("Premi INVIO per riprovare...");
+                        svuota_buffer();
+                    } else {
+                        id_valido = true;
+                    }
+                } while (!id_valido);
                 
                 int id = get_id_veicolo(veicolo_selezionato);
                 int tipo = get_tipo_veicolo(veicolo_selezionato);
                 
-                printf("Giorno inizio (0-6, Lun-Dom): ");
-                scanf("%d", &giorno_inizio);
-
-                if(giorno_inizio < 0 || giorno_inizio > 6) {
-                    set_color(12); // Rosso
-                    printf("Errore: Giorno non valido!\n");
-                    set_color(7); // Bianco
-                    printf("Premi INVIO per continuare...");
-                    svuota_buffer();
-                    break;
-                }
-
-                printf("Ora inizio (0-23): ");
-                scanf("%d", &ora_inizio);
-
-                if(ora_inizio < 0 || ora_inizio > 23) {
-                    set_color(12); // Rosso
-                    printf("Errore: Ora non valida!\n");
-                    set_color(7); // Bianco
-                    printf("Premi INVIO per continuare...");
-                    svuota_buffer();
-                    break;
-                }
-
-                printf("Giorno fine (0-6, Lun-Dom): ");
-                scanf("%d", &giorno_fine);
-
-                if(giorno_fine < 0 || giorno_fine > 6) {
-                    set_color(12); // Rosso
-                    printf("Errore: Giorno non valido!\n");
-                    set_color(7); // Bianco
-                    printf("Premi INVIO per continuare...");
-                    svuota_buffer();
-                    break;
-                }
-
-                printf("Ora fine (0-23): ");
-                scanf("%d", &ora_fine);
-
-                if(ora_fine < 0 || ora_fine > 23) {
-                    set_color(12); // Rosso
-                    printf("Errore: Ora non valida!\n");
-                    set_color(7); // Bianco
-                    printf("Premi INVIO per continuare...");
-                    svuota_buffer();
-                    break;
-                }
-
-                // Converti le date in timestamp
-                int giorno_ora_inizio = giorno_inizio * 24 + ora_inizio;
-                int giorno_ora_fine = giorno_fine * 24 + ora_fine;
+                stampa_bordo_inferiore();
                 
-                // Valida le date
-                int validazione = valida_data_prenotazione(giorno_ora_inizio, giorno_ora_fine);
-                if (validazione != 0) {
-                    set_color(12); // Rosso
-                    if (validazione == -1) {
-                        printf("\nErrore: Non puoi prenotare nel passato!\n");
-                    } else {
-                        printf("\nErrore: La data di fine deve essere successiva alla data di inizio!\n");
-                    }
+                // Input giorno e ora inizio
+                bool data_inizio_valida = false;
+                int giorno_ora_inizio = 0;  // Dichiarata fuori dal loop
+                do {
+                    pulisci_schermo();
+                    stampa_bordo_superiore();
+                    
+                    set_color(13); // Magenta
+                    printf("         NUOVA PRENOTAZIONE\n");
+                    
+                    stampa_separatore();
+                    
+                    // Mostra la data di sistema corrente
+                    set_color(14); // Giallo
+                    printf("         DATA DI SISTEMA\n");
                     set_color(7); // Bianco
-                    printf("Premi INVIO per continuare...");
-                    svuota_buffer();
-                    break;
-                }
+                    stampa_data_sistema();
+                    
+                    stampa_separatore();
+                    
+                    // Mostra il veicolo selezionato
+                    set_color(10); // Verde
+                    printf("     VEICOLO SELEZIONATO\n");
+                    set_color(7); // Bianco
+                    stampa_veicolo(veicolo_selezionato);
+                    printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
+                    
+                    stampa_separatore();
+                    
+                    printf("Giorno inizio (0-6, Lun-Dom): ");
+                    scanf("%d", &giorno_inizio);
+                    
+                    if(giorno_inizio < 0 || giorno_inizio > 6) {
+                        svuota_buffer();
+                        set_color(12); // Rosso
+                        printf("Errore: Giorno non valido!\n");
+                        set_color(7); // Bianco
+                        printf("Premi INVIO per riprovare...");
+                        svuota_buffer();
+                        continue;
+                    }
+                    
+                    printf("Ora inizio (0-23): ");
+                    scanf("%d", &ora_inizio);
+                    
+                    if(ora_inizio < 0 || ora_inizio > 23) {
+                        svuota_buffer();
+                        set_color(12); // Rosso
+                        printf("Errore: Ora non valida!\n");
+                        set_color(7); // Bianco
+                        printf("Premi INVIO per riprovare...");
+                        svuota_buffer();
+                        continue;
+                    }
+                    
+                    // Converti le date in timestamp
+                    giorno_ora_inizio = giorno_inizio * 24 + ora_inizio;
+                    
+                    data_inizio_valida = true;
+                } while (!data_inizio_valida);
+                
+                // Input giorno e ora fine
+                bool data_fine_valida = false;
+                int giorno_ora_fine = 0;  // Dichiarata fuori dal loop
+                do {
+                    pulisci_schermo();
+                    stampa_bordo_superiore();
+                    
+                    set_color(13); // Magenta
+                    printf("         NUOVA PRENOTAZIONE\n");
+                    
+                    stampa_separatore();
+                    
+                    // Mostra la data di sistema corrente
+                    set_color(14); // Giallo
+                    printf("         DATA DI SISTEMA\n");
+                    set_color(7); // Bianco
+                    stampa_data_sistema();
+                    
+                    stampa_separatore();
+                    
+                    // Mostra il veicolo selezionato
+                    set_color(10); // Verde
+                    printf("     VEICOLO SELEZIONATO\n");
+                    set_color(7); // Bianco
+                    stampa_veicolo(veicolo_selezionato);
+                    printf("Tariffa oraria: %.2f euro\n", get_tariffa_oraria(tipo));
+                    
+                    stampa_separatore();
+                    
+                    // Mostra data inizio già inserita
+                    set_color(14); // Giallo
+                    printf("     DATA INIZIO INSERITA\n");
+                    set_color(7); // Bianco
+                    printf("Giorno: %s\n", get_nome_giorno(giorno_inizio));
+                    printf("Ora: %02d:00\n", ora_inizio);
+                    
+                    stampa_separatore();
+                    
+                    printf("Giorno fine (0-6, Lun-Dom): ");
+                    scanf("%d", &giorno_fine);
+                    
+                    if(giorno_fine < 0 || giorno_fine > 6) {
+                        svuota_buffer();
+                        set_color(12); // Rosso
+                        printf("Errore: Giorno non valido!\n");
+                        set_color(7); // Bianco
+                        printf("Premi INVIO per riprovare...");
+                        svuota_buffer();
+                        continue;
+                    }
+                    
+                    printf("Ora fine (0-23): ");
+                    scanf("%d", &ora_fine);
+                    
+                    if(ora_fine < 0 || ora_fine > 23) {
+                        svuota_buffer();
+                        set_color(12); // Rosso
+                        printf("Errore: Ora non valida!\n");
+                        set_color(7); // Bianco
+                        printf("Premi INVIO per riprovare...");
+                        svuota_buffer();
+                        continue;
+                    }
+                    
+                    // Converti le date in timestamp
+                    giorno_ora_fine = giorno_fine * 24 + ora_fine;
+                    
+                    // Valida le date
+                    int validazione = valida_data_prenotazione(giorno_ora_inizio, giorno_ora_fine);
+                    if (validazione != 0) {
+                        svuota_buffer();
+                        set_color(12); // Rosso
+                        if (validazione == -1) {
+                            printf("\nErrore: Non puoi prenotare nel passato!\n");
+                        } else {
+                            printf("\nErrore: La data di fine deve essere successiva alla data di inizio!\n");
+                        }
+                        set_color(7); // Bianco
+                        printf("Premi INVIO per riprovare...");
+                        svuota_buffer();
+                        continue;
+                    }
+                    
+                    data_fine_valida = true;
+                } while (!data_fine_valida);
+                
+                stampa_bordo_inferiore();
                 
                 // Verifica sovrapposizioni
                 if (verifica_sovrapposizioni(coda_prenotazioni, id_veicolo, giorno_ora_inizio, giorno_ora_fine) == 1) {

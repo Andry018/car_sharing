@@ -14,7 +14,7 @@ struct Utente {
 
 
 static Utente tabellaUtenti[TABLE_SIZE];
-static int id_counter = 0;
+static int id_counter = 1;
 
 int carica_ultimo_id_utente() {
     FILE* file = fopen("data/utenti.txt", "r");
