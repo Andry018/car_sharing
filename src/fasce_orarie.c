@@ -52,7 +52,7 @@ CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotaz
         int id_v_prenotazione = get_id_veicolo_prenotazione(p);
         int stato_prenotazione = get_stato_prenotazione(p);
         // Aggiorna solo se la prenotazione è per questo veicolo e non è cancellata
-        if (id_v_prenotazione == calendario->id_veicolo && stato_prenotazione != 0) {
+        if (id_v_prenotazione == calendario->id_veicolo && stato_prenotazione != 0 && stato_prenotazione != 2 && stato_prenotazione != 3) {
             int giorno_inizio = estrai_giorno(get_giorno_ora_inizio(p));
             printf("Giorno inizio: %d\n", giorno_inizio);
             int ora_inizio = estrai_ora(get_giorno_ora_inizio(p));

@@ -14,4 +14,5 @@ void salvataggio(void);
 void stampa_separatore(void);
 void stampa_bordo_superiore(void);
 void stampa_bordo_inferiore(void);
+void stampa_data_sistema(void);
 #endif

@@ -454,15 +454,6 @@ void rimuovi_prenotazioni_scadute( CodaPrenotazioni coda) {
     }
 }
 
-void stampa_data_sistema() {
-    DataSistema data = get_data_sistema();
-    const char* giorni[] = {"Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato", "Domenica"};
-    
-    printf("  %s, ore %02d:00\n", 
-           giorni[get_giorno_sistema(data)], 
-           get_ora_sistema(data));
-}
-
 int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine) {
    
     int timestamp_corrente = converti_in_timestamp(get_giorno_corrente(), get_ora_corrente());

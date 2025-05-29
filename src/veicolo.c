@@ -107,26 +107,56 @@ list aggiungi_veicolo(list l) {
         return l;
     }
 
-    printf("Inserisci il tipo di veicolo (0: Utilitaria, 1: SUV, 2: Berlina, 3: Sportiva): ");
+    pulisci_schermo();
+    stampa_bordo_superiore();
+    
+    set_color(13); // Magenta
+    printf("         AGGIUNGI VEICOLO\n");
+    
+    stampa_separatore();
+    
+    // Mostra la data di sistema corrente
+    set_color(14); // Giallo
+    printf("         DATA DI SISTEMA\n");
+    set_color(7); // Bianco
+    stampa_data_sistema();
+    
+    stampa_separatore();
+    
+    // Sezione Input
+    set_color(10); // Verde
+    printf("     INSERIMENTO DATI VEICOLO\n");
+    set_color(7); // Bianco
+    
+    // Input tipo veicolo
+    printf("Tipo veicolo:\n");
+    printf("0. Utilitaria\n");
+    printf("1. SUV\n");
+    printf("2. Sportiva\n");
+    printf("3. Moto\n");
+    printf("Scelta: ");
     scanf("%d", &v->tipo);
     getchar(); // Consuma il newline
 
-    printf("Inserisci il modello: ");
+    // Input modello
+    printf("\nModello: ");
     fgets(v->modello, sizeof(v->modello), stdin);
     v->modello[strcspn(v->modello, "\n")] = 0;
 
-    printf("Inserisci la targa: ");
+    // Input targa
+    printf("Targa: ");
     fgets(v->targa, sizeof(v->targa), stdin);
     v->targa[strcspn(v->targa, "\n")] = 0;
 
-    printf("Inserisci la posizione: ");
+    // Input posizione
+    printf("Posizione: ");
     fgets(v->posizione, sizeof(v->posizione), stdin);
     v->posizione[strcspn(v->posizione, "\n")] = 0;
 
     v->id = carica_ultimo_id() + 1;
     v->disponibilita = 1;
 
-    list newNode = (list)malloc(sizeof( struct node));
+    list newNode = (list)malloc(sizeof(struct node));
     if (newNode == NULL) {
         free(v);
         return l;
@@ -335,7 +365,7 @@ void modifica_veicolo(list l, int id) {
     }
 
     printf("Modifica veicolo %d\n", id);
-    printf("Nuovo tipo (0: Utilitaria, 1: SUV, 2: Berlina, 3: Sportiva): ");
+    printf("Nuovo tipo (0: Utilitaria, 1: SUV, 2: Sportiva, 3: Moto): ");
     int tipo;
     scanf("%d", &tipo);
     getchar();

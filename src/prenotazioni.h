@@ -75,7 +75,6 @@ void distruggi_coda(CodaPrenotazioni coda);
 // Nuove funzioni per la gestione delle prenotazioni con data di sistema
 void aggiorna_priorita_prenotazioni(CodaPrenotazioni coda);
 void rimuovi_prenotazioni_scadute(CodaPrenotazioni coda);
-void stampa_data_sistema();
 
 // Nuove funzioni di validazione
 int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine);

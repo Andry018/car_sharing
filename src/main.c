@@ -53,7 +53,9 @@ int main() {
         if (stato == 0) {
             mostra_menu_login();
             printf("Scelta: ");
-            scanf("%d", &scelta);
+            if(scanf("%d", &scelta) != 1) {
+                scelta = -999;
+            }
             svuota_buffer();
             
             switch (scelta) {
@@ -217,7 +219,9 @@ int main() {
             }
             
             printf("Scelta: ");
-            scanf("%d", &scelta);
+            if(scanf("%d", &scelta) != 1) {
+                scelta = -999;
+            }
             svuota_buffer();
 
             if (get_isAdmin_utente(cerca_utente(current_username))) {

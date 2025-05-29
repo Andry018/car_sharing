@@ -1,8 +1,12 @@
 #include "f_utili.h"
+#include "data_sistema.h"
 #include <stdio.h>
 #include "veicolo.h"
 #include "prenotazioni.h"
 #include "utenti.h"
+#include <stdlib.h>
+#include <string.h>
+#include <windows.h>
 
 
 
@@ -79,4 +83,12 @@ void stampa_separatore() {
     set_color(11);  // Ciano
     printf("-------------------------------------\n");
     set_color(7);   // Bianco
+}
+
+void stampa_data_sistema() {
+    DataSistema data = get_data_sistema();
+    int giorno = get_giorno_sistema(data);
+    int ora = get_ora_sistema(data);
+    printf("Data: %s\n", get_nome_giorno(giorno));
+    printf("Ora: %02d:00\n", ora);
 }
