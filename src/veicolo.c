@@ -403,6 +403,7 @@ void stampa_lista_veicoli(list l)
     while (temp != NULL)
     {
         stampa_veicolo(temp->v);
+        stampa_separatore();
         temp = temp->next;
     }
 }

@@ -438,6 +438,7 @@ int rimuovi_utente(int id) {
             // Elimina tutte le prenotazioni dell'utente
             CodaPrenotazioni coda = get_coda_prenotazioni();
             rimuovi_prenotazioni_utente(coda, id);
+            salva_prenotazioni_su_file(coda); 
 
             free(tabellaUtenti[i]);
             tabellaUtenti[i] = NULL;

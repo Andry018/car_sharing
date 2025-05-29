@@ -109,6 +109,7 @@ void gestione_veicoli() {
                 svuota_buffer();
                 break;
                 free(nuova_lista);
+                svuota_buffer();
             }
             case 2: {
                 pulisci_schermo();
@@ -223,6 +224,7 @@ void gestione_veicoli() {
                 break;
                 free(temp);
                 free(nuova_lista);
+                svuota_buffer();
             }
             case 3: {
                 pulisci_schermo();
@@ -260,16 +262,19 @@ void gestione_veicoli() {
                 svuota_buffer();
                 free(temp);
                 break;
+                svuota_buffer();
             }
-            case 0:
+            case 0:{
+                printf("\nTornando al menu principale...\n");
                 break;
+            }
             default:
                 set_color(12); // Rosso
                 printf("\nScelta non valida. Premi INVIO per riprovare...");
                 set_color(7); // Bianco
                 svuota_buffer();
         }
-        svuota_buffer();
+        //svuota_buffer();
         
     } while(scelta != 0);
 }
@@ -310,7 +315,7 @@ void prenota_auto(Utente current_user) {
         printf("1. Nuova prenotazione\n");
         printf("2. Visualizza prenotazioni\n");
         printf("3. Cancella prenotazione\n");
-        printf("4. Modifica stato prenotazione\n");
+        //printf("4. Modifica stato prenotazione\n");
         
         stampa_separatore();
         
@@ -318,8 +323,8 @@ void prenota_auto(Utente current_user) {
         set_color(14); // Giallo
         printf("          INFORMAZIONI\n");
         set_color(7); // Bianco
-        printf("5. Visualizza tariffe\n");
-        printf("6. Avanza tempo sistema\n");
+        printf("4. Visualizza tariffe\n");
+        printf("5. Avanza tempo sistema\n");
         
         stampa_separatore();
         
@@ -821,81 +826,11 @@ void prenota_auto(Utente current_user) {
                 svuota_buffer();
                 break;
             }
-            case 4: {
-                pulisci_schermo();
-                stampa_bordo_superiore();
-                
-                set_color(13); // Magenta
-                printf("    MODIFICA STATO PRENOTAZIONE\n");
-                
-                stampa_separatore();
-                
-                // Mostra la data di sistema corrente
-                set_color(14); // Giallo
-                printf("         DATA DI SISTEMA\n");
-                set_color(7); // Bianco
-                stampa_data_sistema();
-                
-                stampa_separatore();
-                
-                // Visualizza tutte le prenotazioni
-                set_color(10); // Verde
-                printf("     ELENCO PRENOTAZIONI\n");
-                set_color(7); // Bianco
-                
-                if (coda_prenotazioni == NULL || get_dimensione_coda(coda_prenotazioni) == 0) {
-                    set_color(12); // Rosso
-                    printf("  Nessuna prenotazione presente\n");
-                    set_color(7); // Bianco
-                } else {
-                    for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
-                        Prenotazione p = get_prenotazione_in_coda(coda_prenotazioni, i);
-                        if (!p) continue;
-                        
-                        set_color(14); // Giallo
-                        printf("  Prenotazione #%d\n", get_id_prenotazione(p));
-                        set_color(7); // Bianco
-                        
-                        stampa_prenotazione(p);
-                        
-                        if (i < get_dimensione_coda(coda_prenotazioni) - 1) {
-                            stampa_separatore();
-                        }
-                    }
-                }
-                
-                stampa_separatore();
-                
-                // Sezione Input
-                set_color(14); // Giallo
-                printf("     MODIFICA STATO\n");
-                set_color(7); // Bianco
-                
-                int id_prenotazione, nuovo_stato;
-                printf("Inserisci l'ID della prenotazione da modificare: ");
-                scanf("%d", &id_prenotazione);
-                printf("Nuovo stato (0=In attesa, 1=Confermata, 2=Completata, 3=Cancellata): ");
-                scanf("%d", &nuovo_stato);
-                svuota_buffer();
-                
-                if (modifica_stato_prenotazione(coda_prenotazioni, id_prenotazione, nuovo_stato) == 0) {
-                    salva_prenotazioni_su_file(coda_prenotazioni);
-                    set_color(10); // Verde
-                    printf("\nStato della prenotazione modificato con successo!\n");
-                } else {
-                    set_color(12); // Rosso
-                    printf("\nErrore: prenotazione non trovata.\n");
-                }
-                set_color(7); // Bianco
-                stampa_bordo_inferiore();
-                printf("Premi INVIO per continuare...");
-                svuota_buffer();
-                break;
-            }
-            case 5:
+            
+            case 4:
                 visualizza_tariffe(current_user);
                 break;
-            case 6: {
+            case 5: {
                 pulisci_schermo();
                 int ore;
                 printf("Inserisci il numero di ore da avanzare: ");
@@ -1501,19 +1436,26 @@ void gestione_prenotazioni_admin() {
                 break;
             }
             case 2: {
+                // Mostra la lista degli utenti
+                pulisci_schermo();
+                stampa_bordo_superiore();
+                set_color(13); // Magenta
+                printf("      ELENCO UTENTI\n");
+                stampa_separatore();
+                stampa_utenti(); // Funzione già esistente
+                stampa_bordo_inferiore();
+
                 int id_utente;
                 printf("Inserisci l'ID dell'utente: ");
                 scanf("%d", &id_utente);
                 svuota_buffer();
-                
+
                 pulisci_schermo();
                 stampa_bordo_superiore();
-                
                 set_color(13); // Magenta
                 printf("  PRENOTAZIONI UTENTE #%d\n", id_utente);
-                
                 stampa_separatore();
-                
+
                 int trovate = 0;
                 for (int i = 0; i < get_dimensione_coda(coda_prenotazioni); i++) {
                     Prenotazione p = get_prenotazione_in_coda(coda_prenotazioni, i);
@@ -1563,6 +1505,15 @@ void gestione_prenotazioni_admin() {
                 break;
             }
             case 3: {
+                // Mostra la lista dei veicoli
+                pulisci_schermo();
+                stampa_bordo_superiore();
+                set_color(13); // Magenta
+                printf("      ELENCO VEICOLI\n");
+                stampa_separatore();
+                stampa_lista_veicoli(get_lista_veicoli()); 
+                stampa_bordo_inferiore();
+
                 int id_veicolo;
                 printf("Inserisci l'ID del veicolo: ");
                 scanf("%d", &id_veicolo);
