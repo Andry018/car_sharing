@@ -322,7 +322,7 @@ const char* get_username_utente(Utente u) {
 }   
 
 const char* get_password_utente(const char* username) {
-   Utente utente = cerca_utente(username);
+    Utente utente = cerca_utente(username);
     if (utente != NULL) {
         return utente->password;
     }
@@ -365,7 +365,6 @@ void set_username_utente(const char* new_username, Utente u) {
     }
     strcpy(u->username, new_username);  // Imposta il nuovo username
     
-   
 }
 
 void set_password_utente(const char* username, Utente u) {
@@ -381,7 +380,7 @@ void set_password_utente(const char* username, Utente u) {
     strncpy(u->password, hashed_password, sizeof(u->password) - 1);
     u->password[sizeof(u->password) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
 }
- 
+
 int verifica_password(const char* password, Utente u) {
     if (u == NULL) {
         return 0;  // Utente non valido
