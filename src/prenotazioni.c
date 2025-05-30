@@ -460,17 +460,24 @@ void aggiorna_priorita_prenotazioni( CodaPrenotazioni coda) {
     }
 }
 
-void rimuovi_prenotazioni_scadute( CodaPrenotazioni coda) {
+void rimuovi_prenotazioni_scadute(CodaPrenotazioni coda) {
     if (coda == NULL) return;
     
     
     int timestamp_corrente = converti_in_timestamp(get_giorno_corrente(), get_ora_corrente());
     
     for (int i = 0; i < coda->dimensione; i++) {
-        if (coda->heap[i].giorno_ora_fine < timestamp_corrente && 
-            coda->heap[i].stato != 2 && 
-            coda->heap[i].stato != 3) {
-            coda->heap[i].stato = 2;
+        Prenotazione p = &coda->heap[i];
+
+        if (p->giorno_ora_fine < timestamp_corrente && p->stato != 2 && p->stato != 3) {
+            p->stato = 2;
+
+            list veicoli = get_lista_veicoli();
+            Veicolo v = cerca_veicolo(veicoli, p->id_veicolo);
+            if (v != NULL) {
+                // Aggiorna la posizione del veicolo alla posizione di riconsegna
+                set_posizione_veicolo(v, p->posizione_riconsegna);
+            }
         }
     }
 }

@@ -258,6 +258,7 @@ int main() {
                         CodaPrenotazioni coda = get_coda_prenotazioni();
                         if (coda != NULL) {
                             rimuovi_prenotazioni_scadute(coda);
+                            salva_lista_veicoli();
                             aggiorna_priorita_prenotazioni(coda);
                             salva_prenotazioni_su_file(coda);
                         }
