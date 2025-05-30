@@ -201,20 +201,13 @@ void gestione_veicoli() {
                     }
                     
                     id_valido = true;
-                    free(temp2);
                 } while (!id_valido);
                 
                 list nuova_lista = rimuovi_veicolo(get_lista_veicoli(), id);
-                if (nuova_lista != NULL) {
-                    set_lista_veicoli(nuova_lista);
-                    salva_lista_veicoli();
-                    set_color(10); // Verde
-                    printf("\nVeicolo rimosso con successo!\n");
-                } else {
-                    set_color(12); // Rosso
-                    printf("\nErrore: Veicolo non trovato!\n");
-                    free(nuova_lista);
-                }
+                set_lista_veicoli(nuova_lista);
+                salva_lista_veicoli();
+                set_color(10); // Verde
+                printf("\nVeicolo rimosso con successo!\n");
                 set_color(7); // Bianco
                 stampa_bordo_inferiore();
                 printf("Premi INVIO per continuare...");
