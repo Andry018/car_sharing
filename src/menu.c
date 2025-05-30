@@ -377,9 +377,9 @@ void prenota_auto(Utente current_user) {
                         set_color(12); // Rosso
                         printf("Nessun veicolo disponibile al momento.\n");
                         set_color(7); // Bianco
-                        printf("Premi INVIO per continuare...");
+                        printf("Premi INVIO per tornare al menu...");
                         svuota_buffer();
-                        break;
+                        return;
                     }
                     
                     stampa_separatore();

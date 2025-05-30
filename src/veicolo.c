@@ -168,7 +168,8 @@ list rimuovi_veicolo(list l, int id)
 {
     if (l == NULL) return NULL;
     
-    if (l->v->id == id)
+    // Caso 1: Il veicolo da rimuovere è il primo della lista
+    if (l->v != NULL && l->v->id == id)
     {
         list temp = l->next;
         free(l->v);  // Libera la memoria del veicolo
@@ -176,10 +177,11 @@ list rimuovi_veicolo(list l, int id)
         return temp;
     }
     
+    // Caso 2: Il veicolo da rimuovere è in una posizione successiva
     list temp = l;
     while (temp->next != NULL)
     {
-        if (temp->next->v->id == id)
+        if (temp->next->v != NULL && temp->next->v->id == id)
         {
             list da_rimuovere = temp->next;
             temp->next = temp->next->next;
@@ -189,6 +191,8 @@ list rimuovi_veicolo(list l, int id)
         }
         temp = temp->next;
     }
+    
+    // Il veicolo non è stato trovato
     return l;
 }
 
