@@ -317,22 +317,22 @@ void stampa_prenotazione(Prenotazione p) {
     printf("  Stato: ");
     switch(get_stato_prenotazione(p)) {
         case 0:
-            set_color(14);  // Giallo per prenotazioni in attesa
+            set_color(LIGHT_YELLOW);  // Giallo per prenotazioni in attesa
             break;
         case 1:
-            set_color(10);  // Verde per prenotazioni confermate
+            set_color(LIGHT_GREEN);  // Verde per prenotazioni confermate
             break;
         case 2:
-            set_color(11);  // Ciano per prenotazioni completate
+            set_color(LIGHT_CYAN);  // Ciano per prenotazioni completate
             break;
         case 3:
-            set_color(12);  // Rosso per prenotazioni cancellate
+            set_color(LIGHT_RED);  // Rosso per prenotazioni cancellate
             break;
     }
     printf("%s\n", stati[get_stato_prenotazione(p)]);
     printf("Posizione riconsegna: %s\n", get_nome_posizione_veicolo(p->posizione_riconsegna));
     
-    set_color(7);  // Bianco
+    set_color(WHITE);  // Bianco
 }
 
 // Funzione per salvare la coda in un file

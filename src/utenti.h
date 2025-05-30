@@ -188,16 +188,12 @@ int get_id_utente(const char* username);
 const char* get_nome_utente(const char* username);
 
 /**
- * @brief Restituisce lo username dell'utente associato allo username passato
+ * @brief Ottiene lo username dell'utente
  * 
- * @pre username è un puntatore valido a una stringa terminata da \0
- * @post Se l'utente esiste, restituisce il suo username
- * @post Se l'utente non esiste, restituisce NULL
- * @sideeffect Nessuno
- * @param username Nome utente dell'utente da cercare
- * @return const char* Username dell'utente se trovato, NULL altrimenti
+ * @param u Puntatore all'utente
+ * @return const char* Lo username dell'utente, o NULL se l'utente non è valido
  */
-const char* get_username_utente(const char* username);
+const char* get_username_utente(Utente u);
 
 /**
  * @brief Restituisce il primo carattere della password dell'utente

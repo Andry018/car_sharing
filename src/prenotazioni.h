@@ -244,13 +244,16 @@ int aggiungi_prenotazione(CodaPrenotazioni coda, Prenotazione prenotazione);
  * 
  * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
  * @pre id_prenotazione deve essere un intero positivo
+ * @pre La coda non deve essere vuota
  * 
  * @post Se la prenotazione viene trovata, viene rimossa dalla coda e la struttura heap viene riorganizzata
  * @post Se la prenotazione non viene trovata, la coda rimane invariata
+ * @post La proprietà di heap minima viene mantenuta dopo la rimozione
  * 
- * @sideeffect Modifica la struttura della coda rimuovendo la prenotazione e riorganizzando l'heap
+ * @sideeffect Modifica l'array heap della coda
+ * @sideeffect Potenziale riorganizzazione dell'array heap tramite bubble_down
  * 
- * @return CodaPrenotazioni La coda modificata dopo la rimozione della prenotazione
+ * @return CodaPrenotazioni Puntatore alla coda modificata
  */
 CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda);
 
@@ -258,8 +261,7 @@ CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda
  * @brief Cerca una prenotazione nella coda per ID
  * 
  * La funzione cerca una prenotazione specifica nella coda delle prenotazioni
- * utilizzando il suo ID. La ricerca viene effettuata linearmente su tutti gli
- * elementi della coda.
+ * utilizzando il suo ID. La ricerca viene effettuata linearmente su tutto l'array heap.
  * 
  * @param coda Puntatore alla coda delle prenotazioni
  * @param id_prenotazione ID della prenotazione da cercare
@@ -267,120 +269,117 @@ CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda
  * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
  * @pre id_prenotazione deve essere un intero positivo
  * 
- * @post Se la prenotazione viene trovata, viene restituito un puntatore alla prenotazione
- * @post Se la prenotazione non viene trovata o la coda è NULL, viene restituito NULL
+ * @post Se la prenotazione viene trovata, viene restituito un puntatore ad essa
+ * @post Se la prenotazione non viene trovata, viene restituito NULL
  * 
- * @sideeffect Nessuno
+ * @sideeffect Nessun effetto collaterale
  * 
- * @return Prenotazione Puntatore alla prenotazione trovata, o NULL se non trovata
+ * @return Prenotazione Puntatore alla prenotazione trovata, NULL se non trovata
  */
 Prenotazione cerca_prenotazione(CodaPrenotazioni coda, int id_prenotazione);
 
 /**
- * @brief Cerca una prenotazione attiva per un determinato giorno e ora
+ * @brief Cerca una prenotazione nella coda per orario
  * 
- * La funzione cerca nella coda delle prenotazioni una prenotazione attiva
- * che copre il periodo specificato dal giorno e ora forniti. Una prenotazione
- * è considerata attiva se il timestamp specificato cade all'interno del suo
- * intervallo temporale.
+ * La funzione cerca una prenotazione specifica nella coda delle prenotazioni
+ * che si sovrappone con l'orario specificato. La ricerca viene effettuata
+ * linearmente su tutto l'array heap.
  * 
  * @param coda Puntatore alla coda delle prenotazioni
  * @param giorno Giorno della settimana (0-6)
  * @param ora Ora del giorno (0-23)
  * 
  * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
- * @pre giorno deve essere un intero compreso tra 0 e 6
- * @pre ora deve essere un intero compreso tra 0 e 23
+ * @pre giorno deve essere compreso tra 0 e 6
+ * @pre ora deve essere compresa tra 0 e 23
  * 
- * @post Se viene trovata una prenotazione attiva per il periodo specificato, viene restituito un puntatore ad essa
- * @post Se non viene trovata alcuna prenotazione attiva o la coda è NULL, viene restituito NULL
+ * @post Se viene trovata una prenotazione che si sovrappone all'orario specificato, viene restituito un puntatore ad essa
+ * @post Se non viene trovata alcuna prenotazione, viene restituito NULL
  * 
- * @sideeffect Nessuno
+ * @sideeffect Nessun effetto collaterale
  * 
- * @return Prenotazione Puntatore alla prenotazione trovata, o NULL se non trovata
+ * @return Prenotazione Puntatore alla prenotazione trovata, NULL se non trovata
  */
 Prenotazione cerca_prenotazione_per_orario(CodaPrenotazioni coda, int giorno, int ora);
 
 /**
  * @brief Modifica lo stato di una prenotazione
  * 
- * La funzione modifica lo stato di una prenotazione specifica nella coda.
- * Se la prenotazione viene completata (stato = 2), aggiorna anche la posizione
- * del veicolo associato alla posizione di riconsegna specificata nella prenotazione.
+ * La funzione modifica lo stato di una prenotazione specifica nella coda
+ * delle prenotazioni. Gli stati possibili sono definiti come costanti nel codice.
  * 
  * @param coda Puntatore alla coda delle prenotazioni
  * @param id_prenotazione ID della prenotazione da modificare
- * @param nuovo_stato Nuovo stato da assegnare alla prenotazione (0: In attesa, 1: Confermata, 2: Completata, 3: Cancellata)
+ * @param nuovo_stato Nuovo stato da assegnare alla prenotazione
  * 
  * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
  * @pre id_prenotazione deve essere un intero positivo
- * @pre nuovo_stato deve essere un intero compreso tra 0 e 3
+ * @pre nuovo_stato deve essere uno degli stati validi definiti nel sistema
  * 
  * @post Se la prenotazione viene trovata, il suo stato viene aggiornato
- * @post Se la prenotazione viene completata, la posizione del veicolo viene aggiornata
- * @post Se la prenotazione non viene trovata, la funzione restituisce -1
+ * @post Se la prenotazione non viene trovata, la coda rimane invariata
  * 
- * @sideeffect Modifica lo stato della prenotazione e, se completata, la posizione del veicolo associato
+ * @sideeffect Modifica lo stato della prenotazione se trovata
  * 
  * @return int 0 se l'operazione è riuscita, -1 se la prenotazione non è stata trovata
  */
 int modifica_stato_prenotazione(CodaPrenotazioni coda, int id_prenotazione, int nuovo_stato);
 
 /**
- * @brief Stampa le informazioni di una prenotazione
+ * @brief Stampa i dettagli di una prenotazione
  * 
- * La funzione stampa su stdout tutte le informazioni relative a una prenotazione,
- * inclusi ID, utente, veicolo, orari di inizio e fine, stato e priorità.
+ * La funzione stampa a video i dettagli di una prenotazione, inclusi ID,
+ * utente, veicolo, orari e stato. L'output è formattato in modo leggibile.
  * 
  * @param prenotazione Puntatore alla prenotazione da stampare
  * 
  * @pre prenotazione deve essere un puntatore valido a una struttura Prenotazione
+ * @pre La console deve supportare l'output testuale
  * 
- * @post Le informazioni della prenotazione vengono stampate su stdout
+ * @post I dettagli della prenotazione vengono stampati a video
  * 
- * @sideeffect Scrive su stdout
+ * @sideeffect Modifica l'output del terminale
  */
 void stampa_prenotazione(Prenotazione prenotazione);
 
 /**
- * @brief Salva tutte le prenotazioni su file
+ * @brief Salva le prenotazioni su file
  * 
- * La funzione salva tutte le prenotazioni presenti nella coda globale su un file.
- * Il file viene creato o sovrascritto se già esistente. Ogni prenotazione viene
- * salvata con tutti i suoi attributi in un formato leggibile.
+ * La funzione salva tutte le prenotazioni presenti nella coda su un file
+ * di testo. Il file viene creato se non esiste, altrimenti viene sovrascritto.
  * 
- * @param coda Puntatore alla coda delle prenotazioni da salvare
+ * @param coda Puntatore alla coda delle prenotazioni
  * 
  * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
+ * @pre Il programma deve avere i permessi di scrittura nella directory
  * 
- * @post Tutte le prenotazioni vengono salvate su file
- * @post Se il file esiste già, viene sovrascritto
+ * @post Le prenotazioni vengono salvate su file in formato testuale
+ * @post Il file viene chiuso correttamente dopo la scrittura
  * 
- * @sideeffect Crea o sovrascrive un file sul filesystem
+ * @sideeffect Crea o sovrascrive il file delle prenotazioni
+ * @sideeffect Modifica il filesystem
  */
 void salva_prenotazioni_su_file(CodaPrenotazioni coda);
 
 /**
- * @brief Carica le prenotazioni da un file di testo nella coda
+ * @brief Carica le prenotazioni da file
  * 
- * La funzione legge tutte le prenotazioni dal file "data/prenotazioni.txt" e le inserisce
- * nella struttura CodaPrenotazioni fornita.
+ * La funzione carica le prenotazioni da un file di testo nella coda
+ * delle prenotazioni. Il file deve essere nel formato corretto.
  * 
- * @param coda Puntatore alla coda delle prenotazioni dove inserire i dati
+ * @param coda Puntatore alla coda delle prenotazioni
  * 
  * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
- * @pre Il file "data/prenotazioni.txt" deve esistere e deve essere accessibile in lettura
- * @pre Il file deve contenere prenotazioni formattate correttamente, una per riga, nel seguente ordine:
- *      id_prenotazione id_utente id_veicolo giorno_ora_inizio giorno_ora_fine stato priorita posizione_riconsegna
+ * @pre Il file delle prenotazioni deve esistere e essere leggibile
+ * @pre Il file deve essere nel formato corretto
  * 
- * @post Le prenotazioni lette correttamente vengono aggiunte alla coda
- * @post Il valore della variabile globale id_counter viene aggiornato se vengono trovati id_prenotazione maggiori di quello attuale
+ * @post Le prenotazioni vengono caricate nella coda
+ * @post Il file viene chiuso correttamente dopo la lettura
  * 
- * @sideeffect Lettura da file "data/prenotazioni.txt"
- * @sideeffect Modifica del contenuto della struttura coda
- * @sideeffect Possibile modifica della variabile globale id_counter
+ * @sideeffect Modifica la coda delle prenotazioni
+ * @sideeffect Legge dal filesystem
  * 
- * @return int 0 se il caricamento è avvenuto con successo, -1 in caso di errore
+ * @return int 0 se il caricamento è riuscito, -1 in caso di errore
  */
 int carica_prenotazioni_da_file(CodaPrenotazioni coda);
 

@@ -63,55 +63,92 @@ int main() {
                     pulisci_schermo();
                     stampa_bordo_superiore();
                     
-                    set_color(13); // Magenta
+                    set_color(LIGHT_MAGENTA); // Magenta
                     printf("             LOGIN\n");
                     stampa_separatore();
                     
                     Utente temp_utente = NULL;
                     char username[30];
-                    do {
-                        set_color(7); // Bianco
+                    int username_valido = 0;
+                    while (!username_valido) {
+                        set_color(WHITE); // Bianco
                         printf("Username: ");
-                        fgets(username, sizeof(username), stdin);
+                        if (fgets(username, sizeof(username), stdin) == NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Errore nella lettura dell'input!\n");
+                            set_color(WHITE); // Bianco
+                            continue;
+                        }
+                        
+                        // Verifica se l'input è troppo lungo
+                        if (strchr(username, '\n') == NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Input troppo lungo! Massimo %zu caratteri.\n", sizeof(username) - 1);
+                            set_color(WHITE); // Bianco
+                            svuota_buffer();
+                            continue;
+                        }
+                        
                         strtok(username, "\n"); // Rimuovi newline
                         
                         if (!valida_username(username)) {
-                            set_color(12); // Rosso
+                            set_color(LIGHT_RED); // Rosso
                             printf("Username non valido! Deve contenere solo caratteri alfanumerici\n");
                             printf("e underscore, lunghezza tra 3 e 29 caratteri.\n");
-                            set_color(7); // Bianco
+                            set_color(WHITE); // Bianco
+                        } else {
+                            username_valido = 1;
                         }
-                    } while (!valida_username(username));
+                    }
                     
                     temp_utente = cerca_utente(username);
                     if (temp_utente == NULL) {
-                        set_color(12); // Rosso
+                        set_color(LIGHT_RED); // Rosso
                         printf("\nErrore: Utente non trovato!\n");
                         printf("Premi INVIO per tornare al menu principale...");
-                        set_color(7); // Bianco
+                        set_color(WHITE); // Bianco
                         svuota_buffer();
                     } else {
                         char password[MAX_PASSWORD_LENGTH];
-                        set_color(7); // Bianco
-                        printf("Password: ");
-                        fgets(password, sizeof(password), stdin);
-                        strtok(password, "\n");
+                        int password_valida = 0;
+                        while (!password_valida) {
+                            set_color(WHITE); // Bianco
+                            printf("Password: ");
+                            if (fgets(password, sizeof(password), stdin) == NULL) {
+                                set_color(LIGHT_RED); // Rosso
+                                printf("Errore nella lettura dell'input!\n");
+                                set_color(WHITE); // Bianco
+                                continue;
+                            }
+                            
+                            // Verifica se l'input è troppo lungo
+                            if (strchr(password, '\n') == NULL) {
+                                set_color(LIGHT_RED); // Rosso
+                                printf("Input troppo lungo! Massimo %zu caratteri.\n", sizeof(password) - 1);
+                                set_color(WHITE); // Bianco
+                                svuota_buffer();
+                                continue;
+                            }
+                            
+                            strtok(password, "\n"); // Rimuovi newline
+                            password_valida = 1;
+                        }
 
                         if (verifica_password(password, temp_utente)) {
-                            set_color(10); // Verde
+                            set_color(LIGHT_GREEN); // Verde
                             printf("\nAccesso effettuato con successo!\n");
-                            printf("Benvenuto/a, %s!\n", get_nome_utente(temp_utente));
+                            printf("Benvenuto/a, %s!\n", get_nome_utente(username));
                             stato = 1;
                             strncpy(current_username, username, sizeof(current_username));
                             salva_utenti_file();
                             printf("\nPremi INVIO per continuare...");
-                            set_color(7); // Bianco
+                            set_color(WHITE); // Bianco
                             svuota_buffer();
                         } else {
-                            set_color(12); // Rosso
+                            set_color(LIGHT_RED); // Rosso
                             printf("\nPassword errata!\n");
                             printf("Premi INVIO per tornare al menu principale...");
-                            set_color(7); // Bianco
+                            set_color(WHITE); // Bianco
                             svuota_buffer();
                         }
                     }
@@ -121,7 +158,7 @@ int main() {
                     pulisci_schermo();
                     stampa_bordo_superiore();
                     
-                    set_color(13); // Magenta
+                    set_color(LIGHT_MAGENTA); // Magenta
                     printf("          REGISTRAZIONE\n");
                     stampa_separatore();
                     
@@ -129,83 +166,137 @@ int main() {
                     char username[30];
                     
                     // Input e validazione nome completo
-                    do {
-                        set_color(7); // Bianco
+                    int nome_valido = 0;
+                    while (!nome_valido) {
+                        set_color(WHITE); // Bianco
                         printf("Nome completo: ");
-                        fgets(nome_completo, sizeof(nome_completo), stdin);
-                        strtok(nome_completo, "\n");
-                        
-                        if (!valida_nome_completo(nome_completo)) {
-                            set_color(12); // Rosso
-                            printf("Nome non valido! Usa solo lettere, spazi, apostrofi e trattini.\n");
-                            printf("Lunghezza tra 3 e 49 caratteri.\n");
-                            set_color(7); // Bianco
-                        }
-                    } while (!valida_nome_completo(nome_completo));
-                    
-                    // Input e validazione username
-                    do {
-                        set_color(7); // Bianco
-                        printf("Username: ");
-                        fgets(username, sizeof(username), stdin);
-                        strtok(username, "\n");
-                        
-                        if (!valida_username(username)) {
-                            set_color(12); // Rosso
-                            printf("Username non valido! Usa solo caratteri alfanumerici e underscore.\n");
-                            printf("Lunghezza tra 3 e 29 caratteri.\n");
-                            set_color(7); // Bianco
-                        } else if (cerca_utente(username) != NULL) {
-                            set_color(12); // Rosso
-                            printf("Username già in uso! Scegline un altro.\n");
-                            set_color(7); // Bianco
+                        if (fgets(nome_completo, sizeof(nome_completo), stdin) == NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Errore nella lettura dell'input!\n");
+                            set_color(WHITE); // Bianco
                             continue;
                         }
-                    } while (!valida_username(username) || 
-                            cerca_utente(username) != NULL);
-                    
-                    char password[MAX_PASSWORD_LENGTH];
-                    do {
-                        set_color(7); // Bianco
-                        printf("Password: ");
-                        fgets(password, sizeof(password), stdin);
-                        strtok(password, "\n");
-                        if (strlen(password) < 4) {
-                            set_color(12); // Rosso
-                            printf("Password troppo corta! Minimo 4 caratteri.\n");
-                            set_color(7); // Bianco
+                        
+                        // Verifica se l'input è troppo lungo
+                        if (strchr(nome_completo, '\n') == NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Input troppo lungo! Massimo %zu caratteri.\n", sizeof(nome_completo) - 1);
+                            set_color(WHITE); // Bianco
+                            svuota_buffer();
+                            continue;
                         }
-                    } while (strlen(password) < 4);
+                        
+                        strtok(nome_completo, "\n"); // Rimuovi newline
+                        
+                        if (!valida_nome_completo(nome_completo)) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Nome non valido! Usa solo lettere, spazi, apostrofi e trattini.\n");
+                            printf("Lunghezza tra 3 e 49 caratteri.\n");
+                            set_color(WHITE); // Bianco
+                        } else {
+                            nome_valido = 1;
+                        }
+                    }
+                    
+                    // Input e validazione username
+                    int username_valido = 0;
+                    while (!username_valido) {
+                        set_color(WHITE); // Bianco
+                        printf("Username: ");
+                        if (fgets(username, sizeof(username), stdin) == NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Errore nella lettura dell'input!\n");
+                            set_color(WHITE); // Bianco
+                            continue;
+                        }
+                        
+                        // Verifica se l'input è troppo lungo
+                        if (strchr(username, '\n') == NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Input troppo lungo! Massimo %zu caratteri.\n", sizeof(username) - 1);
+                            set_color(WHITE); // Bianco
+                            svuota_buffer();
+                            continue;
+                        }
+                        
+                        strtok(username, "\n"); // Rimuovi newline
+                        
+                        if (!valida_username(username)) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Username non valido! Deve contenere solo caratteri alfanumerici\n");
+                            printf("e underscore, lunghezza tra 3 e 29 caratteri.\n");
+                            set_color(WHITE); // Bianco
+                        } else if (cerca_utente(username) != NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Username già in uso! Scegline un altro.\n");
+                            set_color(WHITE); // Bianco
+                        } else {
+                            username_valido = 1;
+                        }
+                    }
+                    
+                    // Input password
+                    char password[MAX_PASSWORD_LENGTH];
+                    int password_valida = 0;
+                    while (!password_valida) {
+                        set_color(WHITE); // Bianco
+                        printf("Password: ");
+                        if (fgets(password, sizeof(password), stdin) == NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Errore nella lettura dell'input!\n");
+                            set_color(WHITE); // Bianco
+                            continue;
+                        }
+                        
+                        // Verifica se l'input è troppo lungo
+                        if (strchr(password, '\n') == NULL) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Input troppo lungo! Massimo %zu caratteri.\n", sizeof(password) - 1);
+                            set_color(WHITE); // Bianco
+                            svuota_buffer();
+                            continue;
+                        }
+                        
+                        strtok(password, "\n"); // Rimuovi newline
+                        
+                        if (strlen(password) < 4) {
+                            set_color(LIGHT_RED); // Rosso
+                            printf("Password troppo corta! Minimo 4 caratteri.\n");
+                            set_color(WHITE); // Bianco
+                        } else {
+                            password_valida = 1;
+                        }
+                    }
 
                     char hashed[MAX_PASSWORD_LENGTH];
                     hash_password(password, hashed);
 
                     if (inserisci_utente(username, nome_completo, hashed)) {
-                        set_color(10); // Verde
+                        set_color(LIGHT_GREEN); // Verde
                         printf("\nRegistrazione completata con successo!\n");
                         stato = 1;
                         strncpy(current_username, username, sizeof(current_username));
                         salva_utenti_file();  // Salvo gli utenti dopo la registrazione
                     } else {
-                        set_color(12); // Rosso
+                        set_color(LIGHT_RED); // Rosso
                         printf("\nErrore: Registrazione fallita.\n");
                     }
                     
                     printf("\nPremi INVIO per continuare...");
-                    set_color(7); // Bianco
+                    set_color(WHITE); // Bianco
                     svuota_buffer();
                     break;
                 }
                 case 0: // Uscita
-                    set_color(12); // Rosso
+                    set_color(LIGHT_RED); // Rosso
                     printf("\nChiusura del programma...\n");
                     salvataggio();
-                    set_color(7); // Bianco
+                    set_color(WHITE); // Bianco
                     return 0;
                 default:
-                    set_color(12); // Rosso
+                    set_color(LIGHT_RED); // Rosso
                     printf("\nScelta non valida! Premi INVIO per riprovare...");
-                    set_color(7); // Bianco
+                    set_color(WHITE); // Bianco
                     svuota_buffer();
                     break;
             }
@@ -274,15 +365,15 @@ int main() {
                         current_username[0] = '\0';
                         break;
                     case 0:
-                        set_color(12); // Rosso
+                        set_color(LIGHT_RED); // Rosso
                         printf("\nSalvataggio dei dati e chiusura del programma...\n");
                         salvataggio();
-                        set_color(7); // Bianco
+                        set_color(WHITE); // Bianco
                         return 0;
                     default:
-                        set_color(12); // Rosso
+                        set_color(LIGHT_RED); // Rosso
                         printf("\nScelta non valida. Premi INVIO per riprovare...");
-                        set_color(7); // Bianco
+                        set_color(WHITE); // Bianco
                         svuota_buffer();
                         break;
                 }
@@ -310,15 +401,15 @@ int main() {
                         current_username[0] = '\0';
                         break;
                     case 0:
-                        set_color(12); // Rosso
+                        set_color(LIGHT_RED); // Rosso
                         printf("\nSalvataggio dei dati e chiusura del programma...\n");
                         salvataggio();
-                        set_color(7); // Bianco
+                        set_color(WHITE); // Bianco
                         return 0;
                     default:
-                        set_color(12); // Rosso
+                        set_color(LIGHT_RED); // Rosso
                         printf("\nScelta non valida. Premi INVIO per riprovare...");
-                        set_color(7); // Bianco
+                        set_color(WHITE); // Bianco
                         svuota_buffer();
                         break;
                 }

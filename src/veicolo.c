@@ -109,23 +109,23 @@ list aggiungi_veicolo(list l) {
     pulisci_schermo();
     stampa_bordo_superiore();
     
-    set_color(13); // Magenta
+    set_color(LIGHT_MAGENTA); // Magenta
     printf("         AGGIUNGI VEICOLO\n");
     
     stampa_separatore();
     
     // Mostra la data di sistema corrente
-    set_color(14); // Giallo
+    set_color(LIGHT_YELLOW); // Giallo
     printf("         DATA DI SISTEMA\n");
-    set_color(7); // Bianco
+    set_color(WHITE); // Bianco
     stampa_data_sistema();
     
     stampa_separatore();
     
     // Sezione Input
-    set_color(10); // Verde
+    set_color(LIGHT_GREEN); // Verde
     printf("     INSERIMENTO DATI VEICOLO\n");
-    set_color(7); // Bianco
+    set_color(WHITE); // Bianco
     
     // Input tipo veicolo
     printf("Tipo veicolo:\n");
@@ -199,29 +199,29 @@ list rimuovi_veicolo(list l, int id)
 void stampa_veicolo(Veicolo v) {
     if (v == NULL) return;
     
-    set_color(7); // Bianco
+    set_color(WHITE); // Bianco
     printf("  ID: %d\n", v->id);
     printf("  Modello: %s\n", v->modello);
     printf("  Targa: %s\n", v->targa);
     
-    set_color(10); // Verde
+    set_color(LIGHT_GREEN); // Verde
     printf("  Tipo: %s\n", get_nome_tipo_veicolo(v->tipo));
     
-    set_color(7); // Bianco
+    set_color(WHITE); // Bianco
     printf("\n");
     
     printf("  Stato: ");
     if(v->disponibilita) {
-        set_color(10); // Verde
+        set_color(LIGHT_GREEN); // Verde
         printf("Disponibile");
     } else {
-        set_color(12); // Rosso
+        set_color(LIGHT_RED); // Rosso
         printf("Non disponibile");
     }
 
-    set_color(14); // Giallo
+    set_color(LIGHT_YELLOW); // Giallo
     printf("  Posizione: %s\n", get_nome_posizione_veicolo(v->posizione)); 
-    set_color(7); // Bianco
+    set_color(WHITE); // Bianco
     printf("\n");
 }
 

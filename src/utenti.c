@@ -243,10 +243,65 @@ int carica_utenti_file() {
 }
 
 int inserisci_utente(const char* username, const char* nome_completo, const char* password) {
+    // Verifica che gli input non siano NULL
+    if (username == NULL || nome_completo == NULL || password == NULL) {
+        printf("Errore: Input non valido (NULL)\n");
+        return 0;
+    }
+
+    // Verifica la lunghezza degli input
+    if (strlen(username) > 29) {
+        printf("Errore: Username troppo lungo (max 29 caratteri)\n");
+        return 0;
+    }
+    if (strlen(nome_completo) > 49) {
+        printf("Errore: Nome completo troppo lungo (max 49 caratteri)\n");
+        return 0;
+    }
+    if (strlen(password) > 29) {
+        printf("Errore: Password troppo lunga (max 29 caratteri)\n");
+        return 0;
+    }
+
+    // Verifica che gli input non siano vuoti o contengano solo spazi
+    if (strlen(username) == 0 || strlen(nome_completo) == 0 || strlen(password) == 0) {
+        printf("Errore: Input vuoto non valido\n");
+        return 0;
+    }
+
+    // Verifica che l'username non contenga spazi
+    if (strchr(username, ' ') != NULL) {
+        printf("Errore: L'username non può contenere spazi\n");
+        return 0;
+    }
+
+    // Verifica che l'username non sia già in uso
+    if (cerca_utente(username) != NULL) {
+        printf("Errore: Username già in uso\n");
+        return 0;
+    }
+
     int idx = hash_djb2(username) % TABLE_SIZE;
     if (tabellaUtenti[idx] == NULL) {
         tabellaUtenti[idx] = malloc(sizeof(struct Utente));
         if (tabellaUtenti[idx] == NULL) {
+            printf("Errore: Memoria insufficiente\n");
+            return 0;
+        }
+    } else {
+        // Se lo slot è occupato, cerca il prossimo slot libero
+        int original_idx = idx;
+        do {
+            idx = (idx + 1) % TABLE_SIZE;
+            if (idx == original_idx) {
+                printf("Errore: Tabella utenti piena\n");
+                return 0;
+            }
+        } while (tabellaUtenti[idx] != NULL);
+        
+        tabellaUtenti[idx] = malloc(sizeof(struct Utente));
+        if (tabellaUtenti[idx] == NULL) {
+            printf("Errore: Memoria insufficiente\n");
             return 0;
         }
     }
@@ -257,9 +312,15 @@ int inserisci_utente(const char* username, const char* nome_completo, const char
     }
     
     tabellaUtenti[idx]->id = id_counter++;
-    strcpy(tabellaUtenti[idx]->username, username);
-    strcpy(tabellaUtenti[idx]->nome_completo, nome_completo);
-    strcpy(tabellaUtenti[idx]->password, password); // Salva la password hashata
+    strncpy(tabellaUtenti[idx]->username, username, sizeof(tabellaUtenti[idx]->username) - 1);
+    tabellaUtenti[idx]->username[sizeof(tabellaUtenti[idx]->username) - 1] = '\0';
+    
+    strncpy(tabellaUtenti[idx]->nome_completo, nome_completo, sizeof(tabellaUtenti[idx]->nome_completo) - 1);
+    tabellaUtenti[idx]->nome_completo[sizeof(tabellaUtenti[idx]->nome_completo) - 1] = '\0';
+    
+    strncpy(tabellaUtenti[idx]->password, password, sizeof(tabellaUtenti[idx]->password) - 1);
+    tabellaUtenti[idx]->password[sizeof(tabellaUtenti[idx]->password) - 1] = '\0';
+    
     tabellaUtenti[idx]->isAdmin = (strcmp(username, "Admin") == 0) ? 1 : 0;
     return 1;
 }
@@ -300,18 +361,20 @@ void stampa_utenti() {
     }
 }
 
-int get_id_utente(Utente u) {
-    if (u == NULL) {
-        return -1;  // Utente non valido
+int get_id_utente(const char* username) {
+    Utente utente = cerca_utente(username);
+    if (utente == NULL) {
+        return -1;  // Utente non trovato
     }
-    return u->id;  // Restituisce l'ID dell'utente
+    return utente->id;  // Restituisce l'ID dell'utente
 }
 
-const char* get_nome_utente(Utente u) {
-    if (u == NULL) {
-        return NULL;  // Utente non valido
+const char* get_nome_utente(const char* username) {
+    Utente utente = cerca_utente(username);
+    if (utente == NULL) {
+        return NULL;  // Utente non trovato
     }
-    return u->nome_completo;  // Restituisce il nome completo dell'utente
+    return utente->nome_completo;  // Restituisce il nome completo dell'utente
 }
 
 const char* get_username_utente(Utente u) {

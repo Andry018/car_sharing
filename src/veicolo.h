@@ -191,19 +191,20 @@ list rimuovi_veicolo(list l, int id);
  * - La posizione del veicolo (Deposito, Posizione B, Posizione C, Posizione D)
  * - Lo stato di disponibilità (con colore associato)
  * 
- * @param v Il veicolo da stampare
- * 
  * @pre Il parametro v è un veicolo valido, ovvero:
  *      - id è un intero assegnato
  *      - modello e targa sono stringhe ben terminate
  *      - tipo è uno dei valori previsti (UTILITARIA, SUV, SPORTIVA, MOTO)
  *      - posizione è uno dei valori previsti (0=Deposito, 1=Posizione B, 2=Posizione C, 3=Posizione D)
- * @pre La funzione set_color(int) è disponibile e funzionante
+ * @pre La console deve supportare l'output testuale e i codici colore ANSI
  * 
- * @post Le informazioni del veicolo sono stampate a schermo in formato leggibile e con evidenziazione a colori
- * @post Lo stato del programma non viene modificato
+ * @post Vengono stampate a video tutte le informazioni del veicolo in formato leggibile
+ * @post I colori vengono utilizzati per evidenziare tipo e disponibilità
  * 
- * @sideeffect Output su console
+ * @sideeffect Modifica l'output del terminale
+ * @sideeffect Cambia temporaneamente il colore del testo
+ * 
+ * @param v Il veicolo da stampare
  */
 void stampa_veicolo(Veicolo v);
 
@@ -211,23 +212,21 @@ void stampa_veicolo(Veicolo v);
 /**
  * @brief Salva la lista dei veicoli su file
  * 
- * La funzione salva i dati dei veicoli contenuti nella lista l nel file "data/veicoli.txt"
- * in modalità sovrascrittura ("w"). Ogni veicolo viene scritto su una riga con i seguenti campi:
- * id tipo modello targa disponibile
+ * La funzione salva su file la lista dei veicoli in formato testuale.
+ * Per ogni veicolo vengono salvati ID, tipo, modello, targa, posizione e disponibilità.
  * 
  * @param l La lista dei veicoli da salvare
  * 
- * @pre l può essere NULL (in tal caso, il file viene comunque aperto e poi chiuso vuoto)
- * @pre La directory data/ esiste e l'applicazione ha i permessi di scrittura al file veicoli.txt
- * @pre I campi modello, targa di ciascun veicolo sono stringhe ben terminate
+ * @pre l deve essere una lista valida (può essere anche NULL)
+ * @pre Il programma deve avere i permessi di scrittura nella directory
+ * @pre Ogni veicolo nella lista deve avere tutti i campi correttamente inizializzati
  * 
- * @post I dati della lista l sono scritti nel file data/veicoli.txt, sovrascrivendo eventuali contenuti precedenti
- * @post Il file è chiuso correttamente al termine
- * @post Un messaggio di conferma viene stampato su console in caso di successo
+ * @post Il file viene creato se non esiste, altrimenti viene sovrascritto
+ * @post Ogni veicolo viene salvato su una riga separata
+ * @post Il file viene chiuso correttamente dopo la scrittura
  * 
- * @sideeffect Scrittura su file: data/veicoli.txt
- * @sideeffect Apertura e chiusura file
- * @sideeffect Output su console con printf
+ * @sideeffect Crea o sovrascrive il file dei veicoli
+ * @sideeffect Modifica il filesystem
  */
 void salva_veicolo_file(list l);
 
@@ -235,59 +234,56 @@ void salva_veicolo_file(list l);
 /**
  * @brief Carica la lista dei veicoli da file
  * 
- * La funzione apre il file data/veicoli.txt, legge ogni riga rappresentante un veicolo,
- * ricostruisce i dati e li inserisce in testa alla lista l. La lista risultante viene restituita.
+ * La funzione legge da file la lista dei veicoli precedentemente salvata.
+ * Per ogni riga del file, crea un nuovo veicolo con i dati letti.
  * 
- * @param l La lista a cui aggiungere i veicoli letti (può essere NULL)
+ * @param l La lista esistente a cui aggiungere i veicoli (può essere NULL)
  * 
- * @pre Il file data/veicoli.txt deve esistere e contenere righe ben formate con il seguente ordine:
- *      id tipo modello targa disponibile
- * @pre Il campo modello può contenere spazi, ma viene letto correttamente finché la targa ha esattamente 7 caratteri
- *      e inizia con una lettera
- * @pre La lista l può essere NULL (in questo caso la funzione crea una nuova lista da zero)
+ * @pre Il file dei veicoli deve esistere e essere leggibile
+ * @pre Il file deve essere nel formato corretto (una riga per veicolo)
+ * @pre Ogni riga deve contenere tutti i campi necessari nel formato corretto
  * 
- * @post Il contenuto del file viene caricato in memoria come lista di veicoli
- * @post I nuovi elementi vengono aggiunti in testa alla lista l
- * @post La lista risultante viene restituita
+ * @post Viene creata una nuova lista con tutti i veicoli letti dal file
+ * @post Se l era NULL, viene restituita la nuova lista
+ * @post Se l non era NULL, i nuovi veicoli vengono aggiunti in testa
  * 
- * @sideeffect Lettura da file: data/veicoli.txt
- * @sideeffect Allocazione dinamica per ogni nodo veicolo (malloc)
+ * @sideeffect Legge dal filesystem
+ * @sideeffect Alloca memoria per la nuova lista e i veicoli
  * 
- * @return list La lista con i veicoli caricati dal file
+ * @return list La lista aggiornata con i veicoli letti dal file
  */
 list carica_veicolo_file(list l);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Carica l'ultimo ID utilizzato dal file dei veicoli
+ * @brief Carica l'ultimo ID utilizzato da file
  * 
- * La funzione apre il file data/veicoli.txt, legge tutte le righe e restituisce il valore massimo
- * del campo id trovato nel file. Se il file non esiste o è vuoto, restituisce 0.
+ * La funzione legge da file l'ultimo ID utilizzato per i veicoli.
+ * Se il file non esiste o è vuoto, restituisce 0.
  * 
- * @pre Il file data/veicoli.txt, se esiste, deve contenere righe in cui l'id è il primo campo
- *      e rappresenta un intero valido
- * @pre Ogni riga deve iniziare con un intero (%d) che rappresenta l'ID del veicolo
+ * @pre Il file degli ID deve esistere e essere leggibile
+ * @pre Il file deve contenere un singolo intero
  * 
- * @post Restituisce l'id massimo tra quelli trovati nel file
- * @post Se il file non esiste, viene restituito 0
+ * @post Viene restituito l'ultimo ID utilizzato
+ * @post Se il file non esiste o è vuoto, viene restituito 0
  * 
- * @sideeffect Nessuno
+ * @sideeffect Legge dal filesystem
  * 
- * @return int L'ultimo ID utilizzato o 0 se il file non esiste
+ * @return int L'ultimo ID utilizzato, o 0 se il file non esiste o è vuoto
  */
 int carica_ultimo_id(void);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Restituisce l'identificativo del veicolo
+ * @brief Ottiene l'ID di un veicolo
  * 
  * @param v Il veicolo di cui ottenere l'ID
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
  * 
- * @post id = v->id
+ * @post Viene restituito l'ID del veicolo
  * 
- * @sideeffect Nessuno
+ * @sideeffect Nessun effetto collaterale
  * 
  * @return int L'ID del veicolo
  */
@@ -295,17 +291,15 @@ int get_id_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Restituisce il tipo del veicolo
- * 
- * Restituisce il tipo del veicolo v, ad esempio auto, scooter, bici, ecc. (codificato come intero).
+ * @brief Ottiene il tipo di un veicolo
  * 
  * @param v Il veicolo di cui ottenere il tipo
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
  * 
- * @post tipo = v->tipo
+ * @post Viene restituito il tipo del veicolo (UTILITARIA, SUV, SPORTIVA, MOTO)
  * 
- * @sideeffect Nessuno
+ * @sideeffect Nessun effetto collaterale
  * 
  * @return int Il tipo del veicolo
  */
@@ -313,17 +307,15 @@ int get_tipo_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Restituisce il modello del veicolo
- * 
- * Restituisce una stringa costante contenente il modello del veicolo v.
+ * @brief Ottiene il modello di un veicolo
  * 
  * @param v Il veicolo di cui ottenere il modello
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
  * 
- * @post modello = v->modello
+ * @post Viene restituito il modello del veicolo
  * 
- * @sideeffect Nessuno
+ * @sideeffect Nessun effetto collaterale
  * 
  * @return const char* Il modello del veicolo
  */
@@ -331,17 +323,15 @@ const char* get_modello_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Restituisce la targa del veicolo
- * 
- * Restituisce una stringa costante contenente la targa del veicolo v.
+ * @brief Ottiene la targa di un veicolo
  * 
  * @param v Il veicolo di cui ottenere la targa
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
  * 
- * @post targa = v->targa
+ * @post Viene restituita la targa del veicolo
  * 
- * @sideeffect Nessuno
+ * @sideeffect Nessun effetto collaterale
  * 
  * @return const char* La targa del veicolo
  */
@@ -349,17 +339,15 @@ const char* get_targa_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Restituisce la posizione del veicolo
- * 
- * Restituisce una stringa con la posizione attuale del veicolo v.
+ * @brief Ottiene la posizione di un veicolo
  * 
  * @param v Il veicolo di cui ottenere la posizione
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
  * 
- * @post posizione = v->posizione
+ * @post Viene restituita la posizione del veicolo (0=Deposito, 1=Posizione B, 2=Posizione C, 3=Posizione D)
  * 
- * @sideeffect Nessuno
+ * @sideeffect Nessun effetto collaterale
  * 
  * @return int La posizione del veicolo
  */
@@ -367,74 +355,66 @@ int get_posizione_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Restituisce la disponibilità del veicolo
- * 
- * Restituisce un intero che indica se il veicolo è disponibile (1) o meno (0).
+ * @brief Ottiene lo stato di disponibilità di un veicolo
  * 
  * @param v Il veicolo di cui ottenere la disponibilità
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
  * 
- * @post disponibilita = v->disponibilita
+ * @post Viene restituito lo stato di disponibilità del veicolo (0=non disponibile, 1=disponibile)
  * 
- * @sideeffect Nessuno
+ * @sideeffect Nessun effetto collaterale
  * 
- * @return int La disponibilità del veicolo (1 = disponibile, 0 = non disponibile)
+ * @return int Lo stato di disponibilità del veicolo
  */
 int get_disponibilita_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Imposta l'ID del veicolo
+ * @brief Imposta l'ID di un veicolo
  * 
- * Imposta l'ID del veicolo v al valore specificato.
- * 
- * @param v Il veicolo da modificare
+ * @param v Il veicolo di cui impostare l'ID
  * @param id Il nuovo ID da assegnare
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
- * @pre id è un intero non negativo
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
+ * @pre id deve essere un intero positivo
  * 
- * @post v->id = id
+ * @post L'ID del veicolo viene aggiornato
  * 
- * @sideeffect Modifica diretta del campo id nella struttura
+ * @sideeffect Modifica l'ID del veicolo
  */
 void set_id_veicolo(Veicolo v, int id);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Imposta il tipo del veicolo
+ * @brief Imposta il tipo di un veicolo
  * 
- * Imposta il tipo del veicolo v al valore tipo (auto, bici, ecc.).
- * 
- * @param v Il veicolo da modificare
+ * @param v Il veicolo di cui impostare il tipo
  * @param tipo Il nuovo tipo da assegnare
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
- * @pre tipo è un intero valido secondo la codifica dei tipi veicolo
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
+ * @pre tipo deve essere uno dei valori previsti (UTILITARIA, SUV, SPORTIVA, MOTO)
  * 
- * @post v->tipo = tipo
+ * @post Il tipo del veicolo viene aggiornato
  * 
- * @sideeffect Modifica diretta del campo tipo nella struttura
+ * @sideeffect Modifica il tipo del veicolo
  */
 void set_tipo_veicolo(Veicolo v, int tipo);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Imposta il modello del veicolo
+ * @brief Imposta il modello di un veicolo
  * 
- * Imposta il campo modello del veicolo v alla stringa passata come parametro.
- * 
- * @param v Il veicolo da modificare
+ * @param v Il veicolo di cui impostare il modello
  * @param modello Il nuovo modello da assegnare
  * 
- * @pre v è un puntatore valido a una struttura Veicolo
- * @pre modello è una stringa valida (non NULL)
+ * @pre v deve essere un puntatore valido a una struttura Veicolo
+ * @pre modello deve essere una stringa valida e non NULL
+ * @pre modello non deve essere più lunga di 30 caratteri
  * 
- * @post Il campo v->modello conterrà una copia sicura di modello, troncata se necessario
- *       alla dimensione massima consentita
+ * @post Il modello del veicolo viene aggiornato
  * 
- * @sideeffect Scrive su v->modello
+ * @sideeffect Modifica il modello del veicolo
  */
 void set_modello_veicolo(Veicolo v, const char* modello);
 
