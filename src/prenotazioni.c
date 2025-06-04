@@ -4,6 +4,33 @@
 #include <stdbool.h>
 #include "prenotazioni.h"
 #include "data_sistema.h"
+#include "f_utili.h"
+#include "veicolo.h"
+
+#define INITIAL_CAPACITY 10
+
+
+// Stati possibili di una prenotazione
+
+
+// Struttura per rappresentare una prenotazione
+struct Prenotazione {
+    int id_prenotazione;
+    int id_utente;
+    int id_veicolo;
+    int giorno_ora_inizio;  // Formato: giorno*24*60 + ora*60 
+    int giorno_ora_fine;    // Formato: giorno*24*60 + ora*60 
+    int stato;              //0: In attesa, 1: Confermata, 2: Completata, 3: Cancellata
+    int priorita;          // Campo per la priorità (più basso = più prioritario)
+    int posizione_riconsegna;
+} ;
+
+// Struttura della coda con priorità
+ struct CodaPrenotazioni {
+    struct Prenotazione *heap;    // Array dinamico per l'heap
+    int capacita;          // Capacità massima dell'array
+    int dimensione;        // Numero di elementi attuali
+};  
 
 // Funzioni di utilità per l'heap
 #define GENITORE(i) ((i - 1) / 2)
@@ -11,44 +38,44 @@
 #define FIGLIO_DESTRO(i) (2 * i + 2)
 
 // Variabile globale per la coda delle prenotazioni
-static CodaPrenotazioni* coda_globale = NULL;
+static struct CodaPrenotazioni *coda_globale = NULL;
 
 // Contatore globale per gli ID delle prenotazioni
 static int id_counter = 0;
 
 // Funzione per ottenere la coda globale
-CodaPrenotazioni* get_coda_prenotazioni() {
+CodaPrenotazioni get_coda_prenotazioni() {
     return coda_globale;
 }
 
 // Funzione per inizializzare una nuova coda
-CodaPrenotazioni* inizializza_coda() {
-    CodaPrenotazioni* coda = (CodaPrenotazioni*)malloc(sizeof(CodaPrenotazioni));
+ CodaPrenotazioni inizializza_coda(void) {
+    CodaPrenotazioni coda = (CodaPrenotazioni)malloc(sizeof(struct CodaPrenotazioni));
     if (coda == NULL) {
         return NULL;
     }
     
-    coda->capacita = 10;  // Capacità iniziale
-    coda->dimensione = 0;
-    coda->heap = (Prenotazione*)malloc(sizeof(Prenotazione) * coda->capacita);
-    
+    // Initialize heap with initial capacity
+    coda->heap = (Prenotazione)malloc(sizeof(struct Prenotazione) * INITIAL_CAPACITY);
     if (coda->heap == NULL) {
         free(coda);
         return NULL;
     }
     
+    coda->capacita = INITIAL_CAPACITY;
+    coda->dimensione = 0;
     return coda;
 }
 
 // Funzione per scambiare due prenotazioni
-void scambia_prenotazioni(Prenotazione* a, Prenotazione* b) {
-    Prenotazione temp = *a;
+void scambia_prenotazioni( struct Prenotazione* a,struct Prenotazione* b) {
+    struct Prenotazione temp = *a;
     *a = *b;
     *b = temp;
 }
 
 // Funzione per fare bubble up nell'heap
-void bubble_up(CodaPrenotazioni* coda, int index) {
+void bubble_up( CodaPrenotazioni coda, int index) {
     while (index > 0 && coda->heap[GENITORE(index)].priorita > coda->heap[index].priorita) {
         scambia_prenotazioni(&coda->heap[GENITORE(index)], &coda->heap[index]);
         index = GENITORE(index);
@@ -56,7 +83,7 @@ void bubble_up(CodaPrenotazioni* coda, int index) {
 }
 
 // Funzione per fare bubble down nell'heap
-void bubble_down(CodaPrenotazioni* coda, int index) {
+void bubble_down( CodaPrenotazioni coda, int index) {
     int min_index = index;
     int left = FIGLIO_SINISTRO(index);
     int right = FIGLIO_DESTRO(index);
@@ -104,48 +131,52 @@ int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, i
 }
 
 // Funzione per creare una nuova prenotazione
-Prenotazione crea_prenotazione(int id_utente, int id_veicolo, 
-                             int giorno_inizio, int ora_inizio,
-                             int giorno_fine, int ora_fine, 
-                             int priorita) {
-    Prenotazione nuova;
+ Prenotazione crea_prenotazione(int id_utente, int id_veicolo, 
+                                     int giorno_inizio, int ora_inizio,
+                                     int giorno_fine, int ora_fine, 
+                                     int priorita, int posizione_riconsegna) {
+     Prenotazione nuova = (Prenotazione)malloc(sizeof(struct Prenotazione));
+    if (nuova == NULL) {
+        return NULL;
+    }
     
-    nuova.id_prenotazione = ++id_counter;
-    nuova.id_utente = id_utente;
-    nuova.id_veicolo = id_veicolo;
-    nuova.giorno_ora_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
-    nuova.giorno_ora_fine = converti_in_timestamp(giorno_fine, ora_fine);
-    nuova.stato = IN_ATTESA;
+    nuova->id_prenotazione = ++id_counter;
+    nuova->id_utente = id_utente;
+    nuova->id_veicolo = id_veicolo;
+    nuova->giorno_ora_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
+    nuova->giorno_ora_fine = converti_in_timestamp(giorno_fine, ora_fine);
+    nuova->stato = 0;  // In attesa
+    nuova->posizione_riconsegna = posizione_riconsegna;
     
     if (priorita < 0) {
         // Se non è specificata una priorità, la calcoliamo in base al tempo
-        nuova.priorita = calcola_priorita_temporale(nuova.giorno_ora_inizio);
+        nuova->priorita = calcola_priorita_temporale(nuova->giorno_ora_inizio);
     } else {
-        nuova.priorita = priorita;
+        nuova->priorita = priorita;
     }
     
     return nuova;
 }
 
 // Funzione per aggiungere una prenotazione alla coda
-int aggiungi_prenotazione(CodaPrenotazioni* coda, Prenotazione prenotazione) {
-    if (coda == NULL) {
+int aggiungi_prenotazione( CodaPrenotazioni coda,  Prenotazione prenotazione) {
+    if (coda == NULL || prenotazione == NULL) {
         return -1;
     }
 
     // Verifica se la fascia oraria è valida
-    if (!verifica_fascia_oraria(estrai_giorno(prenotazione.giorno_ora_inizio), 
-                                estrai_ora(prenotazione.giorno_ora_inizio),
-                                estrai_giorno(prenotazione.giorno_ora_fine), 
-                                estrai_ora(prenotazione.giorno_ora_fine))) {
+    if (!verifica_fascia_oraria(estrai_giorno(prenotazione->giorno_ora_inizio), 
+                                estrai_ora(prenotazione->giorno_ora_inizio),
+                                estrai_giorno(prenotazione->giorno_ora_fine), 
+                                estrai_ora(prenotazione->giorno_ora_fine))) {
         return -2;  // Fascia oraria non valida
     }   
     
     // Se necessario, ridimensiona l'array
     if (coda->dimensione >= coda->capacita) {
         int nuova_capacita = coda->capacita * 2;
-        Prenotazione* nuovo_heap = (Prenotazione*)realloc(coda->heap, 
-                                                        sizeof(Prenotazione) * nuova_capacita);
+         Prenotazione nuovo_heap = ( Prenotazione)realloc(coda->heap, 
+                                                        sizeof(struct Prenotazione) * nuova_capacita);
         if (nuovo_heap == NULL) {
             return -1;
         }
@@ -154,7 +185,7 @@ int aggiungi_prenotazione(CodaPrenotazioni* coda, Prenotazione prenotazione) {
     }
     
     // Inserisci la nuova prenotazione alla fine dell'heap
-    coda->heap[coda->dimensione] = prenotazione;
+    coda->heap[coda->dimensione] = *prenotazione;
     bubble_up(coda, coda->dimensione);
     coda->dimensione++;
     
@@ -162,26 +193,57 @@ int aggiungi_prenotazione(CodaPrenotazioni* coda, Prenotazione prenotazione) {
 }
 
 // Funzione per rimuovere la prenotazione con priorità più alta
-Prenotazione rimuovi_prenotazione(CodaPrenotazioni* coda) {
-    Prenotazione prenotazione_vuota = {0};
-    
+ CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda) {
     if (coda == NULL || coda->dimensione == 0) {
-        return prenotazione_vuota;
+        printf("Coda vuota, impossibile rimuovere la prenotazione.\n");
+        return NULL;  // Coda vuota
     }
-    
-    Prenotazione prenotazione = coda->heap[0];
-    coda->heap[0] = coda->heap[coda->dimensione - 1];
+    // Trova l'indice della prenotazione da rimuovere
+    int index = -1;
+    for (int i = 0; i < coda->dimensione; i++) {
+        if (coda->heap[i].id_prenotazione == id_prenotazione) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) {
+        return NULL;  // Prenotazione non trovata
+    }
+    // Sostituisci la prenotazione da rimuovere con l'ultima prenotazione
+    coda->heap[index] = coda->heap[coda->dimensione - 1];
     coda->dimensione--;
-    
-    if (coda->dimensione > 0) {
-        bubble_down(coda, 0);
+    // Esegui bubble down per mantenere la proprietà dell'heap
+    if (index < coda->dimensione) {
+        bubble_down(coda, index);
     }
-    
-    return prenotazione;
+    // Ritorna la prenotazione rimossa
+    Prenotazione prenotazione_rimossa = (Prenotazione)malloc(sizeof(struct Prenotazione));
+    if (prenotazione_rimossa == NULL) {
+        return NULL;  // Errore di allocazione
+    }
+    *prenotazione_rimossa = coda->heap[index];
+    // Se l'heap è vuoto, ridimensiona l'array
+    if (coda->dimensione == 0) {
+        free(coda->heap);
+        coda->heap = NULL;
+        coda->capacita = 0;
+    } else if (coda->dimensione < coda->capacita / 4) {
+        int nuova_capacita = coda->capacita / 2;
+         Prenotazione nuovo_heap = ( Prenotazione)realloc(coda->heap, 
+                                                        sizeof( Prenotazione) * nuova_capacita);
+        if (nuovo_heap != NULL) {
+            coda->heap = nuovo_heap;
+            coda->capacita = nuova_capacita;
+        }
+    }
+    free(prenotazione_rimossa);  // Libera la memoria della prenotazione rimossa
+
+    return coda; 
+     
 }
 
 // Funzione per cercare una prenotazione per ID
-Prenotazione* cerca_prenotazione(CodaPrenotazioni* coda, int id_prenotazione) {
+ Prenotazione cerca_prenotazione( CodaPrenotazioni coda, int id_prenotazione) {
     if (coda == NULL) {
         return NULL;
     }
@@ -196,7 +258,7 @@ Prenotazione* cerca_prenotazione(CodaPrenotazioni* coda, int id_prenotazione) {
 }
 
 // Funzione per cercare prenotazioni per giorno e ora
-Prenotazione* cerca_prenotazione_per_orario(CodaPrenotazioni* coda, int giorno, int ora) {
+ Prenotazione cerca_prenotazione_per_orario( CodaPrenotazioni coda, int giorno, int ora) {
     if (coda == NULL) {
         return NULL;
     }
@@ -214,51 +276,67 @@ Prenotazione* cerca_prenotazione_per_orario(CodaPrenotazioni* coda, int giorno, 
 }
 
 // Funzione per modificare lo stato di una prenotazione
-int modifica_stato_prenotazione(CodaPrenotazioni* coda, int id_prenotazione, StatoPrenotazione nuovo_stato) {
-    Prenotazione* prenotazione = cerca_prenotazione(coda, id_prenotazione);
+int modifica_stato_prenotazione( CodaPrenotazioni coda, int id_prenotazione, int nuovo_stato) {
+     Prenotazione prenotazione = cerca_prenotazione(coda, id_prenotazione);
     if (prenotazione == NULL) {
         return -1;
     }
     
     prenotazione->stato = nuovo_stato;
+    // Se la prenotazione è stata completata, aggiorna la posizione del veicolo
+    if (nuovo_stato == 2) { // 2 = Completata
+        // Recupera il veicolo associato
+        list veicoli = get_lista_veicoli();
+        while (veicoli != NULL) {
+            Veicolo v = get_veicolo_senza_rimuovere(veicoli);
+            if (v && get_id_veicolo(v) == prenotazione->id_veicolo) {
+                set_posizione_veicolo(v, prenotazione->posizione_riconsegna);
+                break;
+            }
+            veicoli = get_next_node(veicoli);
+        }
     return 0;
+}
+return 0;
 }
 
 // Funzione per stampare una prenotazione
 void stampa_prenotazione(Prenotazione p) {
     const char* stati[] = {"In attesa", "Confermata", "Completata", "Cancellata"};
     
-    printf("  ID Prenotazione: %d\n", p.id_prenotazione);
-    printf("  ID Utente: %d\n", p.id_utente);
-    printf("  ID Veicolo: %d\n", p.id_veicolo);
+    printf("  ID Prenotazione: %d\n", get_id_prenotazione(p));
+    printf("  ID Utente: %d\n",get_id_utente_prenotazione(p));
+    printf("  ID Veicolo: %d\n",get_id_veicolo_prenotazione(p));
     printf("  Inizio: %s ore %02d:00\n", 
-           get_nome_giorno(estrai_giorno(p.giorno_ora_inizio)), 
-           estrai_ora(p.giorno_ora_inizio));
+           get_nome_giorno(get_giorno_inizio(p)), 
+           get_ora_inizio(p));
     printf("  Fine: %s ore %02d:00\n", 
-           get_nome_giorno(estrai_giorno(p.giorno_ora_fine)), 
-           estrai_ora(p.giorno_ora_fine));
+           get_nome_giorno(get_giorno_fine(p)), 
+          get_ora_fine(p));
     
     printf("  Stato: ");
-    switch(p.stato) {
-        case IN_ATTESA:
-            set_color(14);  // Giallo per prenotazioni in attesa
+    switch(get_stato_prenotazione(p)) {
+        case 0:
+            set_color(LIGHT_YELLOW);  // Giallo per prenotazioni in attesa
             break;
-        case CONFERMATA:
-            set_color(10);  // Verde per prenotazioni confermate
+        case 1:
+            set_color(LIGHT_GREEN);  // Verde per prenotazioni confermate
             break;
-        case COMPLETATA:
-            set_color(11);  // Ciano per prenotazioni completate
+        case 2:
+            set_color(LIGHT_CYAN);  // Ciano per prenotazioni completate
             break;
-        case CANCELLATA:
-            set_color(12);  // Rosso per prenotazioni cancellate
+        case 3:
+            set_color(LIGHT_RED);  // Rosso per prenotazioni cancellate
             break;
     }
-    printf("%s\n", stati[p.stato]);
-    set_color(7);  // Bianco
+    printf("%s\n", stati[get_stato_prenotazione(p)]);
+    printf("Posizione riconsegna: %s\n", get_nome_posizione_veicolo(p->posizione_riconsegna));
+    
+    set_color(WHITE);  // Bianco
 }
 
 // Funzione per salvare la coda in un file
-void salva_prenotazioni_su_file(CodaPrenotazioni* coda) {
+void salva_prenotazioni_su_file( CodaPrenotazioni coda) {
     FILE* file = fopen("data/prenotazioni.txt", "w");
     if (file == NULL) {
         printf("Errore nell'apertura del file per la scrittura!\n");
@@ -266,21 +344,22 @@ void salva_prenotazioni_su_file(CodaPrenotazioni* coda) {
     }
     
     for (int i = 0; i < coda->dimensione; i++) {
-        fprintf(file, "%d %d %d %d %d %d %d\n",
+        fprintf(file, "%d %d %d %d %d %d %d %d\n",
                 coda->heap[i].id_prenotazione,
                 coda->heap[i].id_utente,
                 coda->heap[i].id_veicolo,
                 coda->heap[i].giorno_ora_inizio,
                 coda->heap[i].giorno_ora_fine,
                 coda->heap[i].stato,
-                coda->heap[i].priorita);
+                coda->heap[i].priorita,
+                coda->heap[i].posizione_riconsegna);
     }
     
     fclose(file);
 }
 
 // Funzione per caricare le prenotazioni da un file
-int carica_prenotazioni_da_file(CodaPrenotazioni* coda) {
+int carica_prenotazioni_da_file(CodaPrenotazioni coda) {
     if (coda == NULL) {
         printf("Errore: coda non inizializzata!\n");
         return -1;
@@ -294,23 +373,24 @@ int carica_prenotazioni_da_file(CodaPrenotazioni* coda) {
     
     int stato_temp;
     while (!feof(file)) {
-        Prenotazione prenotazione;
-        if (fscanf(file, "%d %d %d %d %d %d %d\n",
+         struct Prenotazione prenotazione;
+        if (fscanf(file, "%d %d %d %d %d %d %d %d\n",
                &prenotazione.id_prenotazione,
                &prenotazione.id_utente,
                &prenotazione.id_veicolo,
                &prenotazione.giorno_ora_inizio,
                &prenotazione.giorno_ora_fine,
                &stato_temp,
-               &prenotazione.priorita) == 7) {
+               &prenotazione.priorita,
+               &prenotazione.posizione_riconsegna) == 8) {
             
             // Aggiorna il contatore globale se necessario
             if (prenotazione.id_prenotazione > id_counter) {
                 id_counter = prenotazione.id_prenotazione;
             }
             
-            prenotazione.stato = (StatoPrenotazione)stato_temp;
-            if (aggiungi_prenotazione(coda, prenotazione) != 0) {
+            prenotazione.stato = stato_temp;
+            if (aggiungi_prenotazione(coda, &prenotazione) != 0) {
                 printf("Errore nell'aggiunta della prenotazione %d!\n", prenotazione.id_prenotazione);
             }
         } else {
@@ -337,13 +417,16 @@ void carica_prenotazioni() {
     }
     
     // Carica le prenotazioni dal file
-    if (carica_prenotazioni_da_file(coda_globale) == 0) {
+    int result = carica_prenotazioni_da_file(coda_globale);
+    if (result == 0) {
         printf("Prenotazioni caricate con successo.\n");
+    } else if (result == -1) {
+        printf("Nessuna prenotazione trovata nel file.\n");
     }
 }
 
 // Funzione per pulire la coda
-void pulisci_coda(CodaPrenotazioni* coda) {
+void pulisci_coda( CodaPrenotazioni coda) {
     if (coda == NULL) {
         return;
     }
@@ -352,7 +435,7 @@ void pulisci_coda(CodaPrenotazioni* coda) {
 }
 
 // Funzione per liberare la memoria della coda
-void distruggi_coda(CodaPrenotazioni* coda) {
+void distruggi_coda( CodaPrenotazioni coda) {
     if (coda == NULL) {
         return;
     }
@@ -361,12 +444,12 @@ void distruggi_coda(CodaPrenotazioni* coda) {
     free(coda);
 }
 
-void aggiorna_priorita_prenotazioni(CodaPrenotazioni* coda) {
+void aggiorna_priorita_prenotazioni( CodaPrenotazioni coda) {
     if (coda == NULL) return;
     
     // Aggiorna la priorità di tutte le prenotazioni in base alla data di sistema
     for (int i = 0; i < coda->dimensione; i++) {
-        if (coda->heap[i].stato != CANCELLATA && coda->heap[i].stato != COMPLETATA) {
+        if (coda->heap[i].stato != 0 && coda->heap[i].stato != 2) {
             coda->heap[i].priorita = calcola_priorita_temporale(coda->heap[i].giorno_ora_inizio);
         }
     }
@@ -377,35 +460,32 @@ void aggiorna_priorita_prenotazioni(CodaPrenotazioni* coda) {
     }
 }
 
-void rimuovi_prenotazioni_scadute(CodaPrenotazioni* coda) {
+void rimuovi_prenotazioni_scadute(CodaPrenotazioni coda) {
     if (coda == NULL) return;
     
-    DataSistema data_corrente = get_data_sistema();
-    int timestamp_corrente = converti_in_timestamp(data_corrente.giorno, data_corrente.ora);
+    
+    int timestamp_corrente = converti_in_timestamp(get_giorno_corrente(), get_ora_corrente());
     
     for (int i = 0; i < coda->dimensione; i++) {
-        if (coda->heap[i].giorno_ora_fine < timestamp_corrente && 
-            coda->heap[i].stato != COMPLETATA && 
-            coda->heap[i].stato != CANCELLATA) {
-            coda->heap[i].stato = COMPLETATA;
+        Prenotazione p = &coda->heap[i];
+
+        if (p->giorno_ora_fine < timestamp_corrente && p->stato != 2 && p->stato != 3) {
+            p->stato = 2;
+
+            list veicoli = get_lista_veicoli();
+            Veicolo v = cerca_veicolo(veicoli, p->id_veicolo);
+            if (v != NULL) {
+                // Aggiorna la posizione del veicolo alla posizione di riconsegna
+                set_posizione_veicolo(v, p->posizione_riconsegna);
+            }
         }
     }
 }
 
-void stampa_data_sistema() {
-    DataSistema data = get_data_sistema();
-    const char* giorni[] = {"Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato", "Domenica"};
-    
-    printf("  %s, ore %02d:00\n", 
-           giorni[data.giorno], 
-           data.ora);
-}
-
 int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine) {
-    DataSistema data_corrente = get_data_sistema();
-    int timestamp_corrente = converti_in_timestamp(data_corrente.giorno, data_corrente.ora);
+    int timestamp_corrente = converti_in_timestamp(get_giorno_corrente(), get_ora_corrente());
     
-    // Controlla se la data di inizio è nel passato
+    // Controlla se la data di inizio è nel passato rispetto alla data sistema
     if (giorno_ora_inizio < timestamp_corrente) {
         return -1;  // Data nel passato
     }
@@ -414,18 +494,27 @@ int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine) {
     if (giorno_ora_fine <= giorno_ora_inizio) {
         return -2;  // Date non valide
     }
+     // Controlla se la data di inizio è nello stesso giorno della data di sistema
+    int giorno_inizio = estrai_giorno(giorno_ora_inizio);
+    int ora_inizio = estrai_ora(giorno_ora_inizio);
+    int giorno_corrente = get_giorno_corrente();
+    int ora_corrente = get_ora_corrente();
+    
+    if (giorno_inizio == giorno_corrente && ora_inizio < ora_corrente) {
+        return -1;  // Data nel passato (stesso giorno ma ora precedente)
+    }
     
     return 0;  // Date valide
 }
 
-int verifica_sovrapposizioni(CodaPrenotazioni* coda, int id_veicolo, int giorno_ora_inizio, int giorno_ora_fine) {
+int verifica_sovrapposizioni( CodaPrenotazioni coda, int id_veicolo, int giorno_ora_inizio, int giorno_ora_fine) {
     if (coda == NULL) return -1;
     
     for (int i = 0; i < coda->dimensione; i++) {
-        Prenotazione p = coda->heap[i];
+         struct Prenotazione p = coda->heap[i];
         
         // Ignora le prenotazioni cancellate o completate
-        if (p.stato == CANCELLATA || p.stato == COMPLETATA) continue;
+        if (p.stato == 3 || p.stato == 2) continue;
         
         // Ignora le prenotazioni di altri veicoli
         if (p.id_veicolo != id_veicolo) continue;
@@ -442,16 +531,157 @@ int verifica_sovrapposizioni(CodaPrenotazioni* coda, int id_veicolo, int giorno_
 }
 
 // Funzione per contare le prenotazioni completate di un utente
-int conta_prenotazioni_completate(CodaPrenotazioni* coda, int id_utente) {
+int conta_prenotazioni_completate( CodaPrenotazioni coda, int id_utente) {
     if (coda == NULL) {
         return 0;
     }
     
     int conteggio = 0;
     for (int i = 0; i < coda->dimensione; i++) {
-        if (coda->heap[i].id_utente == id_utente && coda->heap[i].stato == COMPLETATA) {
+        if (coda->heap[i].id_utente == id_utente && coda->heap[i].stato == 2) {
             conteggio++;
         }
     }
     return conteggio;
+}
+
+// Getter functions for Prenotazione struct fields
+int get_id_prenotazione( Prenotazione p) {
+    if (p == NULL) return -1;
+    return p->id_prenotazione;
+}
+
+int get_id_utente_prenotazione( Prenotazione p) {
+    if (p == NULL) return -1;
+    return p->id_utente;
+}
+
+int get_id_veicolo_prenotazione( Prenotazione p) {
+    if (p == NULL) return -1;
+    return p->id_veicolo;
+}
+
+int get_giorno_ora_inizio( Prenotazione p) {
+    if (p == NULL) return -1;
+    return p->giorno_ora_inizio;
+}
+
+int get_giorno_ora_fine( Prenotazione p) {
+    if (p == NULL) return -1;
+    return p->giorno_ora_fine;
+}
+
+int get_stato_prenotazione( Prenotazione p) {
+    if (p == NULL) return -1;
+    return p->stato;
+}
+
+int get_priorita( Prenotazione p) {
+    if (p == NULL) return -1;
+    return p->priorita;
+}
+
+// Helper functions to get specific time components
+int get_giorno_inizio( Prenotazione p) {
+    if (p == NULL) return -1;
+    return estrai_giorno(p->giorno_ora_inizio);
+}
+
+int get_ora_inizio( Prenotazione p) {
+    if (p == NULL) return -1;
+    return estrai_ora(p->giorno_ora_inizio);
+}
+
+int get_giorno_fine( Prenotazione p) {
+    if (p == NULL) return -1;
+    return estrai_giorno(p->giorno_ora_fine);
+}
+
+int get_ora_fine( Prenotazione p) {
+    if (p == NULL) return -1;
+    return estrai_ora(p->giorno_ora_fine);
+}
+
+ Prenotazione get_heap_coda( CodaPrenotazioni coda) {
+    if (coda == NULL) return NULL;
+    return coda->heap;
+}
+
+int get_capacita_coda( CodaPrenotazioni coda) {
+    if (coda == NULL) return -1;
+    return coda->capacita;
+}
+
+int get_dimensione_coda( CodaPrenotazioni coda) {
+    if (coda == NULL) return -1;
+    return coda->dimensione;
+}
+
+void set_id_prenotazione(int id_prenotazione,  Prenotazione p) {
+    if (p == NULL) return;
+    p->id_prenotazione = id_prenotazione;
+}
+
+void set_id_utente_prenotazione(int id_utente,  Prenotazione p) {
+    if (p == NULL) return;
+    p->id_utente = id_utente;
+}
+
+void set_id_veicolo_prenotazione(int id_veicolo,  Prenotazione p) {
+    if (p == NULL) return;
+    p->id_veicolo = id_veicolo;
+}
+
+void set_giorno_ora_inizio(int giorno_ora_inizio,  Prenotazione p) {
+    if (p == NULL) return;
+    p->giorno_ora_inizio = giorno_ora_inizio;
+}
+
+void set_giorno_ora_fine(int giorno_ora_fine,  Prenotazione p) {
+    if (p == NULL) return;
+    p->giorno_ora_fine = giorno_ora_fine;
+}
+
+void set_stato_prenotazione(int stato,  Prenotazione p) {
+    if (p == NULL) return;
+    p->stato = stato;
+}
+
+void set_priorita(int priorita,  Prenotazione p) {
+    if (p == NULL) return;
+    p->priorita = priorita;
+}
+
+Prenotazione get_prenotazione_in_coda(CodaPrenotazioni coda, int i) {
+    if (coda == NULL || i < 0 || i >= coda->dimensione) {
+        return NULL;
+    }
+    return &coda->heap[i];
+}
+
+int conta_prenotazioni_completate_prima_di(CodaPrenotazioni coda, int id_utente, int id_prenotazione_corrente) {
+    if (coda == NULL) return 0;
+    int conteggio = 0;
+    for (int i = 0; i < coda->dimensione; i++) {
+        Prenotazione p = &coda->heap[i];
+        if (p->id_utente == id_utente && p->stato == 2 && p->id_prenotazione < id_prenotazione_corrente) {
+            conteggio++;
+        }
+    }
+    return conteggio;
+}
+
+void rimuovi_prenotazioni_utente(CodaPrenotazioni coda, int id_utente) {
+    if (coda == NULL) return;
+    for (int i = 0; i < coda->dimensione; ) {
+        if (coda->heap[i].id_utente == id_utente) {
+            // Rimuovi la prenotazione (sposta l'ultima qui e riduci la dimensione)
+            coda->heap[i] = coda->heap[coda->dimensione - 1];
+            coda->dimensione--;
+            // Mantieni la proprietà dell'heap
+            bubble_down(coda, i);
+        } else {
+            i++;
+        }
+    }
 }

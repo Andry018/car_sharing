@@ -3,8 +3,20 @@
 #include <string.h>
 #include "utenti.h"
 #include "hash.h"
+#include <ctype.h>
+#include "prenotazioni.h"
 
-static Utente* tabellaUtenti[TABLE_SIZE];
+struct Utente {
+    int id;
+    char username[30];
+    char nome_completo[50];
+    char password[MAX_PASSWORD_LENGTH];  // Campo per la password
+    int isAdmin;
+} ;
+
+
+static Utente tabellaUtenti[TABLE_SIZE];
+static int id_counter = 1;
 
 int carica_ultimo_id_utente() {
     FILE* file = fopen("data/utenti.txt", "r");
@@ -29,58 +41,11 @@ int carica_ultimo_id_utente() {
     return max_id;
 }
 
-void inizializza_tabella_utenti() {
-    for (int i = 0; i < TABLE_SIZE; i++) {
-        tabellaUtenti[i] = NULL;
+void inizializza_tabella_utenti(void) {
+    for (int index = 0; index < TABLE_SIZE; index++) {
+        tabellaUtenti[index] = NULL;
     }
-    
-    // Verifica se l'admin esiste già nel file
-    FILE* file = fopen("data/utenti.txt", "r");
-    int admin_exists = 0;
-    
-    if (file != NULL) {
-        char line[256];
-        while (fgets(line, sizeof(line), file)) {
-            char username[30];
-            if (sscanf(line, "%*d %s", username) == 1 && strcmp(username, "Admin") == 0) {
-                admin_exists = 1;
-                break;
-            }
-        }
-        fclose(file);
-    }
-    
-    // Crea automaticamente l'utente admin se non esiste
-    if (!admin_exists) {
-        unsigned int index = hash_djb2("Admin") % TABLE_SIZE;
-        tabellaUtenti[index] = malloc(sizeof(Utente));
-        if (tabellaUtenti[index] != NULL) {
-            tabellaUtenti[index]->id = 0;  // ID 0 per l'admin
-            strcpy(tabellaUtenti[index]->username, "Admin");
-            strcpy(tabellaUtenti[index]->nome_completo, "Administrator");
-            tabellaUtenti[index]->isAdmin = 1;
-            
-            // Salva l'admin nel file
-            FILE* write_file;
-            if (admin_exists == 0 && file == NULL) {
-                // Se il file non esiste, crealo
-                write_file = fopen("data/utenti.txt", "w");
-            } else {
-                // Altrimenti aggiungi in append
-                write_file = fopen("data/utenti.txt", "a");
-            }
-            
-            if (write_file != NULL) {
-                fprintf(write_file, "%d %s %s %d\n", 
-                        tabellaUtenti[index]->id,
-                        tabellaUtenti[index]->username,
-                        tabellaUtenti[index]->nome_completo,
-                        tabellaUtenti[index]->isAdmin);
-                fclose(write_file);
-                printf("Utente Admin creato con successo.\n");
-            }
-        }
-    }
+    printf("Tabella utenti inizializzata.\n");
 }
 
 void salva_utenti_file() {
@@ -92,9 +57,10 @@ void salva_utenti_file() {
 
     for (int i = 0; i < TABLE_SIZE; i++) {
         if (tabellaUtenti[i] != NULL) {
-            fprintf(file, "%d %s %s %d\n", 
+            fprintf(file, "%d %s %s %s %d\n", 
                    tabellaUtenti[i]->id, 
                    tabellaUtenti[i]->username, 
+                   tabellaUtenti[i]->password,
                    tabellaUtenti[i]->nome_completo,
                    tabellaUtenti[i]->isAdmin);
         }
@@ -104,62 +70,239 @@ void salva_utenti_file() {
 }
 
 int carica_utenti_file() {
+    int max_id = carica_ultimo_id_utente();
+    printf("Tentativo di apertura del file utenti.txt...\n");
     FILE* file = fopen("data/utenti.txt", "r");
     if (file == NULL) {
-        printf("Errore nell'apertura del file utenti.txt\n");
+        printf("Errore nell'apertura del file utenti.txt. Tentativo di creazione...\n");
+        // Se il file non esiste, crealo con l'utente admin
+        file = fopen("data/utenti.txt", "w");
+        if (file == NULL) {
+            printf("Errore nella creazione del file utenti.txt. Verifica i permessi della directory.\n");
+            return 0;
+        }
+        
+        // Crea l'utente admin
+        char admin_password_hash[MAX_PASSWORD_LENGTH];
+        hash_password("admin", admin_password_hash);
+        if (fprintf(file, "0 Admin %s Administrator 1\n", admin_password_hash) < 0) {
+            printf("Errore nella scrittura del file utenti.txt\n");
+            fclose(file);
+            return 0;
+        }
+       // fclose(file);
+        
+        // Riapri il file in lettura
+        file = fopen("data/utenti.txt", "r");
+        if (file == NULL) {
+            printf("Errore nella riapertura del file utenti.txt\n");
+            return 0;
+        }
+        
+        // Inizializza la tabella con l'admin
+        unsigned int index = hash_djb2("Admin") % TABLE_SIZE;
+        if (tabellaUtenti[index] == NULL) {
+            tabellaUtenti[index] = malloc(sizeof(struct Utente));
+            if (tabellaUtenti[index] != NULL) {
+                tabellaUtenti[index]->id = 0;
+                strcpy(tabellaUtenti[index]->username, "Admin");
+                char admin_password_hash[MAX_PASSWORD_LENGTH];
+                hash_password("admin", admin_password_hash);
+                strcpy(tabellaUtenti[index]->password, admin_password_hash);   
+                strcpy(tabellaUtenti[index]->nome_completo, "Administrator");
+                tabellaUtenti[index]->isAdmin = 1;
+                printf("File utenti.txt creato con l'utente Admin.\n");
+                fclose(file);
+                return 1;
+            }
+        }
+        fclose(file);
         return 0;
     }
 
+    printf("File utenti.txt aperto con successo. Lettura in corso...\n");
     char line[256];
     int success = 1;
+    int count = 0;
+    int line_number = 0;
 
     while (fgets(line, sizeof(line), file)) {
-        char username[30];
-        char nome_completo[50];
-        char* token = strtok(line, " ");  // Legge ID
+        line_number++;
+        // Salta le righe vuote
+        if (line[0] == '\n' || line[0] == '\r' || line[0] == '\0') {
+            continue;
+        }
+
+        char username[30] = {0};
+        char nome_completo[50] = {0};
+        char password[MAX_PASSWORD_LENGTH] = {0};
+        int id = -1, isAdmin = -1;
         
-        if (token != NULL) {
-            token = strtok(NULL, " ");  // Legge username
-            
-            if (token != NULL) {
-                strcpy(username, token);
-                token = strtok(NULL, "\n");  // Legge il resto della linea fino a \n
-                
-                if (token != NULL) {
-                    // Trova l'ultimo numero nella stringa (isAdmin)
-                    char* last_space = strrchr(token, ' ');
-                    if (last_space != NULL) {
-                        *last_space = '\0';  // Termina la stringa prima dell'isAdmin
-                        // Rimuovi spazi iniziali dal nome completo
-                        while (*token == ' ') token++;
-                        strcpy(nome_completo, token);
-                        
-                        if (!inserisci_utente(username, nome_completo)) {
-                            printf("Errore nell'inserimento dell'utente %s\n", username);
-                            success = 0;
-                        }
-                    }
-                }
-            }
+        // Leggi l'ID e l'username
+        char* token = strtok(line, " ");
+        if (token == NULL) {
+            printf("Errore nel formato della riga %d: ID mancante\n", line_number);
+            continue;
+        }
+        id = atoi(token);
+        
+        // Leggi l'username
+        token = strtok(NULL, " ");
+        if (token == NULL) {
+            printf("Errore nel formato della riga %d: username mancante\n", line_number);
+            continue;
+        }
+        strncpy(username, token, sizeof(username) - 1);
+
+        // Leggi la password
+        token = strtok(NULL, " ");
+        if (token == NULL) {
+            printf("Errore nel formato della riga %d: password mancante\n", line_number);
+            continue;
+        }
+        strncpy(password, token, sizeof(password) - 1);
+        
+        // Leggi il nome completo (può contenere spazi)
+        token = strtok(NULL, "\n");
+        if (token == NULL) {
+            printf("Errore nel formato della riga %d: nome completo mancante\n", line_number);
+            continue;
+        }
+        
+        // Estrai isAdmin dal nome completo
+        char* last_space = strrchr(token, ' ');
+        if (last_space == NULL) {
+            printf("Errore nel formato della riga %d: isAdmin mancante\n", line_number);
+            continue;
+        }
+        isAdmin = atoi(last_space + 1);
+        *last_space = '\0';  // Termina il nome completo prima dell'isAdmin
+        
+        strncpy(nome_completo, token, sizeof(nome_completo) - 1);
+        
+        
+        // Verifica che tutti i campi siano validi
+        if (id < 0 || strlen(username) == 0 || strlen(nome_completo) == 0 || isAdmin < 0) {
+            printf("Errore nel formato della riga %d: campi non validi\n", line_number);
+            continue;
+        }
+        
+        unsigned int index = hash_djb2(username) % TABLE_SIZE;
+        
+        // Se lo slot è vuoto, alloca nuova memoria
+        if (tabellaUtenti[index] == NULL) {
+            tabellaUtenti[index] = malloc(sizeof(struct Utente));
+        }
+        
+        if (tabellaUtenti[index] != NULL) {
+            tabellaUtenti[index]->id = id;
+            strcpy(tabellaUtenti[index]->username, username);
+            strcpy(tabellaUtenti[index]->password, password);  
+            strcpy(tabellaUtenti[index]->nome_completo, nome_completo);
+            tabellaUtenti[index]->isAdmin = isAdmin;
+            count++;
+            printf("Caricato utente: %s (ID: %d)\n", username, id);
+        } else {
+            printf("Errore nell'allocazione della memoria per l'utente %s\n", username);
+            success = 0;
+        }
+        if(count > 0) {
+            id_counter = max_id + 1;
+        } else {
+            id_counter = 1;  // Inizializza il contatore se non ci sono utenti
         }
     }
+    
     fclose(file);
     
+    if (count == 0) {
+        printf("Nessun utente trovato nel file. Creazione utente admin...\n");
+        // Se non ci sono utenti, crea l'admin
+        unsigned int index = hash_djb2("Admin") % TABLE_SIZE;
+        if (tabellaUtenti[index] == NULL) {
+            tabellaUtenti[index] = malloc(sizeof(struct Utente));
+            if (tabellaUtenti[index] != NULL) {
+                tabellaUtenti[index]->id = 0;
+                strcpy(tabellaUtenti[index]->username, "Admin");
+                strcpy(tabellaUtenti[index]->password, "admin"); 
+                strcpy(tabellaUtenti[index]->nome_completo, "Administrator");
+                tabellaUtenti[index]->isAdmin = 1;
+                salva_utenti_file();  // Salva l'admin nel file
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
     if (success) {
-        printf("Utenti caricati dal file data/utenti.txt\n");
+        printf("Caricati %d utenti dal file data/utenti.txt\n", count);
     } else {
         printf("Si sono verificati errori durante il caricamento degli utenti\n");
     }
     return success;
 }
 
-int inserisci_utente(const char* username, const char* nome_completo) {
-    static int id_counter = 0;
-    if (id_counter == 0) {
-        id_counter = carica_ultimo_id_utente();
-        // Se non ci sono altri utenti oltre all'admin, parti da 1
-        if (id_counter == 0) {
-            id_counter = 1;
+int inserisci_utente(const char* username, const char* nome_completo, const char* password) {
+    // Verifica che gli input non siano NULL
+    if (username == NULL || nome_completo == NULL || password == NULL) {
+        printf("Errore: Input non valido (NULL)\n");
+        return 0;
+    }
+
+    // Verifica la lunghezza degli input
+    if (strlen(username) > 29) {
+        printf("Errore: Username troppo lungo (max 29 caratteri)\n");
+        return 0;
+    }
+    if (strlen(nome_completo) > 49) {
+        printf("Errore: Nome completo troppo lungo (max 49 caratteri)\n");
+        return 0;
+    }
+    if (strlen(password) > 29) {
+        printf("Errore: Password troppo lunga (max 29 caratteri)\n");
+        return 0;
+    }
+
+    // Verifica che gli input non siano vuoti o contengano solo spazi
+    if (strlen(username) == 0 || strlen(nome_completo) == 0 || strlen(password) == 0) {
+        printf("Errore: Input vuoto non valido\n");
+        return 0;
+    }
+
+    // Verifica che l'username non contenga spazi
+    if (strchr(username, ' ') != NULL) {
+        printf("Errore: L'username non può contenere spazi\n");
+        return 0;
+    }
+
+    // Verifica che l'username non sia già in uso
+    if (cerca_utente(username) != NULL) {
+        printf("Errore: Username già in uso\n");
+        return 0;
+    }
+
+    int idx = hash_djb2(username) % TABLE_SIZE;
+    if (tabellaUtenti[idx] == NULL) {
+        tabellaUtenti[idx] = malloc(sizeof(struct Utente));
+        if (tabellaUtenti[idx] == NULL) {
+            printf("Errore: Memoria insufficiente\n");
+            return 0;
+        }
+    } else {
+        // Se lo slot è occupato, cerca il prossimo slot libero
+        int original_idx = idx;
+        do {
+            idx = (idx + 1) % TABLE_SIZE;
+            if (idx == original_idx) {
+                printf("Errore: Tabella utenti piena\n");
+                return 0;
+            }
+        } while (tabellaUtenti[idx] != NULL);
+        
+        tabellaUtenti[idx] = malloc(sizeof(struct Utente));
+        if (tabellaUtenti[idx] == NULL) {
+            printf("Errore: Memoria insufficiente\n");
+            return 0;
         }
     }
     
@@ -168,34 +311,21 @@ int inserisci_utente(const char* username, const char* nome_completo) {
         id_counter = 0;
     }
     
-    unsigned int index = hash_djb2(username) % TABLE_SIZE;
-
-    for (int i = 0; i < TABLE_SIZE; i++) {
-        int idx = (index + i) % TABLE_SIZE;
-
-        if (tabellaUtenti[idx] == NULL) {
-            tabellaUtenti[idx] = malloc(sizeof(Utente));
-            if (tabellaUtenti[idx] == NULL) {
-                return 0;
-            }
-            
-            // Se non è l'admin, incrementa l'ID
-            if (strcmp(username, "Admin") != 0) {
-                tabellaUtenti[idx]->id = id_counter++;
-            } else {
-                tabellaUtenti[idx]->id = 0;  // Admin sempre con ID 0
-            }
-            
-            strcpy(tabellaUtenti[idx]->username, username);
-            strcpy(tabellaUtenti[idx]->nome_completo, nome_completo);
-            tabellaUtenti[idx]->isAdmin = (strcmp(username, "Admin") == 0) ? 1 : 0;
-            return 1;
-        }
-    }
-    return 0;
+    tabellaUtenti[idx]->id = id_counter++;
+    strncpy(tabellaUtenti[idx]->username, username, sizeof(tabellaUtenti[idx]->username) - 1);
+    tabellaUtenti[idx]->username[sizeof(tabellaUtenti[idx]->username) - 1] = '\0';
+    
+    strncpy(tabellaUtenti[idx]->nome_completo, nome_completo, sizeof(tabellaUtenti[idx]->nome_completo) - 1);
+    tabellaUtenti[idx]->nome_completo[sizeof(tabellaUtenti[idx]->nome_completo) - 1] = '\0';
+    
+    strncpy(tabellaUtenti[idx]->password, password, sizeof(tabellaUtenti[idx]->password) - 1);
+    tabellaUtenti[idx]->password[sizeof(tabellaUtenti[idx]->password) - 1] = '\0';
+    
+    tabellaUtenti[idx]->isAdmin = (strcmp(username, "Admin") == 0) ? 1 : 0;
+    return 1;
 }
 
-Utente* cerca_utente(const char* username) {
+Utente cerca_utente(const char* username) {
     unsigned int index = hash_djb2(username) % TABLE_SIZE;
 
     for (int i = 0; i < TABLE_SIZE; i++) {
@@ -210,7 +340,7 @@ Utente* cerca_utente(const char* username) {
 }
 
 // Funzione per cercare un utente per ID
-Utente* cerca_utente_per_id(int id) {
+Utente cerca_utente_per_id(int id) {
     for (int i = 0; i < TABLE_SIZE; i++) {
         if (tabellaUtenti[i] != NULL && tabellaUtenti[i]->id == id) {
             return tabellaUtenti[i];
@@ -226,7 +356,156 @@ void stampa_utenti() {
                    tabellaUtenti[i]->id,
                    tabellaUtenti[i]->username,
                    tabellaUtenti[i]->nome_completo,
-                   tabellaUtenti[i]->isAdmin ? "Sì" : "No");
+                   tabellaUtenti[i]->isAdmin ? "Si" : "No");
         }
     }
+}
+
+int get_id_utente(const char* username) {
+    Utente utente = cerca_utente(username);
+    if (utente == NULL) {
+        return -1;  // Utente non trovato
+    }
+    return utente->id;  // Restituisce l'ID dell'utente
+}
+
+const char* get_nome_utente(const char* username) {
+    Utente utente = cerca_utente(username);
+    if (utente == NULL) {
+        return NULL;  // Utente non trovato
+    }
+    return utente->nome_completo;  // Restituisce il nome completo dell'utente
+}
+
+const char* get_username_utente(Utente u) {
+    if (u == NULL) {
+        return NULL;  // Utente non valido
+    }
+    return u->username;  // Restituisce l'username dell'utente
+}   
+
+const char* get_password_utente(const char* username) {
+    Utente utente = cerca_utente(username);
+    if (utente != NULL) {
+        return utente->password;
+    }
+    free(utente);
+    return NULL;  // Utente non trovato
+}   
+
+int get_isAdmin_utente(Utente u) {
+    if (u == NULL) {
+        return -1;  // Utente non valido
+    }
+    return u->isAdmin;  // Restituisce lo stato di amministratore dell'utente
+}   
+
+void set_id_utente(int id, Utente u) {
+    if (u == NULL) {
+        printf("Utente non valido!\n");
+        return;
+    }
+    u->id = id;  // Imposta l'ID dell'utente     
+}
+
+void set_nome_utente(const char* nome_completo, Utente u) {
+    if (u == NULL) {
+        printf("Utente non valido!\n");
+        return;
+    }
+    strncpy(u->nome_completo, nome_completo, sizeof(u->nome_completo) - 1);
+    u->nome_completo[sizeof(u->nome_completo) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
+}
+
+void set_username_utente(const char* new_username, Utente u) {
+    if (u == NULL) {
+        printf("Utente non valido!\n");
+        return;
+    }
+    if (cerca_utente(new_username) != NULL) {
+        printf("Username già esistente!\n");
+        return;  // Username già in uso
+    }
+    strcpy(u->username, new_username);  // Imposta il nuovo username
+    
+}
+
+void set_password_utente(const char* username, Utente u) {
+    if (u == NULL) {
+        printf("Utente non valido!\n");
+        return;
+    }
+    
+    char hashed_password[MAX_PASSWORD_LENGTH];
+    hash_password(username, hashed_password);
+    
+    // Imposta la password hashata
+    strncpy(u->password, hashed_password, sizeof(u->password) - 1);
+    u->password[sizeof(u->password) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
+}
+
+int verifica_password(const char* password, Utente u) {
+    if (u == NULL) {
+        return 0;  // Utente non valido
+    }
+    
+    char hashed_password[MAX_PASSWORD_LENGTH];
+    hash_password(password, hashed_password);
+    
+    // Confronta la password hashata con quella memorizzata
+    if (strcmp(u->password, hashed_password) == 0) {
+        return 1;  // Password corretta
+    }
+    
+    return 0;  // Password errata
+}
+
+void hash_password(const char* input, char* output) {
+    hash_djb2(input);
+    unsigned long hash = hash_djb2(input);
+    snprintf(output, MAX_PASSWORD_LENGTH, "%lu", hash);
+}
+
+int valida_username(const char* username) {
+    if (strlen(username) < 3 || strlen(username) > 29) {
+        return 0;
+    }
+    
+    // Verifica che contenga solo caratteri alfanumerici e underscore
+    for (int i = 0; username[i]; i++) {
+        if (!isalnum(username[i]) && username[i] != '_') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int valida_nome_completo(const char* nome) {
+    if (strlen(nome) < 3 || strlen(nome) > 49) {
+        return 0;
+    }
+    
+    // Verifica che contenga solo lettere, spazi e alcuni caratteri speciali
+    for (int i = 0; nome[i]; i++) {
+        if (!isalpha(nome[i]) && nome[i] != ' ' && nome[i] != '\'' && nome[i] != '-') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int rimuovi_utente(int id) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (tabellaUtenti[i] != NULL && tabellaUtenti[i]->id == id) {
+            // Elimina tutte le prenotazioni dell'utente
+            CodaPrenotazioni coda = get_coda_prenotazioni();
+            rimuovi_prenotazioni_utente(coda, id);
+            salva_prenotazioni_su_file(coda); 
+
+            free(tabellaUtenti[i]);
+            tabellaUtenti[i] = NULL;
+            return 1;
+        }
+    }
+    return 0;
 }
