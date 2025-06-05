@@ -4,7 +4,7 @@ ifeq ($(OS),Windows_NT)
     MKDIR = if not exist $(OBJDIR) mkdir $(OBJDIR)
     RMDIR = rmdir /s /q
     SEP = \\
-    COMPILE_FLAGS = -Wall -Wextra -g
+    COMPILE_FLAGS = -Wall -Wextra -g -Isrc -Itests
     ICON = resources$(SEP)icon.ico
 else
     RM = rm -f
@@ -12,7 +12,7 @@ else
     MKDIR = mkdir -p $(OBJDIR)
     RMDIR = rm -rf
     SEP = /
-    COMPILE_FLAGS = -Wall -Wextra -g
+    COMPILE_FLAGS = -Wall -Wextra -g -Isrc -Itests
     PREFIX = $(HOME)/.local
     DESKTOP_FILE = car_sharing.desktop
     ICON = resources$(SEP)icon.png
@@ -21,6 +21,8 @@ endif
 SRCDIR = src
 OBJDIR = obj
 RESDIR = resources
+TESTSRCDIR = tests
+TESTOBJS = $(OBJDIR)/test_car_sharing.o
 
 # Crea la directory obj se non esiste (viene eliminata con il comando 'make clean')
 $(shell $(MKDIR))
@@ -102,13 +104,32 @@ $(OBJDIR)/f_utili.o: $(SRCDIR)/f_utili.c $(SRCDIR)/f_utili.h
 $(OBJDIR)/resource.res: $(RESDIR)/resource.rc
 	windres $(RESDIR)/resource.rc -O coff -o $(OBJDIR)/resource.res
 
+$(OBJDIR)/test_car_sharing.o: $(TESTSRCDIR)/test_car_sharing.c
+	gcc $(COMPILE_FLAGS) -DTEST_BUILD -c $(TESTSRCDIR)/test_car_sharing.c -o $(OBJDIR)/test_car_sharing.o
+
+# Solo le librerie necessarie per i test (escludi main.o)
+TEST_LIBS = $(OBJDIR)/veicolo.o \
+            $(OBJDIR)/prenotazioni.o \
+            $(OBJDIR)/fasce_orarie.o \
+            $(OBJDIR)/utenti.o \
+            $(OBJDIR)/hash.o \
+            $(OBJDIR)/tariffe.o \
+            $(OBJDIR)/data_sistema.o \
+            $(OBJDIR)/f_utili.o
+
+test_car_sharing: test_car_sharing$(EXE)
+
+test_car_sharing$(EXE): $(TESTOBJS) $(TEST_LIBS)
+	gcc $(COMPILE_FLAGS) -o test_car_sharing$(EXE) $(TESTOBJS) $(TEST_LIBS)
+
 clean:  									
 ifeq ($(OS),Windows_NT)
 	$(RM) $(OBJDIR)\\*.o
 	$(RM) car_sharing$(EXE)
+	$(RM) test_car_sharing$(EXE)
 	$(RMDIR) $(OBJDIR)
 else
-	$(RM) $(OBJDIR)/*.o car_sharing$(EXE)
+	$(RM) $(OBJDIR)/*.o car_sharing$(EXE) test_car_sharing$(EXE)
 	$(RMDIR) $(OBJDIR)
 	$(RM) $(PREFIX)/share/applications/$(DESKTOP_FILE)
 	$(RM) $(PREFIX)/share/icons/hicolor/256x256/apps/car_sharing.png

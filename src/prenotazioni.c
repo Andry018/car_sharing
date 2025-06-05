@@ -367,7 +367,7 @@ int carica_prenotazioni_da_file(CodaPrenotazioni coda) {
 
     FILE* file = fopen("data/prenotazioni.txt", "r");
     if (file == NULL) {
-        printf("Errore nell'apertura del file per la lettura!\n");
+        printf("errore nell'apertura del file per la lettura!\n");
         return -1;
     }
     
@@ -600,6 +600,11 @@ int get_giorno_fine( Prenotazione p) {
 int get_ora_fine( Prenotazione p) {
     if (p == NULL) return -1;
     return estrai_ora(p->giorno_ora_fine);
+}
+
+int get_posizione_riconsegna( Prenotazione p) {
+    if (p == NULL) return -1;
+    return p->posizione_riconsegna;
 }
 
  Prenotazione get_heap_coda( CodaPrenotazioni coda) {

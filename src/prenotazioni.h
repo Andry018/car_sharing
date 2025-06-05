@@ -721,6 +721,8 @@ int get_giorno_fine(Prenotazione p);
  */
 int get_ora_fine(Prenotazione p);
 
+int get_posizione_riconsegna(Prenotazione p);
+
 /**
  * @brief Restituisce il puntatore all'array heap della coda
  * 
