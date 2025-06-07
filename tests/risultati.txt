@@ -1,1 +1,8 @@
 tests/TC01/TC01_input.txt FAIL
+tests/TC01/TC01_input.txt FAIL
+tests/TC01/TC01_input.txt FAIL
+tests/TC01/TC01_input.txt FAIL
+tests/TC01/TC01_input.txt FAIL
+tests/TC01/TC01_input.txt FAIL
+tests/TC01/TC01_input.txt FAIL
+tests/TC01/TC01_input.txt PASS

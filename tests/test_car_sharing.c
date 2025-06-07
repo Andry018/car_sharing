@@ -8,6 +8,26 @@
 #include "fasce_orarie.h"
 #define M 64
 
+// Coda di test separata
+static CodaPrenotazioni coda_test = NULL;
+// Contatore ID dedicato ai test
+static int test_id_counter = 1;
+
+// Funzione per inizializzare la coda di test
+static void inizializza_coda_test() {
+    if (coda_test != NULL) {
+        pulisci_coda(coda_test);
+    } else {
+        coda_test = inizializza_coda();
+    }
+    // Reset del contatore ID dei test
+    test_id_counter = 1;
+}
+
+// Funzione per ottenere la coda di test
+static CodaPrenotazioni get_coda_test() {
+    return coda_test;
+}
 
 // Prototipi delle funzioni di test
 void test_creazione_prenotazione(const char* input_fname, const char* output_fname, const char* oracle_fname);
@@ -138,19 +158,31 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
     leggi_input_test(input_fname, input, 10);
 
     // Parsing dei parametri di input
-    int id_utente = atoi(input[0]);
-    int id_veicolo = atoi(input[1]);
-    int giorno_inizio = atoi(input[2]);
-    int ora_inizio = atoi(input[3]);
-    int giorno_fine = atoi(input[4]);
-    int ora_fine = atoi(input[5]);
-    int priorita = atoi(input[6]);
-    int posizione_riconsegna = atoi(input[7]);
+    int id_utente = atoi(input[0]);      // 1
+    int id_veicolo = atoi(input[1]);     // 2
+    int giorno_inizio = atoi(input[2]);  // 2
+    int ora_inizio = atoi(input[3]);     // 10
+    int giorno_fine = atoi(input[4]);    // 3
+    int ora_fine = atoi(input[5]);       // 12
+    int priorita = atoi(input[6]);       // 1
+    int posizione_riconsegna = atoi(input[7]); // 0
 
-    // Creazione della prenotazione
-    Prenotazione p = crea_prenotazione(id_utente, id_veicolo, giorno_inizio, 
-                                     ora_inizio, giorno_fine, ora_fine, priorita, 
-                                     posizione_riconsegna);
+    // Creazione della prenotazione con ID di test
+    Prenotazione p = crea_prenotazione_test(id_utente, id_veicolo, giorno_inizio, 
+                                          ora_inizio, giorno_fine, ora_fine, priorita, 
+                                          posizione_riconsegna, test_id_counter++);
+    
+    if (p == NULL) {
+        printf("Errore nella creazione della prenotazione\n");
+        return;
+    }
+
+    // Aggiungi la prenotazione alla coda di test
+    if (aggiungi_prenotazione(coda_test, p) != 0) {
+        printf("Errore nell'aggiunta della prenotazione alla coda\n");
+        free(p);
+        return;
+    }
     
     // Scrittura dei risultati nel file di output
     FILE* f_output = fopen(output_fname, "w");
@@ -159,7 +191,8 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
         return;
     }
     
-    fprintf(f_output, "%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n", 
+    // Usa spazi invece di newline per separare i valori
+    fprintf(f_output, "%d %d %d %d %d %d %d %d", 
             get_id_prenotazione(p), 
             get_id_utente_prenotazione(p), 
             get_id_veicolo_prenotazione(p), 
@@ -273,12 +306,7 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
             CalendarioVeicolo calendario = inizializza_calendario(get_id_veicolo(v));
             if (calendario) {
                 // Aggiorna il calendario con le prenotazioni esistenti
-                CodaPrenotazioni coda_prenotazioni = get_coda_prenotazioni();
-                if (coda_prenotazioni == NULL) {
-                    printf("Errore nell'ottenere la coda delle prenotazioni\n");
-                    return;
-                }
-                CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, coda_prenotazioni);
+                CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, coda_test);
                 
                 // Verifica la disponibilità del veicolo nel momento specifico
                 if (nuovo_calendario && verifica_disponibilita(nuovo_calendario, giorno, ora, giorno, ora + 1)) {
@@ -314,8 +342,7 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
         }
         fclose(f);
     }
- free(veicoli);
-
+    free(veicoli);
 }
 
 /**
@@ -338,9 +365,6 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
     int ora_inizio = atoi(input[2]);
     int giorno_fine = atoi(input[3]);
     int ora_fine = atoi(input[4]);
-
-    // Ottieni la coda delle prenotazioni
-    CodaPrenotazioni coda_prenotazioni = get_coda_prenotazioni();
     
     // Scrittura dei risultati
     FILE* f_output = fopen(output_fname, "w");
@@ -350,9 +374,9 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
     }
 
     // Stampa delle prenotazioni dell'utente nel periodo specificato
-    int dimensione = get_dimensione_coda(coda_prenotazioni);
+    int dimensione = get_dimensione_coda(coda_test);
     for (int i = 0; i < dimensione; i++) {
-        Prenotazione p = get_prenotazione_in_coda(coda_prenotazioni, i);
+        Prenotazione p = get_prenotazione_in_coda(coda_test, i);
         if (p == NULL) {
             printf("Errore nell'ottenere la prenotazione in coda\n");
             return;
@@ -391,7 +415,6 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
             fprintf(f, "%s FAIL\n", input_fname);
         }
         fclose(f);
-        free(coda_prenotazioni);
     }
 }
 
@@ -401,6 +424,9 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
  * Altrimenti esegue solo i test specificati come argomenti
  */
 int main(int argc, char *argv[]) {
+    // Inizializza la coda di test invece di caricare le prenotazioni reali
+    inizializza_coda_test();
+    
     int total_tests = 0;
     int passed_tests = 0;
 
@@ -442,6 +468,12 @@ int main(int argc, char *argv[]) {
     printf("Test eseguiti: %d\n", total_tests);
     printf("Test passati: %d\n", passed_tests);
     printf("Test falliti: %d\n", total_tests - passed_tests);
+    
+    // Pulizia della coda di test
+    if (coda_test != NULL) {
+        distruggi_coda(coda_test);
+        coda_test = NULL;
+    }
     
     return 0;
 }

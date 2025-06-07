@@ -690,3 +690,32 @@ void rimuovi_prenotazioni_utente(CodaPrenotazioni coda, int id_utente) {
         }
     }
 }
+
+Prenotazione crea_prenotazione_test(int id_utente, int id_veicolo, int giorno_inizio, int ora_inizio,
+                                  int giorno_fine, int ora_fine, int priorita, int posizione_riconsegna,
+                                  int id_prenotazione) {
+    // Validazione dei parametri
+    if (id_utente <= 0 || id_veicolo <= 0 || 
+        giorno_inizio < 0 || giorno_inizio > 6 || ora_inizio < 0 || ora_inizio > 23 ||
+        giorno_fine < 0 || giorno_fine > 6 || ora_fine < 0 || ora_fine > 23 ||
+        priorita < 0 || posizione_riconsegna < 0) {
+        return NULL;
+    }
+
+    // Creazione della prenotazione
+    Prenotazione nuova = (Prenotazione)malloc(sizeof(struct Prenotazione));
+    if (!nuova) return NULL;
+
+    // Inizializzazione dei campi
+    nuova->id_prenotazione = id_prenotazione;
+    nuova->id_utente = id_utente;
+    nuova->id_veicolo = id_veicolo;
+    // Usa direttamente i valori forniti come timestamp
+    nuova->giorno_ora_inizio = ora_inizio;  // Usa direttamente l'ora come timestamp
+    nuova->giorno_ora_fine = ora_fine;      // Usa direttamente l'ora come timestamp
+    nuova->stato = 0;  // Stato iniziale: attiva
+    nuova->priorita = priorita;
+    nuova->posizione_riconsegna = posizione_riconsegna;
+
+    return nuova;
+}

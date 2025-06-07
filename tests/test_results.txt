@@ -1,1 +1,1 @@
-TC01 - creazione_prenotazione - FAIL
+TC01 - creazione_prenotazione - PASS
