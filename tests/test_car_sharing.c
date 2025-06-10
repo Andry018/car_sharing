@@ -158,13 +158,13 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
     leggi_input_test(input_fname, input, 10);
 
     // Parsing dei parametri di input
-    int id_utente = atoi(input[0]);      // 1
-    int id_veicolo = atoi(input[1]);     // 2
-    int giorno_inizio = atoi(input[2]);  // 2
-    int ora_inizio = atoi(input[3]);     // 10
-    int giorno_fine = atoi(input[4]);    // 3
-    int ora_fine = atoi(input[5]);       // 12
-    int priorita = atoi(input[6]);       // 1
+    int id_utente = atoi(input[0]);      // id_utente (int)
+    int id_veicolo = atoi(input[1]);     // id_veicolo(int)
+    int giorno_inizio = atoi(input[2]);  // giorno_inizio (int, 0-6)
+    int ora_inizio = atoi(input[3]);     // ora_inizio (int, 0-23)
+    int giorno_fine = atoi(input[4]);    // giorno_fine (int, 0-6)
+    int ora_fine = atoi(input[5]);       // ora_fine (int, 0-23)
+    int priorita = atoi(input[6]);       // priorita (int, 0-2)
     int posizione_riconsegna = atoi(input[7]); // 0
 
     // Creazione della prenotazione con ID di test
@@ -173,6 +173,8 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
                                           posizione_riconsegna, test_id_counter++);
     
     if (p == NULL) {
+        FILE *f_output = fopen(output_fname, "w");
+        if (f_output) fclose(f_output);
         printf("Errore nella creazione della prenotazione\n");
         return;
     }
