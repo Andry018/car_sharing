@@ -939,21 +939,4 @@ Prenotazione get_prenotazione_in_coda(CodaPrenotazioni coda, int i);
  */
 void rimuovi_prenotazioni_utente(CodaPrenotazioni coda, int id_utente);
 
-/**
- * Crea una nuova prenotazione con ID specificato (per uso nei test)
- * @param id_utente ID dell'utente
- * @param id_veicolo ID del veicolo
- * @param giorno_inizio Giorno di inizio (0-6)
- * @param ora_inizio Ora di inizio (0-23)
- * @param giorno_fine Giorno di fine (0-6)
- * @param ora_fine Ora di fine (0-23)
- * @param priorita Priorità della prenotazione
- * @param posizione_riconsegna Posizione di riconsegna
- * @param id_prenotazione ID da assegnare alla prenotazione
- * @return Puntatore alla prenotazione creata, NULL in caso di errore
- */
-Prenotazione crea_prenotazione_test(int id_utente, int id_veicolo, int giorno_inizio, int ora_inizio,
-                                  int giorno_fine, int ora_fine, int priorita, int posizione_riconsegna,
-                                  int id_prenotazione);
-
 #endif // PRENOTAZIONI_H

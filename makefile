@@ -45,7 +45,7 @@ OBJS += $(OBJDIR)/resource.res
 endif
 
 car_sharing$(EXE): $(OBJS)
-	gcc $(COMPILE_FLAGS) -o car_sharing$(EXE) $(OBJS)
+	$(CC) $(COMPILE_FLAGS) -o car_sharing$(EXE) $(OBJS)
 ifeq ($(OS),Windows_NT)
 	$(RM) $(OBJDIR)\\*.o
 	$(RMDIR) $(OBJDIR)
@@ -71,41 +71,41 @@ else
 	-gtk-update-icon-cache -f -t $(PREFIX)/share/icons/hicolor
 endif
 
-$(OBJDIR)/main.o: $(SRCDIR)/main.c
-	gcc -Wall -Wextra -g -c $(SRCDIR)/main.c -o $(OBJDIR)/main.o
+$(OBJDIR)/main.o: $(SRCDIR)/main.c $(SRCDIR)/veicolo.h $(SRCDIR)/prenotazioni.h $(SRCDIR)/tariffe.h $(SRCDIR)/utenti.h $(SRCDIR)/fasce_orarie.h $(SRCDIR)/f_utili.h
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/main.c -o $(OBJDIR)/main.o
 
-$(OBJDIR)/veicolo.o: $(SRCDIR)/veicolo.c $(SRCDIR)/veicolo.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/veicolo.c -o $(OBJDIR)/veicolo.o
+$(OBJDIR)/veicolo.o: $(SRCDIR)/veicolo.c $(SRCDIR)/veicolo.h $(SRCDIR)/f_utili.h
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/veicolo.c -o $(OBJDIR)/veicolo.o
 
-$(OBJDIR)/prenotazioni.o: $(SRCDIR)/prenotazioni.c $(SRCDIR)/prenotazioni.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/prenotazioni.c -o $(OBJDIR)/prenotazioni.o
+$(OBJDIR)/prenotazioni.o: $(SRCDIR)/prenotazioni.c $(SRCDIR)/prenotazioni.h $(SRCDIR)/veicolo.h $(SRCDIR)/test_utils.h
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/prenotazioni.c -o $(OBJDIR)/prenotazioni.o
 
 $(OBJDIR)/fasce_orarie.o: $(SRCDIR)/fasce_orarie.c $(SRCDIR)/fasce_orarie.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/fasce_orarie.c -o $(OBJDIR)/fasce_orarie.o
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/fasce_orarie.c -o $(OBJDIR)/fasce_orarie.o
 
 $(OBJDIR)/utenti.o: $(SRCDIR)/utenti.c $(SRCDIR)/utenti.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/utenti.c -o $(OBJDIR)/utenti.o
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/utenti.c -o $(OBJDIR)/utenti.o
 
 $(OBJDIR)/hash.o: $(SRCDIR)/hash.c $(SRCDIR)/hash.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/hash.c -o $(OBJDIR)/hash.o
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/hash.c -o $(OBJDIR)/hash.o
 
 $(OBJDIR)/tariffe.o: $(SRCDIR)/tariffe.c $(SRCDIR)/tariffe.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/tariffe.c -o $(OBJDIR)/tariffe.o
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/tariffe.c -o $(OBJDIR)/tariffe.o
 
 $(OBJDIR)/data_sistema.o: $(SRCDIR)/data_sistema.c $(SRCDIR)/data_sistema.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/data_sistema.c -o $(OBJDIR)/data_sistema.o
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/data_sistema.c -o $(OBJDIR)/data_sistema.o
 
 $(OBJDIR)/menu.o: $(SRCDIR)/menu.c $(SRCDIR)/menu.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/menu.c -o $(OBJDIR)/menu.o
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/menu.c -o $(OBJDIR)/menu.o
 
 $(OBJDIR)/f_utili.o: $(SRCDIR)/f_utili.c $(SRCDIR)/f_utili.h
-	gcc -Wall -Wextra -g -c $(SRCDIR)/f_utili.c -o $(OBJDIR)/f_utili.o
+	$(CC) $(COMPILE_FLAGS) -c $(SRCDIR)/f_utili.c -o $(OBJDIR)/f_utili.o
 
 $(OBJDIR)/resource.res: $(RESDIR)/resource.rc
-	windres $(RESDIR)/resource.rc -O coff -o $(OBJDIR)/resource.res
+	$(windres) $(RESDIR)/resource.rc -O coff -o $(OBJDIR)/resource.res
 
-$(OBJDIR)/test_car_sharing.o: $(TESTSRCDIR)/test_car_sharing.c
-	gcc $(COMPILE_FLAGS) -DTEST_BUILD -c $(TESTSRCDIR)/test_car_sharing.c -o $(OBJDIR)/test_car_sharing.o
+$(OBJDIR)/test_car_sharing.o: $(TESTSRCDIR)/test_car_sharing.c $(SRCDIR)/veicolo.h $(SRCDIR)/prenotazioni.h $(SRCDIR)/tariffe.h $(SRCDIR)/utenti.h $(SRCDIR)/fasce_orarie.h $(SRCDIR)/f_utili.h $(SRCDIR)/test_utils.h
+	$(CC) $(COMPILE_FLAGS) -DTEST_BUILD -c $(TESTSRCDIR)/test_car_sharing.c -o $(OBJDIR)/test_car_sharing.o
 
 # Solo le librerie necessarie per i test (escludi main.o)
 TEST_LIBS = $(OBJDIR)/veicolo.o \
@@ -120,7 +120,7 @@ TEST_LIBS = $(OBJDIR)/veicolo.o \
 test_car_sharing: test_car_sharing$(EXE)
 
 test_car_sharing$(EXE): $(TESTOBJS) $(TEST_LIBS)
-	gcc $(COMPILE_FLAGS) -o test_car_sharing$(EXE) $(TESTOBJS) $(TEST_LIBS)
+	$(CC) $(COMPILE_FLAGS) -o test_car_sharing$(EXE) $(TESTOBJS) $(TEST_LIBS)
 
 clean:  									
 ifeq ($(OS),Windows_NT)

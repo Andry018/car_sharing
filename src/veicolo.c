@@ -789,3 +789,11 @@ const char* get_nome_posizione_veicolo(int posizione) {
     }
     
 }
+
+ list aggiungi_veicolo_test(list l, Veicolo v) {
+       list nuovo = malloc(sizeof(struct node));
+       if (!nuovo) return l;
+       nuovo->v = v;
+       nuovo->next = l;
+       return nuovo;
+   }
