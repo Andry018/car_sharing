@@ -4,6 +4,7 @@
 #include "prenotazioni.h"
 #include "tariffe.h"
 #include "utenti.h"
+#include "fasce_orarie.h"
 #include <string.h>
 #include <direct.h>
 #define M 64
@@ -189,28 +190,42 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
     char input[10][M];
     int n = leggi_input_test(input_fname, input, 10);
 
-    int giorno = atoi(input[0]);
-    int ora = atoi(input[1]);
+    int giorno_inizio = atoi(input[0]);
+    int ora_inizio = atoi(input[1]);
+    int giorno_fine = atoi(input[2]);
+    int ora_fine = atoi(input[3]);
 
-    // Visualizza la disponibilità dei veicoli
-    list veicoli_disponibili = visualizza_disponibilita(giorno, ora);
-    
-    // Stampa i veicoli disponibili nel file di output
+    // Ottieni la lista veicoli simulata
+    list veicoli = get_lista_veicoli_test();
+
     FILE* f_output = fopen(output_fname, "w");
     if (!f_output) {
         printf("Errore apertura file di output: %s\n", output_fname);
         return;
     }
 
-    for (int i = 0; i < get_dimensione_coda(veicoli_disponibili); i++) {
-        Veicolo v = get_veicolo(veicoli_disponibili, i);
-        fprintf(f_output, "%d %s %s\n", get_id_veicolo(v), get_tipo_veicolo(v), get_posizione_veicolo(v));
+    // Per ogni veicolo, verifica la disponibilità nell'intervallo richiesto
+    list temp = veicoli;
+    while (temp != NULL) {
+        Veicolo v = get_veicolo_senza_rimuovere(temp);
+        if (v && get_disponibilita_veicolo(v)) {
+            CalendarioVeicolo calendario = inizializza_calendario(get_id_veicolo(v));
+            CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, get_coda_test());
+            if (nuovo_calendario && verifica_disponibilita(nuovo_calendario, giorno_inizio, ora_inizio, giorno_fine, ora_fine)) {
+                fprintf(f_output, "%d %s %s\n",
+                        get_id_veicolo(v),
+                        get_nome_tipo_veicolo(get_tipo_veicolo(v)),
+                        get_nome_posizione_veicolo(get_posizione_veicolo(v)));
+            }
+            free(nuovo_calendario);
+        }
+        temp = get_next_node(temp);
     }
 
     fclose(f_output);
 
     int cmp = compara_file(output_fname, oracle_fname);
-    
+
     FILE* f = fopen("C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/risultati.txt", "a");
     if (f) {
         if (cmp == 0) {
@@ -220,7 +235,6 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
         }
         fclose(f);
     }
-
 }
 
 void test_storico_prenotazioni(const char* input_fname, const char* output_fname, const char* oracle_fname){
