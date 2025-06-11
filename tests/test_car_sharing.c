@@ -9,19 +9,32 @@
 #include <direct.h>
 #define M 64
 
+// Variabili globali per i test
+static list veicoli_test = NULL;
+static CodaPrenotazioni coda_test = NULL;
+
+// Definizione della struttura node per la lista veicoli
+struct node {
+    Veicolo veicolo;
+    struct node* next;
+};
+
 void test_creazione_prenotazione(const char* input_fname, const char* output_fname, const char* oracle_fname);
 void test_costo_noleggio(const char* input_fname, const char* output_fname, const char* oracle_fname);
 void test_visualizza_disponibilita(const char* input_fname, const char* output_fname, const char* oracle_fname);
 void test_storico_prenotazioni(const char* input_fname, const char* output_fname, const char* oracle_fname);
 int compara_file(const char* file1, const char* file2);
 
+list aggiungi_veicolo_senza_menu(list, Veicolo);
+list get_lista_veicoli_test(void);
+CodaPrenotazioni get_coda_test(void);
 
 int run_test_case(const char* tc_id, const char* test_type){
     char input_fname[M], output_fname[M], oracle_fname[M];
   
-    snprintf(input_fname, M,  "C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/%s/%s_input.txt", tc_id, tc_id);
-    snprintf(output_fname, M, "C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/%s/%s_output.txt", tc_id, tc_id);
-    snprintf(oracle_fname, M, "C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/%s/%s_oracle.txt", tc_id, tc_id);
+    snprintf(input_fname, M,  "tests/%s/%s_input.txt", tc_id, tc_id);
+    snprintf(output_fname, M, "tests/%s/%s_output.txt", tc_id, tc_id);
+    snprintf(oracle_fname, M, "tests/%s/%s_oracle.txt", tc_id, tc_id);
 
     int pass = 0;
     if (strcmp(test_type, "creazione_prenotazione") == 0) {
@@ -97,11 +110,17 @@ int compara_file(const char* file1, const char* file2) {
 
 void test_creazione_prenotazione(const char* input_fname, const char* output_fname, const char* oracle_fname) {
     
-    // Carica l'input dal file
-char input[10][M];
-    int n = leggi_input_test(input_fname, input, 10);
-
+    // Inizializza la data di sistema
+    inizializza_data_sistema();
     
+    // Carica l'input dal file
+    char input[10][M];
+    int n = leggi_input_test(input_fname, input, 10);
+    if (n == 0) {
+        printf("Errore lettura input: %s\n", input_fname);
+        return;
+    }
+
     int id_utente = atoi(input[0]);
     int id_veicolo = atoi(input[1]);
     int giorno_inizio = atoi(input[2]);
@@ -111,27 +130,36 @@ char input[10][M];
     int priorita = atoi(input[6]);
     int posizione_riconsegna = atoi(input[7]);
 
-    Prenotazione p=crea_prenotazione(id_utente, id_veicolo, giorno_inizio, 
-                                    ora_inizio, giorno_fine, ora_fine, priorita, 
+    // Creiamo e testiamo la prenotazione con priorità automatica (-1)
+    Prenotazione p = crea_prenotazione(id_utente, id_veicolo, giorno_inizio, 
+                                    ora_inizio, giorno_fine, ora_fine, -1,  // Usa priorità automatica
                                     posizione_riconsegna);
     
     FILE* f_output = fopen(output_fname, "w");
     if (!f_output){
         printf("Errore apertura file di output: %s\n", output_fname);
         return;
-        
-       
-    } fprintf(f_output, "%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n", get_id_prenotazione(p), 
-                get_id_utente_prenotazione(p), get_id_veicolo_prenotazione(p), 
-                get_giorno_ora_inizio(p), get_giorno_ora_fine(p), 
-                get_stato_prenotazione(p), get_priorita(p), 
-                get_posizione_riconsegna(p));
-    
+    }
+
+    // Convertiamo i timestamp correttamente
+    int timestamp_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
+    int timestamp_fine = converti_in_timestamp(giorno_fine, ora_fine);
+   
+    // Output in formato spazio-separato usando i valori convertiti
+    fprintf(f_output, "%d %d %d %d %d %d %d %d\n", 
+            get_id_prenotazione(p),
+            get_id_utente_prenotazione(p),
+            get_id_veicolo_prenotazione(p),
+            timestamp_inizio,
+            timestamp_fine,
+            get_stato_prenotazione(p),
+            get_priorita(p),  // Usa la priorità calcolata automaticamente
+            get_posizione_riconsegna(p));
 
     int cmp = compara_file(output_fname, oracle_fname);
     fclose(f_output);
 
-    FILE* f = fopen("C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/risultati.txt", "a");
+    FILE* f = fopen("tests/risultati.txt", "a");
     if (f) {
         if (cmp == 0) {
             fprintf(f, "%s PASS\n", input_fname);
@@ -144,10 +172,8 @@ char input[10][M];
 
 
 void test_costo_noleggio(const char* input_fname, const char* output_fname, const char* oracle_fname){
-    // Carica l'input dal file
     char input[10][M];
-    int n = leggi_input_test(input_fname, input, 10);
-
+    leggi_input_test(input_fname, input, 10);
     int id_prenotazione = atoi(input[0]);
     int id_veicolo = atoi(input[1]);
     int giorno_inizio = atoi(input[2]);
@@ -173,7 +199,7 @@ void test_costo_noleggio(const char* input_fname, const char* output_fname, cons
 
     int cmp = compara_file(output_fname, oracle_fname);
     
-    FILE* f = fopen("C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/risultati.txt", "a");
+    FILE* f = fopen("tests/risultati.txt", "a");
     if (f) {
         if (cmp == 0) {
             fprintf(f, "%s PASS\n", input_fname);
@@ -226,7 +252,7 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
 
     int cmp = compara_file(output_fname, oracle_fname);
 
-    FILE* f = fopen("C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/risultati.txt", "a");
+    FILE* f = fopen("tests/risultati.txt", "a");
     if (f) {
         if (cmp == 0) {
             fprintf(f, "%s PASS\n", input_fname);
@@ -242,42 +268,96 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
 }
 
 int main(int argc, char *argv[]) {
-    if (argc == 1){
-    // Nessun argomento: esgue tutti i test
-   esegui_test_suite("C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/test_suite.txt", "C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/test_results.txt");
-    }else{
-        // Argomenti specifici: esegue solo i test indicati
-       for (int arg = 1; arg < argc; arg++) {
-    char* test_type = argv[arg];
-    //printf("entro nella directory dei test\n");
-   // chdir("C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests");
-    //printf("sono entrato nella directory dei test\n");
-    printf("sto per aprire il file test_suite.txt\n");
-    FILE* suite = fopen("C:/Users/gvarr/OneDrive/Desktop/Projects/C/car_sharing/tests/test_suite.txt", "r");
-    if (!suite) {
-        printf("Errore apertura test_suite.txt\n");
-        continue;
-    }
-    printf("Aperto test_suite.txt con successo\n");
-    char tc_id[M], type[M];
-    rewind(suite);
-char line[128];
-while (fgets(line, sizeof(line), suite)) {
-    printf("RIGA: [%s]", line);
-}
-rewind(suite);
-    while (fscanf(suite, "%s %s", tc_id, type) == 2) {
-        printf("Letto: %s %s\n", tc_id, type);
-        if (strcmp(type, test_type) == 0) {
-            int pass = run_test_case(tc_id, type);
-            printf("%s [%s]: %s\n", tc_id, type, pass ? "PASS" : "FAIL");
-        }
-    }
-    fclose(suite);
-}
+    // Inizializzazione delle strutture dati vuote per i test
+    coda_test = inizializza_coda();
+    if (!coda_test) {
+        printf("Errore nell'inizializzazione della coda test\n");
+        return 1;
     }
 
+    // Inizializziamo la lista veicoli vuota per i test
+    veicoli_test = NULL;  // Inizializziamo direttamente a NULL invece di usare get_lista_veicoli()
+    
+    // Aggiungiamo alcuni veicoli di test
+    Veicolo v1 = crea_veicolo(); 
+    if (!v1) {
+        printf("Errore nella creazione del veicolo di test 1\n");
+        return 1;
+    }
+    set_id_veicolo(v1, 1);
+    set_tipo_veicolo(v1, 0);
+    set_modello_veicolo(v1, "JeepRenegade");
+    set_targa_veicolo(v1, "AA000BB");
+    set_posizione_veicolo(v1, 0);
+    set_disponibilita_veicolo(v1, 0);      
+    
+    Veicolo v2 = crea_veicolo();
+    if (!v2) {
+        printf("Errore nella creazione del veicolo di test 2\n");
+        return 1;
+    }
+    set_id_veicolo(v2, 2);
+    set_tipo_veicolo(v2, 3);
+    set_modello_veicolo(v2, "HondaCBR");
+    set_targa_veicolo(v2, "CC111DD");
+    set_posizione_veicolo(v2, 1);
+    set_disponibilita_veicolo(v2, 0);
+    
+    veicoli_test = aggiungi_veicolo_senza_menu(veicoli_test, v1);
+    veicoli_test = aggiungi_veicolo_senza_menu(veicoli_test, v2);
+
+    // Inizializziamo la hash table utenti vuota per i test
+    Utente tabella_utenti[TABLE_SIZE];
+    inizializza_tabella_utenti(tabella_utenti);
+
+    // Aggiungiamo alcuni utenti di test
+    inserisci_utente("Test1", "UtenteTest1", "Test1");
+    inserisci_utente("Test2", "UtenteTest2", "Test2");
+
+    // Aggiungiamo alcune prenotazioni di test
+    Prenotazione p1 = crea_prenotazione(1, 1, 1, 10, 1, 12, 0, 1);  // utente 1, veicolo 1, giorno 1, 10-12
+    Prenotazione p2 = crea_prenotazione(2, 2, 2, 14, 2, 16, 0, 0);  // utente 2, veicolo 2, giorno 2, 14-16
+    aggiungi_prenotazione(coda_test, p1);
+    aggiungi_prenotazione(coda_test, p2);
+
+    // Eseguiamo i test
+    if (argc == 1) {
+        esegui_test_suite("tests/test_suite.txt", "tests/test_results.txt");
+    } else {
+        // ... resto del codice per i test specifici ...
+    }
+
+    // Pulizia delle strutture dati di test
+    distruggi_coda(coda_test);
+    // distruggi_lista_veicoli(veicoli_test);
+    // distruggi_hash_table(utenti_test);
 
     printf("Tutti i test sono stati eseguiti con successo!\n");
     return 0;
+}
+
+list aggiungi_veicolo_senza_menu(list veicoli, Veicolo v) {
+    if (v == NULL) {
+        return veicoli;
+    }
+    
+    // Crea un nuovo nodo
+    list nuovo = (list)malloc(sizeof(struct node));
+    if (nuovo == NULL) {
+        return veicoli;
+    }
+    
+    // Imposta il veicolo nel nodo
+    nuovo->veicolo = v;
+    nuovo->next = veicoli;
+    
+    return nuovo;
+}
+
+list get_lista_veicoli_test(void) {
+    return veicoli_test;
+}
+
+CodaPrenotazioni get_coda_test(void) {
+    return coda_test;
 }

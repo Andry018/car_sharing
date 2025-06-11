@@ -839,4 +839,5 @@ const char* get_nome_posizione_veicolo(int posizione);
 list get_next_node(list l);
 Veicolo get_veicolo_senza_rimuovere(list l);
 
+
 #endif
