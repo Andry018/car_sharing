@@ -1,4 +1,6 @@
 ifeq ($(OS),Windows_NT)   
+	CC = gcc
+	windres = windres
     RM = del
     EXE = .exe
     MKDIR = if not exist $(OBJDIR) mkdir $(OBJDIR)

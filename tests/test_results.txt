@@ -1,36 +1,35 @@
-TC00 - creazione_veicoli - FAIL
-TC01 - creazione_prenotazione - PASS
-TC02 - creazione_prenotazione - FAIL
-TC03 - creazione_prenotazione - PASS
-TC04 - creazione_prenotazione - PASS
-TC05 - creazione_prenotazione - FAIL
-TC06 - creazione_prenotazione - FAIL
-TC07 - creazione_prenotazione - FAIL
-TC08 - creazione_prenotazione - FAIL
-TC09 - creazione_prenotazione - FAIL
-TC10 - creazione_prenotazione - PASS
-TC11 - creazione_prenotazione - PASS
-TC12 - creazione_prenotazione - FAIL
-TC13 - creazione_prenotazione - FAIL
-TC14 - creazione_prenotazione - FAIL
-TC15 - creazione_prenotazione - FAIL
-TC16 - creazione_prenotazione - FAIL
-TC17 - costo_noleggio - PASS
-TC18 - costo_noleggio - PASS
-TC19 - costo_noleggio - PASS
-TC20 - costo_noleggio - PASS
-TC21 - costo_noleggio - PASS
-TC22 - costo_noleggio - PASS
-TC23 - costo_noleggio - PASS
-TC24 - costo_noleggio - PASS
-TC25 - costo_noleggio - PASS
-TC26 - costo_noleggio - PASS
-TC27 - costo_noleggio - PASS
-TC28 - costo_noleggio - PASS
-TC29 - costo_noleggio - PASS
+TC01 - creazione_prenotazione - FAIL
+TC02 - creazione_prenotazione - PASS
+TC03 - creazione_prenotazione - FAIL
+TC04 - creazione_prenotazione - FAIL
+TC05 - creazione_prenotazione - PASS
+TC06 - creazione_prenotazione - PASS
+TC07 - creazione_prenotazione - PASS
+TC08 - creazione_prenotazione - PASS
+TC09 - creazione_prenotazione - PASS
+TC10 - creazione_prenotazione - FAIL
+TC11 - creazione_prenotazione - FAIL
+TC12 - creazione_prenotazione - PASS
+TC13 - creazione_prenotazione - PASS
+TC14 - creazione_prenotazione - PASS
+TC15 - creazione_prenotazione - PASS
+TC16 - creazione_prenotazione - PASS
+TC17 - costo_noleggio - FAIL
+TC18 - costo_noleggio - FAIL
+TC19 - costo_noleggio - FAIL
+TC20 - costo_noleggio - FAIL
+TC21 - costo_noleggio - FAIL
+TC22 - costo_noleggio - FAIL
+TC23 - costo_noleggio - FAIL
+TC24 - costo_noleggio - FAIL
+TC25 - costo_noleggio - FAIL
+TC26 - costo_noleggio - FAIL
+TC27 - costo_noleggio - FAIL
+TC28 - costo_noleggio - FAIL
+TC29 - costo_noleggio - FAIL
 
 Riepilogo test:
-Totali: 30
-Passati: 18
-Falliti: 12
-Percentuale successo: 60.00%
+Totali: 29
+Passati: 11
+Falliti: 18
+Percentuale successo: 37.93%

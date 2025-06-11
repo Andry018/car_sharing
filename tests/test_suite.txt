@@ -1,4 +1,3 @@
-TC00 creazione_veicoli
 TC01 creazione_prenotazione
 TC02 creazione_prenotazione
 TC03 creazione_prenotazione

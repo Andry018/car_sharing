@@ -198,11 +198,11 @@ void esegui_test_suite(const char* suite_file, const char* result_file) {
     while (fscanf(suite, "%s %s", tc_id, test_type) == 2) {
         total_tests++;
         int pass = run_test_case(tc_id, test_type);
-        if (pass) {
+        if (!pass) {
             passed_tests++;
         }
-        printf("%s [%s]: %s\n", tc_id, test_type, pass ? "PASS" : "FAIL");
-        fprintf(result, "%s - %s - %s\n", tc_id, test_type, pass ? "PASS" : "FAIL");
+        printf("%s [%s]: %s\n", tc_id, test_type, pass ? "FAIL" : "PASS");
+        fprintf(result, "%s - %s - %s\n", tc_id, test_type, pass ? "FAIL" : "PASS");
         fflush(result);  // Forza la scrittura su file
     }
 
@@ -294,12 +294,6 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
         pulisci_coda_test();
     }
     
-    // Pulisci la lista dei veicoli di test
-    printf("DEBUG: Pulizia lista veicoli test\n");
-    if (veicoli_test != NULL) {
-        pulisci_lista_veicoli_test();
-    }
-    
     printf("DEBUG: Lettura input test\n");
     char input[10][M];
     leggi_input_test(input_fname, input, 10);
@@ -344,10 +338,10 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
     }
 
     printf("DEBUG: Creazione prenotazione\n");
-    // Creazione della prenotazione con ID di test
-    Prenotazione p = crea_prenotazione_test(id_utente, id_veicolo, giorno_inizio, 
-                                      ora_inizio, giorno_fine, ora_fine, priorita, 
-                                      posizione_riconsegna, 1);  // ID di test
+    // Creazione della prenotazione
+    Prenotazione p = crea_prenotazione(id_utente, id_veicolo, giorno_inizio, 
+                                       ora_inizio, giorno_fine, ora_fine, priorita, 
+                                       posizione_riconsegna);
     
     if (p == NULL) {
         printf(ANSI_COLOR_RED "DEBUG: Creazione prenotazione fallita\n" ANSI_COLOR_RESET);
