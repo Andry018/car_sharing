@@ -106,46 +106,116 @@ list aggiungi_veicolo(list l) {
         return l;
     }
 
-    pulisci_schermo();
-    stampa_bordo_superiore();
-    
-    set_color(13); // Magenta
-    printf("         AGGIUNGI VEICOLO\n");
-    
-    stampa_separatore();
-    
-    // Mostra la data di sistema corrente
-    set_color(14); // Giallo
-    printf("         DATA DI SISTEMA\n");
-    set_color(7); // Bianco
-    stampa_data_sistema();
-    
-    stampa_separatore();
-    
-    // Sezione Input
-    set_color(10); // Verde
-    printf("     INSERIMENTO DATI VEICOLO\n");
-    set_color(7); // Bianco
-    
-    // Input tipo veicolo
-    printf("Tipo veicolo:\n");
-    printf("0. Utilitaria\n");
-    printf("1. SUV\n");
-    printf("2. Sportiva\n");
-    printf("3. Moto\n");
-    printf("Scelta: ");
-    scanf("%d", &v->tipo);
-    getchar(); // Consuma il newline
+    // Input tipo veicolo con validazione
+    int tipo_valido = 0;
+    do {
+        pulisci_schermo();
+        stampa_bordo_superiore();
+        set_color(13); // Magenta
+        printf("         AGGIUNGI VEICOLO\n");
+        stampa_separatore();
+        set_color(14); // Giallo
+        printf("         DATA DI SISTEMA\n");
+        set_color(7); // Bianco
+        stampa_data_sistema();
+        stampa_separatore();
+        set_color(10); // Verde
+        printf("     INSERIMENTO DATI VEICOLO\n");
+        set_color(7); // Bianco
 
-    // Input modello
-    printf("\nModello: ");
-    fgets(v->modello, sizeof(v->modello), stdin);
-    v->modello[strcspn(v->modello, "\n")] = 0;
+        printf("Tipo veicolo:\n");
+        printf("0. Utilitaria\n");
+        printf("1. SUV\n");
+        printf("2. Sportiva\n");
+        printf("3. Moto\n");
+        printf("Scelta: ");
+        if (scanf("%d", &v->tipo) != 1 || v->tipo < 0 || v->tipo > 3) {
+            set_color(12); // Rosso
+            printf("Tipo non valido. Riprova.\n");
+            svuota_buffer();
+            set_color(7); // Bianco
+            while (getchar() != '\n'); // Pulisci buffer
+            // Il ciclo riparte e il menu viene ridisegnato pulito
+        } else {
+            tipo_valido = 1;
+            getchar(); // Consuma il newline
+        }
+    } while (!tipo_valido);
 
-    // Input targa
-    printf("Targa: ");
-    fgets(v->targa, sizeof(v->targa), stdin);
-    v->targa[strcspn(v->targa, "\n")] = 0;
+    // Input modello con validazione
+    do {
+        pulisci_schermo();
+        stampa_bordo_superiore();
+        set_color(13); // Magenta
+        printf("         AGGIUNGI VEICOLO\n");
+        stampa_separatore();
+        set_color(14); // Giallo
+        printf("         DATA DI SISTEMA\n");
+        set_color(7); // Bianco
+        stampa_data_sistema();
+        stampa_separatore();
+        set_color(10); // Verde
+        printf("     INSERIMENTO DATI VEICOLO\n");
+        set_color(7); // Bianco;
+
+        printf("Tipo veicolo: %s\n", get_nome_tipo_veicolo(v->tipo));
+        printf("Modello: ");
+        fgets(v->modello, sizeof(v->modello), stdin);
+        v->modello[strcspn(v->modello, "\n")] = 0;
+        if (strlen(v->modello) == 0) {
+            printf("Il modello non può essere vuoto. Riprova.\n");
+        }
+    } while (strlen(v->modello) == 0);
+
+    // Input targa con validazione
+    int targa_valida = 0;
+    do {
+        pulisci_schermo();
+        stampa_bordo_superiore();
+        set_color(13); // Magenta
+        printf("         AGGIUNGI VEICOLO\n");
+        stampa_separatore();
+        set_color(14); // Giallo
+        printf("         DATA DI SISTEMA\n");
+        set_color(7); // Bianco
+        stampa_data_sistema();
+        stampa_separatore();
+        set_color(10); // Verde
+        printf("     INSERIMENTO DATI VEICOLO\n");
+        set_color(7); // Bianco;
+
+        printf("Tipo veicolo: %s\n", get_nome_tipo_veicolo(v->tipo));
+        printf("Modello: %s\n", v->modello);
+
+        printf("Targa: ");
+        fgets(v->targa, sizeof(v->targa), stdin);
+
+        // Se manca il newline, svuota il buffer
+        if (strchr(v->targa, '\n') == NULL) {
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);
+        }
+        v->targa[strcspn(v->targa, "\n")] = 0;
+
+        if (strlen(v->targa) == 0) {
+            set_color(12); // Rosso
+            printf("La targa non può essere vuota. Premi INVIO per riprovare.\n");
+            set_color(7); // Bianco
+            getchar(); // Attendi INVIO
+        } else if (strlen(v->targa) < 7) {
+            set_color(12); // Rosso
+            printf("La targa inserita non è valida (deve essere di 7 caratteri). Premi INVIO per riprovare.\n");
+            set_color(7); // Bianco
+            getchar(); // Attendi INVIO
+        } else if (strlen(v->targa) > 7) {
+            set_color(12); // Rosso
+            printf("La targa non può superare 7 caratteri. Premi INVIO per riprovare.\n");
+            set_color(7); // Bianco
+            getchar(); // Attendi INVIO
+        } else {
+            targa_valida = 1;
+        }
+    } while (!targa_valida);
 
     // Input posizione
     v->posizione = 0; // Inizializza a 0
