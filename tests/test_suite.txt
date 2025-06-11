@@ -1,1 +1,4 @@
 TC01 creazione_prenotazione
+TC02 creazione_prenotazione
+TC03 costo_noleggio
+TC04 costo_noleggio

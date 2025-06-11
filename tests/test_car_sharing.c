@@ -7,6 +7,8 @@
 #include "fasce_orarie.h"
 #include <string.h>
 #include <direct.h>
+#include "data_sistema.h"
+#include "f_utili.h"
 #define M 64
 
 // Variabili globali per i test
@@ -18,6 +20,48 @@ struct node {
     Veicolo veicolo;
     struct node* next;
 };
+
+// Funzioni di utilità per i test
+bool verifica_utente_esistente(int id_utente, FILE* f_output, const char* output_fname, const char* oracle_fname) {
+    Utente utente = cerca_utente_per_id(id_utente);
+    if (utente == NULL) {
+        fprintf(f_output, "ERRORE_UTENTE_NON_TROVATO\n");
+        fclose(f_output);
+        int cmp = compara_file(output_fname, oracle_fname);
+        FILE* f = fopen("tests/risultati.txt", "a");
+        if (f) {
+            if (cmp == 0) {
+                fprintf(f, "%s PASS\n", output_fname);
+            } else {
+                fprintf(f, "%s FAIL\n", output_fname);
+            }
+            fclose(f);
+        }
+        return false;
+    }
+    return true;
+}
+
+bool verifica_veicolo_esistente(int id_veicolo, FILE* f_output, const char* output_fname, const char* oracle_fname) {
+    list veicoli = get_lista_veicoli_test();
+    Veicolo veicolo = cerca_veicolo(veicoli, id_veicolo);
+    if (veicolo == NULL) {
+        fprintf(f_output, "ERRORE_VEICOLO_NON_TROVATO\n");
+        fclose(f_output);
+        int cmp = compara_file(output_fname, oracle_fname);
+        FILE* f = fopen("tests/risultati.txt", "a");
+        if (f) {
+            if (cmp == 0) {
+                fprintf(f, "%s PASS\n", output_fname);
+            } else {
+                fprintf(f, "%s FAIL\n", output_fname);
+            }
+            fclose(f);
+        }
+        return false;
+    }
+    return true;
+}
 
 void test_creazione_prenotazione(const char* input_fname, const char* output_fname, const char* oracle_fname);
 void test_costo_noleggio(const char* input_fname, const char* output_fname, const char* oracle_fname);
@@ -130,20 +174,65 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
     int priorita = atoi(input[6]);
     int posizione_riconsegna = atoi(input[7]);
 
-    // Creiamo e testiamo la prenotazione con priorità automatica (-1)
-    Prenotazione p = crea_prenotazione(id_utente, id_veicolo, giorno_inizio, 
-                                    ora_inizio, giorno_fine, ora_fine, -1,  // Usa priorità automatica
-                                    posizione_riconsegna);
-    
     FILE* f_output = fopen(output_fname, "w");
     if (!f_output){
         printf("Errore apertura file di output: %s\n", output_fname);
         return;
     }
 
-    // Convertiamo i timestamp correttamente
+    // Verifica se l'utente esiste
+    if (!verifica_utente_esistente(id_utente, f_output, output_fname, oracle_fname)) {
+        return;
+    }
+
+    // Verifica se il veicolo esiste
+    if (!verifica_veicolo_esistente(id_veicolo, f_output, output_fname, oracle_fname)) {
+        return;
+    }
+
+    // Verifica la validità della fascia oraria
+    if (!verifica_fascia_oraria(giorno_inizio, ora_inizio, giorno_fine, ora_fine)) {
+        fprintf(f_output, "ERRORE_FASCIA_ORARIA\n");
+        fclose(f_output);
+        int cmp = compara_file(output_fname, oracle_fname);
+        FILE* f = fopen("tests/risultati.txt", "a");
+        if (f) {
+            if (cmp == 0) {
+                fprintf(f, "%s PASS\n", input_fname);
+            } else {
+                fprintf(f, "%s FAIL\n", input_fname);
+            }
+            fclose(f);
+        }
+        return;
+    }
+
+    // Verifica la validità della data rispetto alla data di sistema
     int timestamp_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
     int timestamp_fine = converti_in_timestamp(giorno_fine, ora_fine);
+    int validazione = valida_data_prenotazione(timestamp_inizio, timestamp_fine);
+    if (validazione != 0) {
+        // Converti i codici di errore negativi in positivi per l'output
+        int codice_errore = -validazione;  // -(-1) = 1, -(-2) = 2
+        fprintf(f_output, "ERRORE_DATA_%d\n", codice_errore);
+        fclose(f_output);
+        int cmp = compara_file(output_fname, oracle_fname);
+        FILE* f = fopen("tests/risultati.txt", "a");
+        if (f) {
+            if (cmp == 0) {
+                fprintf(f, "%s PASS\n", input_fname);
+            } else {
+                fprintf(f, "%s FAIL\n", input_fname);
+            }
+            fclose(f);
+        }
+        return;
+    }
+
+    // Creiamo e testiamo la prenotazione con priorità automatica (-1)
+    Prenotazione p = crea_prenotazione(id_utente, id_veicolo, giorno_inizio, 
+                                    ora_inizio, giorno_fine, ora_fine, -1,  // Usa priorità automatica
+                                    posizione_riconsegna);
    
     // Output in formato spazio-separato usando i valori convertiti
     fprintf(f_output, "%d %d %d %d %d %d %d %d\n", 
@@ -156,9 +245,9 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
             get_priorita(p),  // Usa la priorità calcolata automaticamente
             get_posizione_riconsegna(p));
 
-    int cmp = compara_file(output_fname, oracle_fname);
     fclose(f_output);
-
+    int cmp = compara_file(output_fname, oracle_fname);
+    
     FILE* f = fopen("tests/risultati.txt", "a");
     if (f) {
         if (cmp == 0) {
@@ -170,7 +259,6 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
     }
 }
 
-
 void test_costo_noleggio(const char* input_fname, const char* output_fname, const char* oracle_fname){
     char input[10][M];
     leggi_input_test(input_fname, input, 10);
@@ -181,17 +269,34 @@ void test_costo_noleggio(const char* input_fname, const char* output_fname, cons
     int giorno_fine = atoi(input[4]);
     int ora_fine = atoi(input[5]);
 
-    // Calcola il costo del noleggio
-    int timestamp_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
-    int timestamp_fine = converti_in_timestamp(giorno_fine, ora_fine);
-    double costo = calcola_tariffa_prenotazione(id_veicolo, timestamp_inizio, timestamp_fine);
-   
-    // Stampa il risultato nel file di output
     FILE* f_output = fopen(output_fname, "w");
     if (!f_output) {
         printf("Errore apertura file di output: %s\n", output_fname);
         return;
     }
+
+    // Verifica se il veicolo esiste
+    if (!verifica_veicolo_esistente(id_veicolo, f_output, output_fname, oracle_fname)) {
+        return;
+    }
+
+    // Ottieni il tipo di veicolo
+    list veicoli = get_lista_veicoli_test();
+    list temp = veicoli;
+    int tipo_veicolo = -1;
+    while (temp != NULL) {
+        Veicolo v = get_veicolo_senza_rimuovere(temp);
+        if (v && get_id_veicolo(v) == id_veicolo) {
+            tipo_veicolo = get_tipo_veicolo(v);
+            break;
+        }
+        temp = get_next_node(temp);
+    }
+
+    // Calcola il costo del noleggio
+    int timestamp_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
+    int timestamp_fine = converti_in_timestamp(giorno_fine, ora_fine);
+    double costo = calcola_tariffa_prenotazione(tipo_veicolo, timestamp_inizio, timestamp_fine);
     
     fprintf(f_output, "%.2f\n", costo);
     
@@ -208,7 +313,6 @@ void test_costo_noleggio(const char* input_fname, const char* output_fname, cons
         }
         fclose(f);
     }
-
 }
 
 void test_visualizza_disponibilita(const char* input_fname, const char* output_fname, const char* oracle_fname){
@@ -251,7 +355,7 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
     fclose(f_output);
 
     int cmp = compara_file(output_fname, oracle_fname);
-
+    
     FILE* f = fopen("tests/risultati.txt", "a");
     if (f) {
         if (cmp == 0) {

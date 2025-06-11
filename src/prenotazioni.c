@@ -6,6 +6,7 @@
 #include "data_sistema.h"
 #include "f_utili.h"
 #include "veicolo.h"
+#include "utenti.h"
 
 #define INITIAL_CAPACITY 10
 
@@ -131,11 +132,13 @@ int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, i
 }
 
 // Funzione per creare una nuova prenotazione
- Prenotazione crea_prenotazione(int id_utente, int id_veicolo, 
+Prenotazione crea_prenotazione(int id_utente, int id_veicolo, 
                                      int giorno_inizio, int ora_inizio,
                                      int giorno_fine, int ora_fine, 
                                      int priorita, int posizione_riconsegna) {
-     Prenotazione nuova = (Prenotazione)malloc(sizeof(struct Prenotazione));
+   
+
+    Prenotazione nuova = (Prenotazione)malloc(sizeof(struct Prenotazione));
     if (nuova == NULL) {
         return NULL;
     }
@@ -159,7 +162,7 @@ int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, i
 }
 
 // Funzione per aggiungere una prenotazione alla coda
-int aggiungi_prenotazione( CodaPrenotazioni coda,  Prenotazione prenotazione) {
+int aggiungi_prenotazione(CodaPrenotazioni coda, Prenotazione prenotazione) {
     if (coda == NULL || prenotazione == NULL) {
         return -1;
     }
@@ -171,11 +174,24 @@ int aggiungi_prenotazione( CodaPrenotazioni coda,  Prenotazione prenotazione) {
                                 estrai_ora(prenotazione->giorno_ora_fine))) {
         return -2;  // Fascia oraria non valida
     }   
+
+    // Verifica se l'utente esiste
+    Utente utente = cerca_utente_per_id(prenotazione->id_utente);
+    if (utente == NULL) {
+        return -3;  // Utente non trovato
+    }
+
+    // Verifica se il veicolo esiste
+    list veicoli = get_lista_veicoli();
+    Veicolo veicolo = cerca_veicolo(veicoli, prenotazione->id_veicolo);
+    if (veicolo == NULL) {
+        return -4;  // Veicolo non trovato
+    }
     
     // Se necessario, ridimensiona l'array
     if (coda->dimensione >= coda->capacita) {
         int nuova_capacita = coda->capacita * 2;
-         Prenotazione nuovo_heap = ( Prenotazione)realloc(coda->heap, 
+        Prenotazione nuovo_heap = (Prenotazione)realloc(coda->heap, 
                                                         sizeof(struct Prenotazione) * nuova_capacita);
         if (nuovo_heap == NULL) {
             return -1;
