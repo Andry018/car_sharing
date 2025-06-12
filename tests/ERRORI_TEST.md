@@ -95,26 +95,55 @@ Input: 6 argomenti
 ## Test Case
 
 ## TC01: Creazione Prenotazione Valida
-- **Input**: Prenotazione valida per un'utilitaria (tipo 0)
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 0
+  ora_inizio: 10
+  giorno_fine: 1
+  ora_fine: 10
+  priorità: -1
+  posizione_riconsegna: 0
 - **Output Atteso**: Dettagli della prenotazione creata
 - **Verifica**: Il sistema deve creare correttamente la prenotazione
 
 ## TC02: Creazione Prenotazione nel Passato
-- **Input**: Prenotazione con data nel passato
+- **Input**:
+  id_utente: 2
+  id_veicolo: 2
+  giorno_inizio: 0
+  ora_inizio: 0
+  giorno_fine: 1
+  ora_fine: 0
+  priorità: -1
+  posizione_riconsegna: 0
 - **Output Atteso**: "ERRORE_DATA_1" (data nel passato)
 - **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
 
-## TC03: Calcolo Costo Noleggio Valido
+## TC03: Creazione Prenotazione Data di fine precedente a Data inizio
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 1
+  ora_inizio: 12
+  giorno_fine: 1
+  ora_fine: 10
+  priorità: -1
+  posizione_riconsegna: 0
+- **Output Atteso**: "ERRORE_DATA_2" (data nel passato)
+- **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
+
+## TC11: Calcolo Costo Noleggio Valido
 - **Input**: Prenotazione valida per un'utilitaria (tipo 0) per 2 ore
 - **Output Atteso**: "10.00" (5€/ora × 2 ore)
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio
 
-## TC04: Calcolo Costo Noleggio con Utente Non Esistente
+## TC12: Calcolo Costo Noleggio con Utente Non Esistente
 - **Input**: Prenotazione con id_utente non esistente
 - **Output Atteso**: "ERRORE_UTENTE_NON_TROVATO"
 - **Verifica**: Il sistema deve gestire correttamente il caso di utente non trovato e restituire un messaggio di errore appropriato 
 
-## TC05: Visualizzazione Disponibilità Veicoli
+## TC13: Visualizzazione Disponibilità Veicoli
 - **Input**: 
   - giorno_inizio: 1
   - ora_inizio: 10
@@ -130,7 +159,7 @@ Input: 6 argomenti
   3. Considerare correttamente lo stato delle prenotazioni (confermate vs non confermate)
   4. Gestire correttamente l'aggiornamento della disponibilità dei veicoli in base al calendario
 
-## TC06: Visualizzazione Storico Prenotazioni
+## TC14: Visualizzazione Storico Prenotazioni
 - **Input**: 
   - id_utente: 1
 - **Setup**:
@@ -142,3 +171,17 @@ Input: 6 argomenti
   2. Non mostrare le prenotazioni di altri utenti
   3. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
   4. Gestire correttamente il formato di output per ogni prenotazione 
+
+  ## TC15: Visualizzazione Storico Prenotazioni
+  **Input**
+    id_utente: 0
+  **Setup**
+    Utente 1: ha una prenotazione confermata per il veicolo 1(giorno 1, 10-12)
+              ha una prenotazione non confermata per il veicolo 2(giorno 2, 14-16)
+    Utente 2: ha una prenotazione confermata per il veicolo 3(giorno 3, 9-11)
+              ha una prenotazione non confermata per il veicolo 4(giorno 4, 13-15)
+  **Output Atteso**: Tutte le prenotazioni di tutti gli utenti dovrebbero essere mostrate
+  - **Verifica**: Il sistema deve:
+  1. Mostrare correttamente tutte le prenotazioni di tutti gli utenti
+  2. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
+  3. Gestire correttamente il formato di output per ogni prenotazione 

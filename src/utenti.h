@@ -11,8 +11,8 @@ int carica_ultimo_id_utente();
 void inizializza_tabella_utenti();
 void salva_utenti_file();
 int carica_utenti_file();
-int inserisci_utente(const char* soprannome, const char* nome_completo, const char* password);
-Utente cerca_utente(const char* soprannome);
+int inserisci_utente(const char* nome_utente, const char* nome_completo, const char* password);
+Utente cerca_utente(const char* nome_utente);
 Utente cerca_utente_per_id(int id);
 void stampa_utenti();
 
@@ -22,8 +22,8 @@ int rimuovi_utente(int id);
 int ottieni_id_utente(Utente u);
 const char* ottieni_nome_utente(Utente u);
 const char* ottieni_soprannome_utente(Utente u);
-const char* ottieni_password_utente(const char* soprannome);
-int ottieni_isAdmin_utente(Utente u);
+const char* ottieni_password_utente(const char* nome_utente);
+int ottieni_isamministratore_utente(Utente u);
 
 // Setter functions
 void imposta_id_utente(int id, Utente u);

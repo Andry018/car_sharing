@@ -1,6 +1,8 @@
 TC01 - creazione_prenotazione - PASS
 TC02 - creazione_prenotazione - PASS
-TC03 - costo_noleggio - PASS
-TC04 - costo_noleggio - PASS
-TC05 - visualizza_disponibilita - PASS
-TC06 - storico_prenotazioni - PASS
+TC03 - creazione_prenotazione - PASS
+TC11 - costo_noleggio - PASS
+TC12 - costo_noleggio - PASS
+TC13 - visualizza_disponibilita - FAIL
+TC14 - storico_prenotazioni - FAIL
+TC15 - storico_prenotazioni - FAIL

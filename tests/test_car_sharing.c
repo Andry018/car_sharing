@@ -398,6 +398,21 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
         fclose(f_output);
         return;
     }
+    if (id_utente == 0){
+        for (int i = 0; i < ottieni_dimensione_coda(coda); i++) {
+            Prenotazione p = ottieni_prenotazione_in_coda(coda, i);
+            if (!p) continue;
+            fprintf(f_output, "%d %d %d %d %d %d %d %d\n",
+                    ottieni_id_prenotazione(p),
+                    ottieni_id_utente_prenotazione(p),
+                    ottieni_id_veicolo_prenotazione(p),
+                    ottieni_giorno_ora_inizio(p),
+                    ottieni_giorno_ora_fine(p),
+                    ottieni_stato_prenotazione(p),
+                    ottieni_priorita(p),
+                    ottieni_posizione_riconsegna(p));
+        }
+    }else{
     for (int i = 0; i < ottieni_dimensione_coda(coda); i++) {
         Prenotazione p = ottieni_prenotazione_in_coda(coda, i);
         if (!p) continue;
@@ -412,6 +427,7 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
                     ottieni_priorita(p),
                     ottieni_posizione_riconsegna(p));
         }
+    }
     }
     fclose(f_output);
 
@@ -449,7 +465,7 @@ int main(int argc, char *argv[]) {
     }
     imposta_id_veicolo(v1, 1);
     imposta_tipo_veicolo(v1, 0);
-    imposta_modello_veicolo(v1, "JeepRenegade");
+    imposta_modello_veicolo(v1, "Fiat500");
     imposta_targa_veicolo(v1, "AA000BB");
     imposta_posizione_veicolo(v1, 0);
     imposta_disponibilita_veicolo(v1, 1);      // Changed from 0 to 1
@@ -465,26 +481,59 @@ int main(int argc, char *argv[]) {
     imposta_targa_veicolo(v2, "CC111DD");
     imposta_posizione_veicolo(v2, 1);
     imposta_disponibilita_veicolo(v2, 1);      // Changed from 0 to 1
+
+    Veicolo v3 = crea_veicolo();
+    if (!v3) {
+        printf("Errore nella creazione del veicolo di test 3\n");
+        return 1;
+    }
+    imposta_id_veicolo(v3, 3);
+    imposta_tipo_veicolo(v3, 1);
+    imposta_modello_veicolo(v3, "JeepWrangler");
+    imposta_targa_veicolo(v3, "EE222FF");
+    imposta_posizione_veicolo(v3, 2);
+    imposta_disponibilita_veicolo(v3, 1);      // Changed from 0 to 1
+
+    Veicolo v4 = crea_veicolo();
+    if (!v4) {
+        printf("Errore nella creazione del veicolo di test 4\n");
+        return 1;
+    }
+    imposta_id_veicolo(v4, 4);
+    imposta_tipo_veicolo(v4, 2);
+    imposta_modello_veicolo(v4, "TeslaModelS");
+    imposta_targa_veicolo(v4, "GG333HH");
+    imposta_posizione_veicolo(v4, 3);
+    imposta_disponibilita_veicolo(v4, 1);      // Changed from 0 to 1
     
     list veicoli = ottieni_lista_veicoli();
     veicoli = aggiungi_veicolo_senza_menu(veicoli, v1);
     veicoli = aggiungi_veicolo_senza_menu(veicoli, v2);
+    veicoli = aggiungi_veicolo_senza_menu(veicoli, v3);
+    veicoli = aggiungi_veicolo_senza_menu(veicoli, v4);
     imposta_lista_veicoli(veicoli);
 
     // Inizializziamo la hash table utenti vuota per i test
     Utente tabella_utenti[TABLE_SIZE];
     inizializza_tabella_utenti(tabella_utenti);
 
-    // Aggiungiamo alcuni utenti di test
+    // Aggiungiamo alcuni utenti di test 
+    inserisci_utente("amministratore", "Amministratore", "Test0");
     inserisci_utente("Test1", "UtenteTest1", "Test1");
     inserisci_utente("Test2", "UtenteTest2", "Test2");
+   
 
     // Aggiungiamo alcune prenotazioni di test
     Prenotazione p1 = crea_prenotazione(1, 1, 1, 10, 1, 12, 0, 1);  // utente 1, veicolo 1, giorno 1, 10-12
     imposta_stato_prenotazione(1,p1);
-    Prenotazione p2 = crea_prenotazione(2, 2, 2, 14, 2, 16, 0, 0);  // utente 2, veicolo 2, giorno 2, 14-16
+    Prenotazione p2 = crea_prenotazione(1, 2, 2, 14, 2, 16, 0, 0); // utente 1, veicolo 2, giorno 2, 14-16
+    Prenotazione p3 = crea_prenotazione(2, 3, 3, 9, 3, 11, 0, 2); // utente 2, veicolo 3, giorno 3, 9-11
+    imposta_stato_prenotazione(1,p2);
+    Prenotazione p4 = crea_prenotazione(2, 4, 4, 13, 4, 15, 0, 3); // utente 2, veicolo 4, giorno 4, 13-15  
     aggiungi_prenotazione(coda_test, p1);
     aggiungi_prenotazione(coda_test, p2);
+    aggiungi_prenotazione(coda_test, p3);
+    aggiungi_prenotazione(coda_test, p4);
 
     // Eseguiamo i test
     if (argc == 1) {

@@ -20,12 +20,12 @@ void restituisci_auto(void);
 void visualizza_disponibilita(void);
 
 void mostra_menu_cliente(Utente utente_corrente);
-void mostra_menu_admin(Utente utente_corrente);
-void gestione_prenotazioni_admin(void);
+void mostra_menu_amministratore(Utente utente_corrente);
+void gestione_prenotazioni_amministratore(void);
 void mostra_menu_iniziale();
 void mostra_logo();
 void mostra_menu_login();
-void gestione_utenti_admin(void);
+void gestione_utenti_amministratore(void);
 
 
 

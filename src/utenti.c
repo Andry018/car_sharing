@@ -11,7 +11,7 @@ struct Utente {
     char nome_utente[30];
     char nome_completo[50];
     char password[MAX_PASSWORD_LENGTH];  // Campo per la password
-    int isAdmin;
+    int isamministratore;
 } ;
 
 
@@ -31,8 +31,8 @@ int carica_ultimo_id_utente() {
         int id;
         char nome_utente[30];
         if (sscanf(line, "%d %s", &id, nome_utente) >= 2) {
-            // Ignora l'admin (ID 0) nel conteggio del max_id
-            if (id > max_id && strcmp(nome_utente, "Admin") != 0) {
+            // Ignora l'amministratore (ID 0) nel conteggio del max_id
+            if (id > max_id && strcmp(nome_utente, "amministratore") != 0) {
                 max_id = id;
             }
         }
@@ -62,7 +62,7 @@ void salva_utenti_file() {
                    tabellaUtenti[i]->nome_utente, 
                    tabellaUtenti[i]->password,
                    tabellaUtenti[i]->nome_completo,
-                   tabellaUtenti[i]->isAdmin);
+                   tabellaUtenti[i]->isamministratore);
         }
     }
     fclose(file);
@@ -75,17 +75,17 @@ int carica_utenti_file() {
     FILE* file = fopen("data/utenti.txt", "r");
     if (file == NULL) {
         printf("Errore nell'apertura del file utenti.txt. Tentativo di creazione...\n");
-        // Se il file non esiste, crealo con l'utente admin
+        // Se il file non esiste, crealo con l'utente amministratore
         file = fopen("data/utenti.txt", "w");
         if (file == NULL) {
             printf("Errore nella creazione del file utenti.txt. Verifica i permessi della directory.\n");
             return 0;
         }
         
-        // Crea l'utente admin
-        char admin_password_hash[MAX_PASSWORD_LENGTH];
-        hash_password("admin", admin_password_hash);
-        if (fprintf(file, "0 Admin %s Administrator 1\n", admin_password_hash) < 0) {
+        // Crea l'utente amministratore
+        char amministratore_password_hash[MAX_PASSWORD_LENGTH];
+        hash_password("amministratore", amministratore_password_hash);
+        if (fprintf(file, "0 amministratore %s amministratoreistrator 1\n", amministratore_password_hash) < 0) {
             printf("Errore nella scrittura del file utenti.txt\n");
             fclose(file);
             return 0;
@@ -99,19 +99,19 @@ int carica_utenti_file() {
             return 0;
         }
         
-        // Inizializza la tabella con l'admin
-        unsigned int indice = hash_djb2("Admin") % TABLE_SIZE;
+        // Inizializza la tabella con l'amministratore
+        unsigned int indice = hash_djb2("amministratore") % TABLE_SIZE;
         if (tabellaUtenti[indice] == NULL) {
             tabellaUtenti[indice] = malloc(sizeof(struct Utente));
             if (tabellaUtenti[indice] != NULL) {
                 tabellaUtenti[indice]->id = 0;
-                strcpy(tabellaUtenti[indice]->nome_utente, "Admin");
-                char admin_password_hash[MAX_PASSWORD_LENGTH];
-                hash_password("admin", admin_password_hash);
-                strcpy(tabellaUtenti[indice]->password, admin_password_hash);   
-                strcpy(tabellaUtenti[indice]->nome_completo, "Administrator");
-                tabellaUtenti[indice]->isAdmin = 1;
-                printf("File utenti.txt creato con l'utente Admin.\n");
+                strcpy(tabellaUtenti[indice]->nome_utente, "amministratore");
+                char amministratore_password_hash[MAX_PASSWORD_LENGTH];
+                hash_password("amministratore", amministratore_password_hash);
+                strcpy(tabellaUtenti[indice]->password, amministratore_password_hash);   
+                strcpy(tabellaUtenti[indice]->nome_completo, "amministratoreistrator");
+                tabellaUtenti[indice]->isamministratore = 1;
+                printf("File utenti.txt creato con l'utente amministratore.\n");
                 fclose(file);
                 return 1;
             }
@@ -136,7 +136,7 @@ int carica_utenti_file() {
         char nome_utente[30] = {0};
         char nome_completo[50] = {0};
         char password[MAX_PASSWORD_LENGTH] = {0};
-        int id = -1, isAdmin = -1;
+        int id = -1, isamministratore = -1;
         
         // Leggi l'ID e il nome utente
         char* token = strtok(line, " ");
@@ -169,20 +169,20 @@ int carica_utenti_file() {
             continue;
         }
         
-        // Estrai isAdmin dal nome completo
+        // Estrai isamministratore dal nome completo
         char* last_space = strrchr(token, ' ');
         if (last_space == NULL) {
-            printf("Errore nel formato della riga %d: isAdmin mancante\n", line_number);
+            printf("Errore nel formato della riga %d: isamministratore mancante\n", line_number);
             continue;
         }
-        isAdmin = atoi(last_space + 1);
-        *last_space = '\0';  // Termina il nome completo prima dell'isAdmin
+        isamministratore = atoi(last_space + 1);
+        *last_space = '\0';  // Termina il nome completo prima dell'isamministratore
         
         strncpy(nome_completo, token, sizeof(nome_completo) - 1);
         
         
         // Verifica che tutti i campi siano validi
-        if (id < 0 || strlen(nome_utente) == 0 || strlen(nome_completo) == 0 || isAdmin < 0) {
+        if (id < 0 || strlen(nome_utente) == 0 || strlen(nome_completo) == 0 || isamministratore < 0) {
             printf("Errore nel formato della riga %d: campi non validi\n", line_number);
             continue;
         }
@@ -199,7 +199,7 @@ int carica_utenti_file() {
             strcpy(tabellaUtenti[indice]->nome_utente, nome_utente);
             strcpy(tabellaUtenti[indice]->password, password);  
             strcpy(tabellaUtenti[indice]->nome_completo, nome_completo);
-            tabellaUtenti[indice]->isAdmin = isAdmin;
+            tabellaUtenti[indice]->isamministratore = isamministratore;
             count++;
             printf("Caricato utente: %s (ID: %d)\n", nome_utente, id);
         } else {
@@ -216,18 +216,18 @@ int carica_utenti_file() {
     fclose(file);
     
     if (count == 0) {
-        printf("Nessun utente trovato nel file. Creazione utente admin...\n");
-        // Se non ci sono utenti, crea l'admin
-        unsigned int indice = hash_djb2("Admin") % TABLE_SIZE;
+        printf("Nessun utente trovato nel file. Creazione utente amministratore...\n");
+        // Se non ci sono utenti, crea l'amministratore
+        unsigned int indice = hash_djb2("amministratore") % TABLE_SIZE;
         if (tabellaUtenti[indice] == NULL) {
             tabellaUtenti[indice] = malloc(sizeof(struct Utente));
             if (tabellaUtenti[indice] != NULL) {
                 tabellaUtenti[indice]->id = 0;
-                strcpy(tabellaUtenti[indice]->nome_utente, "Admin");
-                strcpy(tabellaUtenti[indice]->password, "admin"); 
-                strcpy(tabellaUtenti[indice]->nome_completo, "Administrator");
-                tabellaUtenti[indice]->isAdmin = 1;
-                salva_utenti_file();  // Salva l'admin nel file
+                strcpy(tabellaUtenti[indice]->nome_utente, "amministratore");
+                strcpy(tabellaUtenti[indice]->password, "amministratore"); 
+                strcpy(tabellaUtenti[indice]->nome_completo, "amministratoreistrator");
+                tabellaUtenti[indice]->isamministratore = 1;
+                salva_utenti_file();  // Salva l'amministratore nel file
                 return 1;
             }
         }
@@ -251,8 +251,8 @@ int inserisci_utente(const char* nome_utente, const char* nome_completo, const c
         }
     }
     
-    // Se stiamo inserendo l'admin, usa ID 0
-    if (strcmp(nome_utente, "Admin") == 0) {
+    // Se stiamo inserendo l'amministratore, usa ID 0
+    if (strcmp(nome_utente, "amministratore") == 0) {
         id_counter = 0;
     }
     
@@ -260,7 +260,7 @@ int inserisci_utente(const char* nome_utente, const char* nome_completo, const c
     strcpy(tabellaUtenti[idx]->nome_utente, nome_utente);
     strcpy(tabellaUtenti[idx]->nome_completo, nome_completo);
     strcpy(tabellaUtenti[idx]->password, password); // Salva la password hashata
-    tabellaUtenti[idx]->isAdmin = (strcmp(nome_utente, "Admin") == 0) ? 1 : 0;
+    tabellaUtenti[idx]->isamministratore = (strcmp(nome_utente, "amministratore") == 0) ? 1 : 0;
     return 1;
 }
 
@@ -291,11 +291,11 @@ Utente cerca_utente_per_id(int id) {
 void stampa_utenti() {
     for (int i = 0; i < TABLE_SIZE; i++) {
         if (tabellaUtenti[i] != NULL) {
-            printf("ID: %d | nome_utente: %s | Nome: %s | Admin: %s\n",
+            printf("ID: %d | nome_utente: %s | Nome: %s | amministratore: %s\n",
                    tabellaUtenti[i]->id,
                    tabellaUtenti[i]->nome_utente,
                    tabellaUtenti[i]->nome_completo,
-                   tabellaUtenti[i]->isAdmin ? "Si" : "No");
+                   tabellaUtenti[i]->isamministratore ? "Si" : "No");
         }
     }
 }
@@ -330,11 +330,11 @@ const char* ottieni_password_utente(const char* nome_utente) {
     return NULL;  // Utente non trovato
 }   
 
-int ottieni_isAdmin_utente(Utente u) {
+int ottieni_isamministratore_utente(Utente u) {
     if (u == NULL) {
         return -1;  // Utente non valido
     }
-    return u->isAdmin;  // Restituisce lo stato di amministratore dell'utente
+    return u->isamministratore;  // Restituisce lo stato di amministratore dell'utente
 }   
 
 void imposta_id_utente(int id, Utente u) {

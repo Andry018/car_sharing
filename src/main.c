@@ -212,8 +212,8 @@ int main() {
         } else {
             pulisci_schermo();
             
-            if (ottieni_isAdmin_utente(cerca_utente(utente_corrente))) {
-                mostra_menu_admin(cerca_utente(utente_corrente));
+            if (ottieni_isamministratore_utente(cerca_utente(utente_corrente))) {
+                mostra_menu_amministratore(cerca_utente(utente_corrente));
             } else {
                 mostra_menu_cliente(cerca_utente(utente_corrente));
             }
@@ -224,8 +224,8 @@ int main() {
             }
             svuota_buffer();
 
-            if (ottieni_isAdmin_utente(cerca_utente(utente_corrente))) {
-                // Menu Admin
+            if (ottieni_isamministratore_utente(cerca_utente(utente_corrente))) {
+                // Menu amministratore
                 switch (scelta) {
                     case 1:
                         pulisci_schermo();
@@ -233,11 +233,11 @@ int main() {
                         break;
                     case 2:
                         pulisci_schermo();
-                        gestione_prenotazioni_admin();
+                        gestione_prenotazioni_amministratore();
                         break;
                     case 3:
                         pulisci_schermo();
-                        gestione_utenti_admin();
+                        gestione_utenti_amministratore();
                         break;
                     case 4:
                         pulisci_schermo();

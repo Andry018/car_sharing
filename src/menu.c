@@ -782,7 +782,7 @@ void prenota_auto(Utente utente_corrente) {
                 Prenotazione prenotazione = cerca_prenotazione(coda_prenotazioni, id_prenotazione);
                 if (prenotazione != NULL) {
                     // Verifica che l'utente possa cancellare questa prenotazione
-                    if (ottieni_isAdmin_utente(utente_corrente) || ottieni_id_utente_prenotazione(prenotazione) == ottieni_id_utente(utente_corrente)) {
+                    if (ottieni_isamministratore_utente(utente_corrente) || ottieni_id_utente_prenotazione(prenotazione) == ottieni_id_utente(utente_corrente)) {
                         imposta_stato_prenotazione(3, prenotazione);
                         salva_prenotazioni_su_file(coda_prenotazioni);
                         imposta_colore(10); // Verde
@@ -854,13 +854,13 @@ void visualizza_prenotazioni(Utente utente_corrente) {
     
     CodaPrenotazioni coda = ottieni_coda_prenotazioni();
     int id_utente = ottieni_id_utente(utente_corrente);
-    int is_admin = ottieni_isAdmin_utente(utente_corrente);
+    int is_amministratore = ottieni_isamministratore_utente(utente_corrente);
 
     if (coda == NULL || ottieni_dimensione_coda(coda) == 0) {
         imposta_colore(12); // Rosso
         printf("  Nessuna prenotazione presente\n");
         imposta_colore(7); // Bianco
-    } else if (is_admin) {
+    } else if (is_amministratore) {
         for (int i = 0; i < ottieni_dimensione_coda(coda); i++) {
             Prenotazione p = ottieni_prenotazione_in_coda(coda, i);
             stampa_prenotazione(p);
@@ -1269,7 +1269,7 @@ void mostra_menu_cliente(Utente utente_corrente) {
     stampa_bordo_inferiore();
 }
 
-void mostra_menu_admin(Utente utente_corrente) {
+void mostra_menu_amministratore(Utente utente_corrente) {
     stampa_bordo_superiore();
     
     imposta_colore(13);  // Magenta
@@ -1310,7 +1310,7 @@ void mostra_menu_admin(Utente utente_corrente) {
     stampa_bordo_inferiore();
 }
 
-void gestione_prenotazioni_admin() {
+void gestione_prenotazioni_amministratore() {
     int scelta;
     CodaPrenotazioni coda_prenotazioni = ottieni_coda_prenotazioni();
     
@@ -1319,7 +1319,7 @@ void gestione_prenotazioni_admin() {
         stampa_bordo_superiore();
         
         imposta_colore(13); // Magenta
-        printf("    GESTIONE PRENOTAZIONI (ADMIN)\n");
+        printf("    GESTIONE PRENOTAZIONI (amministratore)\n");
         
         stampa_separatore();
         
@@ -1672,7 +1672,7 @@ void gestione_prenotazioni_admin() {
     } while (scelta != 0);
 }
 
-void gestione_utenti_admin() {
+void gestione_utenti_amministratore() {
     int scelta;
     do {
         pulisci_schermo();
@@ -1684,7 +1684,7 @@ void gestione_utenti_admin() {
         imposta_colore(10); // Verde
         printf("1. Visualizza tutti gli utenti\n");
         printf("2. Cancella utente\n");
-        printf("0. Torna al menu admin\n");
+        printf("0. Torna al menu amministratore\n");
         stampa_bordo_inferiore();
         printf("Scelta: ");
         if(scanf("%d", &scelta) != 1) {
@@ -1728,7 +1728,7 @@ void gestione_utenti_admin() {
                 svuota_buffer();
                 if (id == 0) {
                     imposta_colore(12); // Rosso
-                    printf("Non puoi cancellare l'utente Admin!\n");
+                    printf("Non puoi cancellare l'utente amministratore!\n");
                     imposta_colore(7); // Bianco
                 } else if (rimuovi_utente(id)) {
                     imposta_colore(10); // Verde
