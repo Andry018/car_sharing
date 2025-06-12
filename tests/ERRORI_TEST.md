@@ -113,3 +113,19 @@ Input: 6 argomenti
 - **Input**: Prenotazione con id_utente non esistente
 - **Output Atteso**: "ERRORE_UTENTE_NON_TROVATO"
 - **Verifica**: Il sistema deve gestire correttamente il caso di utente non trovato e restituire un messaggio di errore appropriato 
+
+## TC05: Visualizzazione Disponibilità Veicoli
+- **Input**: 
+  - giorno_inizio: 1
+  - ora_inizio: 10
+  - giorno_fine: 1
+  - ora_fine: 12
+- **Setup**:
+  - Veicolo 1 (JeepRenegade): prenotazione confermata per giorno 1, 10-12
+  - Veicolo 2 (HondaCBR): nessuna prenotazione nel periodo
+- **Output Atteso**: Solo il veicolo 2 (HondaCBR) dovrebbe essere mostrato come disponibile
+- **Verifica**: Il sistema deve:
+  1. Mostrare correttamente solo i veicoli disponibili nel periodo richiesto
+  2. Escludere i veicoli con prenotazioni confermate nel periodo
+  3. Considerare correttamente lo stato delle prenotazioni (confermate vs non confermate)
+  4. Gestire correttamente l'aggiornamento della disponibilità dei veicoli in base al calendario 

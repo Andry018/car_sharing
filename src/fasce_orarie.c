@@ -39,12 +39,11 @@ CalendarioVeicolo inizializza_calendario(int id_veicolo) {
 // Funzione per aggiornare il calendario con le prenotazioni dal file
 CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotazioni coda) {
     if (calendario == NULL || coda == NULL) {
-        fprintf(stderr, "Errore: calendario o coda delle prenotazioni non inizializzati.\n");
         return NULL;
     }
     
     // Prima inizializza il calendario
-   CalendarioVeicolo nuovo_calendario = inizializza_calendario(calendario->id_veicolo);
+    CalendarioVeicolo nuovo_calendario = inizializza_calendario(calendario->id_veicolo);
     int dimensione = get_dimensione_coda(coda);
     // Poi aggiorna con le prenotazioni attive
     for (int i = 0; i < dimensione; i++) {
@@ -62,8 +61,8 @@ CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotaz
             if (giorno_inizio == giorno_fine) {
                 // Prenotazione nello stesso giorno
                 for (int ora = ora_inizio; ora < ora_fine; ora++) {
-                   nuovo_calendario->calendario[giorno_inizio][ora].occupato = 1;
-                   nuovo_calendario->calendario[giorno_inizio][ora].id_prenotazione = get_id_prenotazione(p);
+                    nuovo_calendario->calendario[giorno_inizio][ora].occupato = 1;
+                    nuovo_calendario->calendario[giorno_inizio][ora].id_prenotazione = get_id_prenotazione(p);
                 }
             } else {
                 // Prenotazione su più giorni
@@ -102,8 +101,6 @@ CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotaz
         Veicolo v = cerca_veicolo(get_lista_veicoli(), nuovo_calendario->id_veicolo);
         if (v) {
             set_disponibilita_veicolo(v, 0);
-            printf("DEBUG: Veicolo %d impostato come NON DISPONIBILE (data sistema: %d %d)\n", nuovo_calendario->id_veicolo, giorno_attuale, ora_attuale);
-
         }
     } else {
         // Altrimenti, imposta disponibile
