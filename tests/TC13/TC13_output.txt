@@ -1,3 +1,1 @@
-4 TeslaModelS Posizione D
-3 JeepWrangler Posizione C
-2 HondaCBR Posizione B
+20.00
