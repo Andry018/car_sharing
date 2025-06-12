@@ -1,6 +1,8 @@
 #ifndef TARIFFE_H
 #define TARIFFE_H
 
+#include "prenotazioni.h"
+
 /**
  * @brief Calcola la tariffa totale per un noleggio
  * 
@@ -41,7 +43,7 @@ double calcola_tariffa(int tipo, int ore_totali);
  * 
  * @return double La tariffa totale in euro
  */
-double calcola_tariffa_prenotazione(int tipo, int giorno_ora_inizio, int giorno_ora_fine);
+double calcola_tariffa_prenotazione(CodaPrenotazioni coda, int tipo, int giorno_ora_inizio, int giorno_ora_fine, int id_utente);
 
 /**
  * @brief Ottiene la tariffa oraria base per un tipo di veicolo
@@ -130,4 +132,4 @@ int calcola_ore_gratuite(int ore_totali);
  */
 void stampa_info_sconti(void);
 
-#endif // TARIFFE_H 
+#endif // TARIFFE_H

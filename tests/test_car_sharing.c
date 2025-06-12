@@ -262,6 +262,7 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
 void test_costo_noleggio(const char* input_fname, const char* output_fname, const char* oracle_fname){
     char input[10][M];
     leggi_input_test(input_fname, input, 10);
+    int id_utente = atoi(input[0]);
     int id_veicolo = atoi(input[1]);
     int giorno_inizio = atoi(input[2]);
     int ora_inizio = atoi(input[3]);
@@ -276,6 +277,23 @@ void test_costo_noleggio(const char* input_fname, const char* output_fname, cons
 
     // Verifica se il veicolo esiste
     if (!verifica_veicolo_esistente(id_veicolo, f_output, output_fname, oracle_fname)) {
+        return;
+    }
+
+    // Controllo errore ora_fine < ora_inizio nello stesso giorno
+    if (!verifica_fascia_oraria(giorno_inizio, ora_inizio, giorno_fine, ora_fine)) {
+        fprintf(f_output, "ERRORE_FASCIA_ORARIA\n");
+        fclose(f_output);
+        int cmp = compara_file(output_fname, oracle_fname);
+        FILE* f = fopen("tests/risultati.txt", "a");
+        if (f) {
+            if (cmp == 0) {
+                fprintf(f, "%s PASS\n", input_fname);
+            } else {
+                fprintf(f, "%s FAIL\n", input_fname);
+            }
+            fclose(f);
+        }
         return;
     }
 
@@ -295,7 +313,7 @@ void test_costo_noleggio(const char* input_fname, const char* output_fname, cons
     // Calcola il costo del noleggio
     int timestamp_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
     int timestamp_fine = converti_in_timestamp(giorno_fine, ora_fine);
-    double costo = calcola_tariffa_prenotazione(tipo_veicolo, timestamp_inizio, timestamp_fine);
+    double costo = calcola_tariffa_prenotazione(coda_test, tipo_veicolo, timestamp_inizio, timestamp_fine, id_utente);
     
     fprintf(f_output, "%.2f\n", costo);
     
@@ -531,10 +549,43 @@ int main(int argc, char *argv[]) {
     Prenotazione p3 = crea_prenotazione(2, 3, 3, 9, 3, 11, 0, 2); // utente 2, veicolo 3, giorno 3, 9-11
     imposta_stato_prenotazione(1,p2);
     Prenotazione p4 = crea_prenotazione(2, 4, 4, 13, 4, 15, 0, 3); // utente 2, veicolo 4, giorno 4, 13-15  
-    aggiungi_prenotazione(coda_test, p1);
+    Prenotazione p5 = crea_prenotazione(2, 2, 2, 16, 2, 17, 0, 0); // utente 2, veicolo 2, giorno 2, 16-17
+    Prenotazione p6 = crea_prenotazione(2, 2, 2, 17, 2, 18, 0, 0); // utente 2, veicolo 2, giorno 2, 17-18
+    Prenotazione p7 = crea_prenotazione(2, 2, 2, 18, 2, 19, 0, 0); // utente 2, veicolo 2, giorno 2, 18-19
+    Prenotazione p8 = crea_prenotazione(2, 2, 2, 19, 2, 20, 0, 0); // utente 2, veicolo 2, giorno 2, 19-20
+    Prenotazione p9 = crea_prenotazione(2, 2, 2, 20, 2, 21, 0, 0); // utente 2, veicolo 2, giorno 2, 20-21
+    Prenotazione p10 = crea_prenotazione(2, 2, 2, 21, 2, 22, 0, 0); // utente 2, veicolo 2, giorno 2, 21-22
+    Prenotazione p11 = crea_prenotazione(2, 2, 2, 22, 2, 23, 0, 0); // utente 2, veicolo 2, giorno 2, 22-23
+    Prenotazione p12 = crea_prenotazione(2, 2, 2, 23, 3, 0, 0, 0); // utente 2, veicolo 2, giorno 2, 23-0
+
+    Prenotazione p13 = crea_prenotazione(2, 2, 3, 0, 3, 1, 0, 0); // utente 2, veicolo 2, giorno 3, 0-1
+    Prenotazione p14 = crea_prenotazione(2, 2, 3, 1, 3, 2, 0, 0); // utente 2, veicolo 2, giorno 3, 1-2
+
+     imposta_stato_prenotazione(2, p5);  // Imposta lo stato della prenotazione p5 a "Completata"
+    imposta_stato_prenotazione(2, p6);  // Imposta lo stato della prenotazione p6 a "Completata"
+    imposta_stato_prenotazione(2, p7);  // Imposta lo stato della prenotazione p7 a "Completata"
+    imposta_stato_prenotazione(2, p8);  // Imposta lo stato della prenotazione p8 a "Completata"
+    imposta_stato_prenotazione(2, p9);  // Imposta lo stato della prenotazione p9 a "Completata"
+    imposta_stato_prenotazione(2, p10); // Imposta lo stato della prenotazione p10 a "Completata"
+    imposta_stato_prenotazione(2, p11); // Imposta lo stato della prenotazione p11 a "Completata"
+    imposta_stato_prenotazione(2, p12); // Imposta lo stato della prenotazione p12 a "Completata"
+    imposta_stato_prenotazione(2, p13); // Imposta lo stato della prenotazione p13 a "Completata"
+    imposta_stato_prenotazione(2, p14); // Imposta lo stato della prenotazione p14 a "Completata"
+
+    aggiungi_prenotazione(coda_test, p1);    
     aggiungi_prenotazione(coda_test, p2);
     aggiungi_prenotazione(coda_test, p3);
     aggiungi_prenotazione(coda_test, p4);
+    aggiungi_prenotazione(coda_test, p5);
+    aggiungi_prenotazione(coda_test, p6);
+    aggiungi_prenotazione(coda_test, p7);
+    aggiungi_prenotazione(coda_test, p8);
+    aggiungi_prenotazione(coda_test, p9);
+    aggiungi_prenotazione(coda_test, p10);
+    aggiungi_prenotazione(coda_test, p11);
+    aggiungi_prenotazione(coda_test, p12);
+    aggiungi_prenotazione(coda_test, p13);
+    aggiungi_prenotazione(coda_test, p14);
 
     // Eseguiamo i test
     if (argc == 1) {

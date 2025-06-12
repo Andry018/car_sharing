@@ -547,7 +547,7 @@ int verifica_sovrapposizioni( CodaPrenotazioni coda, int id_veicolo, int giorno_
 }
 
 // Funzione per contare le prenotazioni completate di un utente
-int conta_prenotazioni_completate( CodaPrenotazioni coda, int id_utente) {
+int conta_prenotazioni_completate(CodaPrenotazioni coda, int id_utente) {
     if (coda == NULL) {
         return 0;
     }

@@ -1,6 +1,7 @@
 #include "tariffe.h"
 #include "veicolo.h"
 #include "prenotazioni.h"
+#include "utenti.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -64,7 +65,7 @@ double calcola_tariffa(int tipo, int ore_totali) {
 }
 
 // Funzione per calcolare la tariffa di una prenotazione
-double calcola_tariffa_prenotazione(int tipo, int giorno_ora_inizio, int giorno_ora_fine) {
+double calcola_tariffa_prenotazione(CodaPrenotazioni coda, int tipo, int giorno_ora_inizio, int giorno_ora_fine, int id_utente) {
     // Estrai il giorno e l'ora dall'intero che li rappresenta
     int giorno_inizio = estrai_giorno(giorno_ora_inizio);
     int ora_inizio = estrai_ora(giorno_ora_inizio);
@@ -89,7 +90,13 @@ double calcola_tariffa_prenotazione(int tipo, int giorno_ora_inizio, int giorno_
         ore_totali += ora_fine;
     }
     
-    return calcola_tariffa(tipo, ore_totali);
+    double tariffa_base = calcola_tariffa(tipo, ore_totali);
+
+    // --- SCONTO FEDELTA ---
+    int noleggi_completati = conta_prenotazioni_completate(coda, id_utente);
+    double tariffa_finale = applica_sconto_fedelta(tariffa_base, noleggi_completati);
+
+    return tariffa_finale;
 }
 
 // Funzione per stampare le informazioni sugli sconti disponibili
@@ -101,5 +108,5 @@ void stampa_info_sconti(void) {
     printf("   - 1 ora gratuita ogni %d ore di noleggio\n", ORE_PER_PACCHETTO);
     printf("   Esempio: noleggio di 6 ore = paghi 5 ore\n");
     printf("           noleggio di 12 ore = paghi 10 ore\n");
-} 
+}
 
