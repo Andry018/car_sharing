@@ -100,7 +100,7 @@ int main() {
                         if (verifica_password(password, temp_utente)) {
                             imposta_colore(10); // Verde
                             printf("\nAccesso effettuato con successo!\n");
-                            printf("Benvenuto/a, %s!\n", ottieni_nome_utente(temp_utente));
+                            printf("Benvenuto/a, %s!\n", ottieni_nome_completo_utente(temp_utente));
                             stato = 1;
                             strncpy(utente_corrente, nome_utente, sizeof(utente_corrente));
                             salva_utenti_file();

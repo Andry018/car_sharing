@@ -25,6 +25,16 @@ void inizializza_data_sistema() {
 }
 
 void avanza_tempo(int ore) {
+    // Validazione input
+    if (ore < 0) {
+        fprintf(stderr, "Errore: il numero di ore deve essere positivo\n");
+        return;
+    }
+    if (data_corrente == NULL) {
+        fprintf(stderr, "Errore: la data di sistema non è inizializzata\n");
+        return;
+    }
+
     data_corrente->ora += ore;
     
     // Gestisci il riporto delle ore
@@ -48,7 +58,13 @@ int converti_data_in_timestamp(DataSistema data) {
 }
 
 DataSistema converti_timestamp_in_data(int timestamp) {
-    DataSistema data=ottieni_data_sistema();
+    // Validazione input
+    if (timestamp < 0) {
+        fprintf(stderr, "Errore: il timestamp deve essere non negativo\n");
+        return NULL;
+    }
+
+    DataSistema data = ottieni_data_sistema();
     if (data == NULL) {
         data = (DataSistema)malloc(sizeof(struct DataSistema));
         if (data == NULL) {

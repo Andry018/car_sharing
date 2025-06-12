@@ -10,30 +10,30 @@
 
 
 
-// Funzione per impostare il coloree del testo
+// Funzione per impostare il colore del testo
 void imposta_colore(int colore) {
 #ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, colore);
 #else
-    // ANSI escape codes for colores
+    // ANSI escape codes for colors
     switch(colore) {
-        case 7:  // Bianco (default)
+        case COLORE_BIANCO:  // Bianco (default)
             printf("\033[0m");
             break;
-        case 10: // Verde
+        case COLORE_VERDE:   // Verde
             printf("\033[0;32m");
             break;
-        case 11: // Ciano
+        case COLORE_CIANO:   // Ciano
             printf("\033[0;36m");
             break;
-        case 12: // Rosso
+        case COLORE_ROSSO:   // Rosso
             printf("\033[0;31m");
             break;
-        case 13: // Magenta
+        case COLORE_MAGENTA: // Magenta
             printf("\033[0;35m");
             break;
-        case 14: // Giallo
+        case COLORE_GIALLO:  // Giallo
             printf("\033[0;33m");
             break;
         default:
@@ -68,21 +68,21 @@ void salvataggio() {
 }
 
 void stampa_bordo_superiore() {
-    imposta_colore(11);  // Ciano
+    imposta_colore(COLORE_CIANO);  // Ciano
     printf("=====================================\n");
-    imposta_colore(7);   // Bianco
+    imposta_colore(COLORE_BIANCO); // Bianco
 }
 
 void stampa_bordo_inferiore() {
-    imposta_colore(11);  // Ciano
+    imposta_colore(COLORE_CIANO);  // Ciano
     printf("=====================================\n");
-    imposta_colore(7);   // Bianco
+    imposta_colore(COLORE_BIANCO); // Bianco
 }
 
 void stampa_separatore() {
-    imposta_colore(11);  // Ciano
+    imposta_colore(COLORE_CIANO);  // Ciano
     printf("-------------------------------------\n");
-    imposta_colore(7);   // Bianco
+    imposta_colore(COLORE_BIANCO); // Bianco
 }
 
 void stampa_data_sistema() {

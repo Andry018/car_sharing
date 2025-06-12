@@ -307,14 +307,14 @@ int ottieni_id_utente(Utente u) {
     return u->id;  // Restituisce l'ID dell'utente
 }
 
-const char* ottieni_nome_utente(Utente u) {
+const char* ottieni_nome_completo_utente(Utente u) {
     if (u == NULL) {
         return NULL;  // Utente non valido
     }
     return u->nome_completo;  // Restituisce il nome completo dell'utente
 }
 
-const char* ottieni_nome_utente_utente(Utente u) {
+const char* ottieni_nome_utente(Utente u) {
     if (u == NULL) {
         return NULL;  // Utente non valido
     }
@@ -322,11 +322,10 @@ const char* ottieni_nome_utente_utente(Utente u) {
 }   
 
 const char* ottieni_password_utente(const char* nome_utente) {
-   Utente utente = cerca_utente(nome_utente);
+    Utente utente = cerca_utente(nome_utente);
     if (utente != NULL) {
         return utente->password;
     }
-    free(utente);
     return NULL;  // Utente non trovato
 }   
 
