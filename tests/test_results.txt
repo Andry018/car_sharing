@@ -5,7 +5,9 @@ TC04 - creazione_prenotazione - PASS
 TC05 - creazione_prenotazione - PASS
 TC06 - creazione_prenotazione - PASS
 TC07 - creazione_prenotazione - PASS
-TC08 - creazione_prenotazione - FAIL
+TC08 - creazione_prenotazione - PASS
+TC09 - creazione_prenotazione - PASS
+TC10 - creazione_prenotazione - PASS
 TC11 - costo_noleggio - PASS
 TC12 - costo_noleggio - PASS
 TC13 - visualizza_disponibilita - FAIL

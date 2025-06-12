@@ -193,10 +193,36 @@ Input: 6 argomenti
   ora_inizio: 10
   giorno_fine: 1
   ora_fine: 12
-  priorità: 2
+  priorità: 5
   posizione_riconsegna: 0
-- **Output Atteso**: Dettagli della prenotazione creata con priorità impostata a 2
+- **Output Atteso**: Dettagli della prenotazione creata con priorità impostata a 5
 - **Verifica**: Il sistema deve creare correttamente la prenotazione
+
+## TC09: Creazione Prenotazione che copre tutta la settimana da data avvio sistema
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 0
+  ora_inizio: 8
+  giorno_fine: 6
+  ora_fine: 23
+  priorità: -1
+  posizione_riconsegna: 0
+- **Output Atteso**: Dettagli della prenotazione creata 
+- **Verifica**: Il sistema deve creare correttamente la prenotazione
+
+## TC10: Creazione Prenotazione che copre tutta la settimana
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 0
+  ora_inizio: 0
+  giorno_fine: 6
+  ora_fine: 23
+  priorità: -1
+  posizione_riconsegna: 0
+- **Output Atteso**: "ERRORE_DATA_1" (Data inizio precedente a data sistema)
+- **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
 
 ## TC11: Calcolo Costo Noleggio Valido
 - **Input**: Prenotazione valida per un'utilitaria (tipo 0) per 2 ore

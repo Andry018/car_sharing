@@ -171,6 +171,7 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
     int ora_inizio = atoi(input[3]);
     int giorno_fine = atoi(input[4]);
     int ora_fine = atoi(input[5]);
+    int priorita = atoi(input[6]);  
     int posizione_riconsegna = atoi(input[7]);
 
     FILE* f_output = fopen(output_fname, "w");
@@ -230,7 +231,7 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
 
     // Creiamo e testiamo la prenotazione con priorità automatica (-1)
     Prenotazione p = crea_prenotazione(id_utente, id_veicolo, giorno_inizio, 
-                                    ora_inizio, giorno_fine, ora_fine, -1,  // Usa priorità automatica
+                                    ora_inizio, giorno_fine, ora_fine, priorita,  
                                     posizione_riconsegna);
    
     // Output in formato spazio-separato usando i valori convertiti
