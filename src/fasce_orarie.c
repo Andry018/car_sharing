@@ -90,6 +90,29 @@ CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotaz
         }
     }
     free(calendario); // Libera la memoria del vecchio calendario
+
+    // Dopo aver aggiornato il calendario:
+    DataSistema data_attuale = get_data_sistema();
+    int giorno_attuale = get_giorno_sistema(data_attuale);
+    int ora_attuale = get_ora_sistema(data_attuale);
+
+    // Se la fascia oraria attuale è occupata, imposta il veicolo come non disponibile
+    if (nuovo_calendario->calendario[giorno_attuale][ora_attuale].occupato) {
+        // Cerca il veicolo nella lista globale e imposta disponibilità a 0
+        Veicolo v = cerca_veicolo(get_lista_veicoli(), nuovo_calendario->id_veicolo);
+        if (v) {
+            set_disponibilita_veicolo(v, 0);
+            printf("DEBUG: Veicolo %d impostato come NON DISPONIBILE (data sistema: %d %d)\n", nuovo_calendario->id_veicolo, giorno_attuale, ora_attuale);
+
+        }
+    } else {
+        // Altrimenti, imposta disponibile
+        Veicolo v = cerca_veicolo(get_lista_veicoli(), nuovo_calendario->id_veicolo);
+        if (v) {
+            set_disponibilita_veicolo(v, 1);
+        }
+    }
+
     return nuovo_calendario;
 }
 

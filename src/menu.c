@@ -1009,6 +1009,11 @@ void visualizza_disponibilita() {
             temp = get_next_node(temp);
             continue;
         }
+         // Aggiorna il calendario e la disponibilità 
+        CalendarioVeicolo calendario = inizializza_calendario(get_id_veicolo(v));
+        CodaPrenotazioni coda = get_coda_prenotazioni();
+        CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, coda);
+        free(nuovo_calendario);
         
         stampa_veicolo(v);
         trovato = true;

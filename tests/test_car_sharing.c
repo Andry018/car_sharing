@@ -368,6 +368,49 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
 }
 
 void test_storico_prenotazioni(const char* input_fname, const char* output_fname, const char* oracle_fname){
+    char input[10][M];
+    int n = leggi_input_test(input_fname, input, 10);
+
+    int id_utente = atoi(input[0]);
+
+    FILE* f_output = fopen(output_fname, "w");
+    if (!f_output) {
+        printf("Errore apertura file di output: %s\n", output_fname);
+        return;
+    }
+
+    CodaPrenotazioni coda = get_coda_test();
+    if (!verifica_utente_esistente(id_utente, f_output, output_fname, oracle_fname)) {
+        fclose(f_output);
+        return;
+    }
+    for (int i = 0; i < get_dimensione_coda(coda); i++) {
+        Prenotazione p = get_prenotazione_in_coda(coda, i);
+        if (!p) continue;
+        if (get_id_utente_prenotazione(p) == id_utente) {
+            fprintf(f_output, "%d %d %d %d %d %d %d %d\n",
+                    get_id_prenotazione(p),
+                    get_id_utente_prenotazione(p),
+                    get_id_veicolo_prenotazione(p),
+                    get_giorno_ora_inizio(p),
+                    get_giorno_ora_fine(p),
+                    get_stato_prenotazione(p),
+                    get_priorita(p),
+                    get_posizione_riconsegna(p));
+        }
+    }
+    fclose(f_output);
+
+    int cmp = compara_file(output_fname, oracle_fname);
+    FILE* f = fopen("tests/risultati.txt", "a");
+    if (f) {
+        if (cmp == 0) {
+            fprintf(f, "%s PASS\n", input_fname);
+        } else {
+            fprintf(f, "%s FAIL\n", input_fname);
+        }
+        fclose(f);
+    }
 
 }
 
