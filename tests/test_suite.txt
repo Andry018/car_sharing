@@ -1,6 +1,11 @@
 TC01 creazione_prenotazione
 TC02 creazione_prenotazione
 TC03 creazione_prenotazione
+TC04 creazione_prenotazione
+TC05 creazione_prenotazione
+TC06 creazione_prenotazione
+TC07 creazione_prenotazione
+TC08 creazione_prenotazione
 TC11 costo_noleggio
 TC12 costo_noleggio
 TC13 visualizza_disponibilita

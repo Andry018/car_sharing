@@ -130,8 +130,73 @@ Input: 6 argomenti
   ora_fine: 10
   priorità: -1
   posizione_riconsegna: 0
-- **Output Atteso**: "ERRORE_DATA_2" (data nel passato)
+- **Output Atteso**: "ERRORE_FASCIA_ORARIA" 
 - **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
+
+## TC04: Creazione Prenotazione Utente non esistente
+- **Input**: 
+  id_utente: 999
+  id_veicolo: 2
+  giorno_inizio: 1
+  ora_inizio: 10
+  giorno_fine: 1
+  ora_fine: 12
+  priorità: -1
+  posizione_riconsegna: 0
+- **Output Atteso**: "ERRORE_UTENTE_NON_TROVATO" 
+- **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
+
+## TC05: Creazione Prenotazione Veicolo non esistente
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 999
+  giorno_inizio: 1
+  ora_inizio: 10
+  giorno_fine: 1
+  ora_fine: 12
+  priorità: -1
+  posizione_riconsegna: 0
+- **Output Atteso**: "ERRORE_VEICOLO_NON_TROVATO" 
+- **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
+
+## TC06: Creazione Prenotazione con Giorno fuori range
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 7
+  ora_inizio: 10
+  giorno_fine: 8
+  ora_fine: 12
+  priorità: -1
+  posizione_riconsegna: 0
+- **Output Atteso**: "ERRORE_FASCIA_ORARIA" 
+- **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
+
+## TC07: Creazione Prenotazione con Ora fuori range
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 1
+  ora_inizio: 24
+  giorno_fine: 1
+  ora_fine: 26
+  priorità: -1
+  posizione_riconsegna: 0
+- **Output Atteso**: "ERRORE_FASCIA_ORARIA" 
+- **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
+
+## TC08: Creazione Prenotazione con priorità manuale
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 1
+  ora_inizio: 10
+  giorno_fine: 1
+  ora_fine: 12
+  priorità: 2
+  posizione_riconsegna: 0
+- **Output Atteso**: Dettagli della prenotazione creata con priorità impostata a 2
+- **Verifica**: Il sistema deve creare correttamente la prenotazione
 
 ## TC11: Calcolo Costo Noleggio Valido
 - **Input**: Prenotazione valida per un'utilitaria (tipo 0) per 2 ore
