@@ -8,7 +8,7 @@
 
 // Forward declarations per information hiding
 typedef struct Veicolo* Veicolo;
-typedef struct node* list;
+typedef struct nodo* list;
 
 // Funzioni di accesso alla lista
 /**
@@ -25,7 +25,7 @@ typedef struct node* list;
  * 
  * @note Questa funzione è di sola lettura e non modifica lo stato del sistema
  */
-list get_lista_veicoli(void);
+list ottieni_lista_veicoli(void);
 
 //------------------------------------------------------------------------------
 /**
@@ -41,7 +41,7 @@ list get_lista_veicoli(void);
  * 
  * @sideeffect Modifica lo stato globale: aggiorna la variabile listaVeicoli
  */
-void set_lista_veicoli(list nuovaLista);
+void imposta_lista_veicoli(list nuovaLista);
 
 //------------------------------------------------------------------------------
 /**
@@ -86,7 +86,7 @@ void carica_lista_veicoli(void);
  * 
  * @pre La variabile globale listaVeicoli deve essere inizializzata (può anche essere NULL)
  * @pre I nodi della lista sono stati allocati dinamicamente con malloc o funzioni equivalenti
- * @pre La struttura dei nodi deve essere coerente (ogni nodo punta al successivo con il campo next)
+ * @pre La struttura dei nodi deve essere coerente (ogni nodo punta al successivo con il campo successivo)
  * 
  * @post Tutta la memoria dinamica associata a listaVeicoli viene liberata
  * @post La variabile listaVeicoli risulta vuota, ovvero NULL
@@ -137,9 +137,9 @@ Veicolo crea_veicolo(void);
  * @param l La lista a cui aggiungere il veicolo (può essere NULL)
  * 
  * @pre Il parametro l può essere NULL o una lista valida di veicoli
- * @pre La struttura struct node deve essere definita correttamente, con almeno:
+ * @pre La struttura struct nodo deve essere definita correttamente, con almeno:
  *      - un campo veicolo veicoli
- *      - un campo struct node* next
+ *      - un campo struct nodo* successivo
  * @pre La funzione crea_veicolo() deve essere disponibile e funzionante
  * 
  * @post Restituisce un nuovo puntatore alla lista, con il nuovo nodo in testa
@@ -187,9 +187,9 @@ list rimuovi_veicolo(list l, int id);
  * - L'ID del veicolo
  * - Il modello
  * - La targa
- * - Il tipo del veicolo (con colore associato)
+ * - Il tipo del veicolo (con coloree associato)
  * - La posizione del veicolo (Deposito, Posizione B, Posizione C, Posizione D)
- * - Lo stato di disponibilità (con colore associato)
+ * - Lo stato di disponibilità (con coloree associato)
  * 
  * @param v Il veicolo da stampare
  * 
@@ -198,9 +198,9 @@ list rimuovi_veicolo(list l, int id);
  *      - modello e targa sono stringhe ben terminate
  *      - tipo è uno dei valori previsti (UTILITARIA, SUV, SPORTIVA, MOTO)
  *      - posizione è uno dei valori previsti (0=Deposito, 1=Posizione B, 2=Posizione C, 3=Posizione D)
- * @pre La funzione set_color(int) è disponibile e funzionante
+ * @pre La funzione imposta_colore(int) è disponibile e funzionante
  * 
- * @post Le informazioni del veicolo sono stampate a schermo in formato leggibile e con evidenziazione a colori
+ * @post Le informazioni del veicolo sono stampate a schermo in formato leggibile e con evidenziazione a colorei
  * @post Lo stato del programma non viene modificato
  * 
  * @sideeffect Output su console
@@ -291,7 +291,7 @@ int carica_ultimo_id(void);
  * 
  * @return int L'ID del veicolo
  */
-int get_id_veicolo(Veicolo v);
+int ottieni_id_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
@@ -309,7 +309,7 @@ int get_id_veicolo(Veicolo v);
  * 
  * @return int Il tipo del veicolo
  */
-int get_tipo_veicolo(Veicolo v);
+int ottieni_tipo_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
@@ -327,7 +327,7 @@ int get_tipo_veicolo(Veicolo v);
  * 
  * @return const char* Il modello del veicolo
  */
-const char* get_modello_veicolo(Veicolo v);
+const char* ottieni_modello_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
@@ -345,7 +345,7 @@ const char* get_modello_veicolo(Veicolo v);
  * 
  * @return const char* La targa del veicolo
  */
-const char* get_targa_veicolo(Veicolo v);
+const char* ottieni_targa_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
@@ -363,7 +363,7 @@ const char* get_targa_veicolo(Veicolo v);
  * 
  * @return int La posizione del veicolo
  */
-int get_posizione_veicolo(Veicolo v);
+int ottieni_posizione_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
@@ -381,7 +381,7 @@ int get_posizione_veicolo(Veicolo v);
  * 
  * @return int La disponibilità del veicolo (1 = disponibile, 0 = non disponibile)
  */
-int get_disponibilita_veicolo(Veicolo v);
+int ottieni_disponibilita_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
@@ -399,7 +399,7 @@ int get_disponibilita_veicolo(Veicolo v);
  * 
  * @sideeffect Modifica diretta del campo id nella struttura
  */
-void set_id_veicolo(Veicolo v, int id);
+void imposta_id_veicolo(Veicolo v, int id);
 
 //------------------------------------------------------------------------------
 /**
@@ -417,7 +417,7 @@ void set_id_veicolo(Veicolo v, int id);
  * 
  * @sideeffect Modifica diretta del campo tipo nella struttura
  */
-void set_tipo_veicolo(Veicolo v, int tipo);
+void imposta_tipo_veicolo(Veicolo v, int tipo);
 
 //------------------------------------------------------------------------------
 /**
@@ -436,7 +436,7 @@ void set_tipo_veicolo(Veicolo v, int tipo);
  * 
  * @sideeffect Scrive su v->modello
  */
-void set_modello_veicolo(Veicolo v, const char* modello);
+void imposta_modello_veicolo(Veicolo v, const char* modello);
 
 //------------------------------------------------------------------------------
 /**
@@ -454,7 +454,7 @@ void set_modello_veicolo(Veicolo v, const char* modello);
  * 
  * @sideeffect Scrive su v->targa
  */
-void set_targa_veicolo(Veicolo v, const char* targa);
+void imposta_targa_veicolo(Veicolo v, const char* targa);
 
 //------------------------------------------------------------------------------
 /**
@@ -472,7 +472,7 @@ void set_targa_veicolo(Veicolo v, const char* targa);
  * 
  * @sideeffect Scrive su v->posizione
  */
-void set_posizione_veicolo(Veicolo v, int posizione);
+void imposta_posizione_veicolo(Veicolo v, int posizione);
 
 //------------------------------------------------------------------------------
 /**
@@ -490,7 +490,7 @@ void set_posizione_veicolo(Veicolo v, int posizione);
  * 
  * @sideeffect Modifica il campo disponibilita della struttura
  */
-void set_disponibilita_veicolo(Veicolo v, int disponibilita);
+void imposta_disponibilita_veicolo(Veicolo v, int disponibilita);
 
 // Funzioni di ricerca
 //------------------------------------------------------------------------------
@@ -809,7 +809,7 @@ void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int pos
  * 
  * @return const char* Il nome del tipo di veicolo
  */
-const char* get_nome_tipo_veicolo(int tipo);
+const char* ottieni_nome_tipo_veicolo(int tipo);
 
 //------------------------------------------------------------------------------
 /**
@@ -834,10 +834,10 @@ const char* get_nome_tipo_veicolo(int tipo);
  * 
  * @return const char* Il nome della posizione del veicolo
  */
-const char* get_nome_posizione_veicolo(int posizione);
+const char* ottieni_nome_posizione_veicolo(int posizione);
 
-list get_next_node(list l);
-Veicolo get_veicolo_senza_rimuovere(list l);
+list ottieni_successivo_nodo(list l);
+Veicolo ottieni_veicolo_senza_rimuovere(list l);
 
 
 #endif

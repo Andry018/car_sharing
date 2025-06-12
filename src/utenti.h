@@ -11,28 +11,28 @@ int carica_ultimo_id_utente();
 void inizializza_tabella_utenti();
 void salva_utenti_file();
 int carica_utenti_file();
-int inserisci_utente(const char* username, const char* nome_completo, const char* password);
-Utente cerca_utente(const char* username);
+int inserisci_utente(const char* soprannome, const char* nome_completo, const char* password);
+Utente cerca_utente(const char* soprannome);
 Utente cerca_utente_per_id(int id);
 void stampa_utenti();
 
 int rimuovi_utente(int id);
 
 // Getter functions
-int get_id_utente(Utente u);
-const char* get_nome_utente(Utente u);
-const char* get_username_utente(Utente u);
-const char* get_password_utente(const char* username);
-int get_isAdmin_utente(Utente u);
+int ottieni_id_utente(Utente u);
+const char* ottieni_nome_utente(Utente u);
+const char* ottieni_soprannome_utente(Utente u);
+const char* ottieni_password_utente(const char* soprannome);
+int ottieni_isAdmin_utente(Utente u);
 
 // Setter functions
-void set_id_utente(int id, Utente u);
-void set_nome_utente( const char* nome_completo, Utente u);
-void set_username_utente(const char* new_username, Utente u);
-void set_password_utente(const char* password, Utente u);
+void imposta_id_utente(int id, Utente u);
+void imposta_nome_utente( const char* nome_completo, Utente u);
+void imposta_nome_utente_utente(const char* nuovo_nome_utente, Utente u);
+void imposta_password_utente(const char* password, Utente u);
 
 // Funzioni per validare
-int valida_username(const char* username);
+int valida_nome_utente(const char* nome_utente);
 int valida_nome_completo(const char* nome);
 int verifica_password(const char* password, Utente u);
 void hash_password(const char* input, char* output);

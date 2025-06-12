@@ -7,7 +7,7 @@
 #include <unistd.h>
 #endif
 
-void set_color(int color);
+void imposta_colore(int colore);
 void svuota_buffer(void);
 void pulisci_schermo(void);
 void salvataggio(void);

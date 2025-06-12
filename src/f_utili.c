@@ -10,14 +10,14 @@
 
 
 
-// Funzione per impostare il colore del testo
-void set_color(int color) {
+// Funzione per impostare il coloree del testo
+void imposta_colore(int colore) {
 #ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, color);
+    SetConsoleTextAttribute(hConsole, colore);
 #else
-    // ANSI escape codes for colors
-    switch(color) {
+    // ANSI escape codes for colores
+    switch(colore) {
         case 7:  // Bianco (default)
             printf("\033[0m");
             break;
@@ -60,7 +60,7 @@ void pulisci_schermo() {
 void salvataggio() {
     // Salva i dati prima di chiudere
     salva_lista_veicoli();
-    salva_prenotazioni_su_file(get_coda_prenotazioni());
+    salva_prenotazioni_su_file(ottieni_coda_prenotazioni());
     salva_utenti_file();
     
     // Libera la memoria
@@ -68,27 +68,27 @@ void salvataggio() {
 }
 
 void stampa_bordo_superiore() {
-    set_color(11);  // Ciano
+    imposta_colore(11);  // Ciano
     printf("=====================================\n");
-    set_color(7);   // Bianco
+    imposta_colore(7);   // Bianco
 }
 
 void stampa_bordo_inferiore() {
-    set_color(11);  // Ciano
+    imposta_colore(11);  // Ciano
     printf("=====================================\n");
-    set_color(7);   // Bianco
+    imposta_colore(7);   // Bianco
 }
 
 void stampa_separatore() {
-    set_color(11);  // Ciano
+    imposta_colore(11);  // Ciano
     printf("-------------------------------------\n");
-    set_color(7);   // Bianco
+    imposta_colore(7);   // Bianco
 }
 
 void stampa_data_sistema() {
-    DataSistema data = get_data_sistema();
-    int giorno = get_giorno_sistema(data);
-    int ora = get_ora_sistema(data);
-    printf("Data: %s\n", get_nome_giorno(giorno));
+    DataSistema data = ottieni_data_sistema();
+    int giorno = ottieni_giorno_sistema(data);
+    int ora = ottieni_ora_sistema(data);
+    printf("Data: %s\n", ottieni_nome_giorno(giorno));
     printf("Ora: %02d:00\n", ora);
 }

@@ -16,72 +16,72 @@ struct Veicolo {
     int disponibilita;
 };
 
-typedef struct node {
+typedef struct nodo {
     Veicolo v;
-    struct node* next;
-} node;
+    struct nodo* successivo;
+} nodo;
 
 // Variabile statica per la lista dei veicoli
 static list listaVeicoli = NULL;
 
 // Implementazione delle funzioni di accesso alla lista
-list get_lista_veicoli(void) {
+list ottieni_lista_veicoli(void) {
     return listaVeicoli;
 }
 
-void set_lista_veicoli(list nuovaLista) {
+void imposta_lista_veicoli(list nuovaLista) {
     listaVeicoli = nuovaLista;
 }
 
 // Implementazione dei getter
-int get_id_veicolo(Veicolo v) {
+int ottieni_id_veicolo(Veicolo v) {
     return v->id;
 }
 
-int get_tipo_veicolo(Veicolo v) {
+int ottieni_tipo_veicolo(Veicolo v) {
     return v->tipo;
 }
 
-const char* get_modello_veicolo(Veicolo v) {
+const char* ottieni_modello_veicolo(Veicolo v) {
     return v->modello;
 }
 
-const char* get_targa_veicolo(Veicolo v) {
+const char* ottieni_targa_veicolo(Veicolo v) {
     return v->targa;
 }
 
-int get_posizione_veicolo(Veicolo v) {
+int ottieni_posizione_veicolo(Veicolo v) {
     return v->posizione;
 }
 
-int get_disponibilita_veicolo(Veicolo v) {
+int ottieni_disponibilita_veicolo(Veicolo v) {
     return v->disponibilita;
 }
 
 // Implementazione dei setter
-void set_id_veicolo(Veicolo v, int id) {
+void imposta_id_veicolo(Veicolo v, int id) {
     v->id = id;
 }
 
-void set_tipo_veicolo(Veicolo v, int tipo) {
+void imposta_tipo_veicolo(Veicolo v, int tipo) {
     v->tipo = tipo;
 }
 
-void set_modello_veicolo(Veicolo v, const char* modello) {
+void imposta_modello_veicolo(Veicolo v, const char* modello) {
     strncpy(v->modello, modello, sizeof(v->modello) - 1);
     v->modello[sizeof(v->modello) - 1] = '\0';
 }
 
-void set_targa_veicolo(Veicolo v, const char* targa) {
+void imposta_targa_veicolo(Veicolo v, const char* targa) {
     strncpy(v->targa, targa, sizeof(v->targa) - 1);
     v->targa[sizeof(v->targa) - 1] = '\0';
 }
 
-void set_posizione_veicolo(Veicolo v, int posizione) {
+void imposta_posizione_veicolo(Veicolo v, int posizione) {
    v->posizione = posizione;
 }
 
-void set_disponibilita_veicolo(Veicolo v, int disponibilita) {
+void imposta_disponibilita_veicolo(Veicolo v, int disponibilita) {
     v->disponibilita = disponibilita;
 }
 
@@ -111,17 +111,17 @@ list aggiungi_veicolo(list l) {
     do {
         pulisci_schermo();
         stampa_bordo_superiore();
-        set_color(13); // Magenta
+        imposta_colore(13); // Magenta
         printf("         AGGIUNGI VEICOLO\n");
         stampa_separatore();
-        set_color(14); // Giallo
+        imposta_colore(14); // Giallo
         printf("         DATA DI SISTEMA\n");
-        set_color(7); // Bianco
+        imposta_colore(7); // Bianco
         stampa_data_sistema();
         stampa_separatore();
-        set_color(10); // Verde
+        imposta_colore(10); // Verde
         printf("     INSERIMENTO DATI VEICOLO\n");
-        set_color(7); // Bianco
+        imposta_colore(7); // Bianco
 
         printf("Tipo veicolo:\n");
         printf("0. Utilitaria\n");
@@ -130,15 +130,15 @@ list aggiungi_veicolo(list l) {
         printf("3. Moto\n");
         printf("Scelta: ");
         if (scanf("%d", &v->tipo) != 1 || v->tipo < 0 || v->tipo > 3) {
-            set_color(12); // Rosso
+            imposta_colore(12); // Rosso
             printf("Tipo non valido. Riprova.\n");
             svuota_buffer();
-            set_color(7); // Bianco
+            imposta_colore(7); // Bianco
             while (getchar() != '\n'); // Pulisci buffer
             // Il ciclo riparte e il menu viene ridisegnato pulito
         } else {
             tipo_valido = 1;
-            getchar(); // Consuma il newline
+            getchar(); // Consuma la nuova linea
         }
     } while (!tipo_valido);
 
@@ -146,19 +146,19 @@ list aggiungi_veicolo(list l) {
     do {
         pulisci_schermo();
         stampa_bordo_superiore();
-        set_color(13); // Magenta
+        imposta_colore(13); // Magenta
         printf("         AGGIUNGI VEICOLO\n");
         stampa_separatore();
-        set_color(14); // Giallo
+        imposta_colore(14); // Giallo
         printf("         DATA DI SISTEMA\n");
-        set_color(7); // Bianco
+        imposta_colore(7); // Bianco
         stampa_data_sistema();
         stampa_separatore();
-        set_color(10); // Verde
+        imposta_colore(10); // Verde
         printf("     INSERIMENTO DATI VEICOLO\n");
-        set_color(7); // Bianco;
+        imposta_colore(7); // Bianco;
 
-        printf("Tipo veicolo: %s\n", get_nome_tipo_veicolo(v->tipo));
+        printf("Tipo veicolo: %s\n", ottieni_nome_tipo_veicolo(v->tipo));
         printf("Modello: ");
         fgets(v->modello, sizeof(v->modello), stdin);
         v->modello[strcspn(v->modello, "\n")] = 0;
@@ -172,25 +172,25 @@ list aggiungi_veicolo(list l) {
     do {
         pulisci_schermo();
         stampa_bordo_superiore();
-        set_color(13); // Magenta
+        imposta_colore(13); // Magenta
         printf("         AGGIUNGI VEICOLO\n");
         stampa_separatore();
-        set_color(14); // Giallo
+        imposta_colore(14); // Giallo
         printf("         DATA DI SISTEMA\n");
-        set_color(7); // Bianco
+        imposta_colore(7); // Bianco
         stampa_data_sistema();
         stampa_separatore();
-        set_color(10); // Verde
+        imposta_colore(10); // Verde
         printf("     INSERIMENTO DATI VEICOLO\n");
-        set_color(7); // Bianco;
+        imposta_colore(7); // Bianco;
 
-        printf("Tipo veicolo: %s\n", get_nome_tipo_veicolo(v->tipo));
+        printf("Tipo veicolo: %s\n", ottieni_nome_tipo_veicolo(v->tipo));
         printf("Modello: %s\n", v->modello);
 
         printf("Targa: ");
         fgets(v->targa, sizeof(v->targa), stdin);
 
-        // Se manca il newline, svuota il buffer
+        // Se manca la nuova linea , svuota il buffer
         if (strchr(v->targa, '\n') == NULL) {
             int c;
             while ((c = getchar()) != '\n' && c != EOF);
@@ -198,19 +198,19 @@ list aggiungi_veicolo(list l) {
         v->targa[strcspn(v->targa, "\n")] = 0;
 
         if (strlen(v->targa) == 0) {
-            set_color(12); // Rosso
+            imposta_colore(12); // Rosso
             printf("La targa non può essere vuota. Premi INVIO per riprovare.\n");
-            set_color(7); // Bianco
+            imposta_colore(7); // Bianco
             getchar(); // Attendi INVIO
         } else if (strlen(v->targa) < 7) {
-            set_color(12); // Rosso
+            imposta_colore(12); // Rosso
             printf("La targa inserita non è valida (deve essere di 7 caratteri). Premi INVIO per riprovare.\n");
-            set_color(7); // Bianco
+            imposta_colore(7); // Bianco
             getchar(); // Attendi INVIO
         } else if (strlen(v->targa) > 7) {
-            set_color(12); // Rosso
+            imposta_colore(12); // Rosso
             printf("La targa non può superare 7 caratteri. Premi INVIO per riprovare.\n");
-            set_color(7); // Bianco
+            imposta_colore(7); // Bianco
             getchar(); // Attendi INVIO
         } else {
             targa_valida = 1;
@@ -223,15 +223,15 @@ list aggiungi_veicolo(list l) {
     v->id = carica_ultimo_id() + 1;
     v->disponibilita = 1;
 
-    list newNode = (list)malloc(sizeof(struct node));
-    if (newNode == NULL) {
+    list nuovo_nodo = (list)malloc(sizeof(struct nodo));
+    if (nuovo_nodo == NULL) {
         free(v);
         return l;
     }
 
-    newNode->v = v;
-    newNode->next = l;
-    return newNode;
+    nuovo_nodo->v = v;
+    nuovo_nodo->successivo = l;
+    return nuovo_nodo;
 }
 
 list rimuovi_veicolo(list l, int id)
@@ -241,7 +241,7 @@ list rimuovi_veicolo(list l, int id)
     // Caso 1: Il veicolo da rimuovere è il primo della lista
     if (l->v != NULL && l->v->id == id)
     {
-        list temp = l->next;
+        list temp = l->successivo;
         free(l->v);  // Libera la memoria del veicolo
         free(l);     // Libera la memoria del nodo della lista
         return temp;
@@ -249,17 +249,17 @@ list rimuovi_veicolo(list l, int id)
     
     // Caso 2: Il veicolo da rimuovere è in una posizione successiva
     list temp = l;
-    while (temp->next != NULL)
+    while (temp->successivo != NULL)
     {
-        if (temp->next->v != NULL && temp->next->v->id == id)
+        if (temp->successivo->v != NULL && temp->successivo->v->id == id)
         {
-            list da_rimuovere = temp->next;
-            temp->next = temp->next->next;
+            list da_rimuovere = temp->successivo;
+            temp->successivo = temp->successivo->successivo;
             free(da_rimuovere->v);  // Libera la memoria del veicolo
             free(da_rimuovere);     // Libera la memoria del nodo della lista
             return l;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     // Il veicolo non è stato trovato
@@ -269,29 +269,29 @@ list rimuovi_veicolo(list l, int id)
 void stampa_veicolo(Veicolo v) {
     if (v == NULL) return;
     
-    set_color(7); // Bianco
+    imposta_colore(7); // Bianco
     printf("  ID: %d\n", v->id);
     printf("  Modello: %s\n", v->modello);
     printf("  Targa: %s\n", v->targa);
     
-    set_color(10); // Verde
-    printf("  Tipo: %s\n", get_nome_tipo_veicolo(v->tipo));
+    imposta_colore(10); // Verde
+    printf("  Tipo: %s\n", ottieni_nome_tipo_veicolo(v->tipo));
     
-    set_color(7); // Bianco
+    imposta_colore(7); // Bianco
     printf("\n");
     
     printf("  Stato: ");
     if(v->disponibilita) {
-        set_color(10); // Verde
+        imposta_colore(10); // Verde
         printf("Disponibile");
     } else {
-        set_color(12); // Rosso
+        imposta_colore(12); // Rosso
         printf("Non disponibile");
     }
 
-    set_color(14); // Giallo
-    printf("  Posizione: %s\n", get_nome_posizione_veicolo(v->posizione)); 
-    set_color(7); // Bianco
+    imposta_colore(14); // Giallo
+    printf("  Posizione: %s\n", ottieni_nome_posizione_veicolo(v->posizione)); 
+    imposta_colore(7); // Bianco
     printf("\n");
 }
 
@@ -315,7 +315,7 @@ void salva_veicolo_file(list l)
             temp->v->targa,
             temp->v->posizione,
             temp->v->disponibilita);
-        temp = temp->next;
+        temp = temp->successivo;
     }
     fclose(fp);
     printf("Veicoli salvati nel file data/veicoli.txt\n");
@@ -366,10 +366,10 @@ list carica_veicolo_file(list l)
                                 v->disponibilita = atoi(token);
                                 
                                 // Aggiunge il veicolo alla lista
-                                list nuovo = (list)malloc(sizeof(struct node));
+                                list nuovo = (list)malloc(sizeof(struct nodo));
                                 if (nuovo != NULL) {
                                     nuovo->v = v;
-                                    nuovo->next = l;
+                                    nuovo->successivo = l;
                                     l = nuovo;
                                 } else {
                                     free(v);  // Libera il veicolo solo se non è stato aggiunto alla lista
@@ -388,17 +388,17 @@ list carica_veicolo_file(list l)
     return l;
 }
 
-list get_next_node(list l) {
-    return l->next;
+list ottieni_successivo_nodo(list l) {
+    return l->successivo;
 }
 
-Veicolo get_veicolo_da_lista(list *l) {
+Veicolo ottieni_veicolo_da_lista(list *l) {
     if (*l == NULL) {
         return NULL;
     }
     Veicolo v = (*l)->v;
     list temp = *l;
-    *l = (*l)->next;
+    *l = (*l)->successivo;
     free(temp);     // Libera solo la memoria del nodo
     return v;       // Restituisce il veicolo senza liberarlo
 }
@@ -409,7 +409,7 @@ Veicolo cerca_veicolo(list l, int id) {
         if (l->v->id == id) {
             return l->v;
         }
-        l = l->next;
+        l = l->successivo;
     }
     return NULL;
 }
@@ -426,25 +426,25 @@ void modifica_veicolo(list l, int id) {
     int tipo;
     scanf("%d", &tipo);
     getchar();
-    set_tipo_veicolo(v, tipo);
+    imposta_tipo_veicolo(v, tipo);
 
     printf("Nuovo modello: ");
     char modello[50];
     fgets(modello, sizeof(modello), stdin);
     modello[strcspn(modello, "\n")] = 0;
-    set_modello_veicolo(v, modello);
+    imposta_modello_veicolo(v, modello);
 
     printf("Nuova targa: ");
     char targa[10];
     fgets(targa, sizeof(targa), stdin);
     targa[strcspn(targa, "\n")] = 0;
-    set_targa_veicolo(v, targa);
+    imposta_targa_veicolo(v, targa);
 
     printf("Nuova posizione: (0: Deposito, 1: Posizione B, 2: Posizione C, 3: Posizione D): ");
     int posizione;
     scanf("%d", &posizione);
     getchar();
-    set_posizione_veicolo(v, posizione);
+    imposta_posizione_veicolo(v, posizione);
 }
 
 void stampa_lista_veicoli(list l)
@@ -461,7 +461,7 @@ void stampa_lista_veicoli(list l)
     {
         stampa_veicolo(temp->v);
         stampa_separatore();
-        temp = temp->next;
+        temp = temp->successivo;
     }
 }
 
@@ -483,7 +483,7 @@ void stampa_veicoli_disponibili(list l)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -510,7 +510,7 @@ void stampa_veicoli_non_disponibili(list l)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -553,7 +553,7 @@ void stampa_veicoli_per_tipo(list l, int tipo)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -570,7 +570,7 @@ void stampa_veicoli_per_posizione(list l, int posizione)
         return;
     }
     
-    printf("\nVeicoli nella posizione %s:\n", get_nome_posizione_veicolo(posizione));
+    printf("\nVeicoli nella posizione %s:\n", ottieni_nome_posizione_veicolo(posizione));
     list temp = l;
     bool trovato = false;
     while (temp != NULL)
@@ -580,7 +580,7 @@ void stampa_veicoli_per_posizione(list l, int posizione)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -607,7 +607,7 @@ void stampa_veicoli_per_modello(list l, const char* modello)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -634,7 +634,7 @@ void stampa_veicoli_per_targa(list l, const char* targa)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -661,7 +661,7 @@ void stampa_veicoli_per_id(list l, int id)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -678,9 +678,9 @@ void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione)
         return;
     }
     
-    printf("\nVeicoli di tipo %s", get_nome_tipo_veicolo(tipo));
+    printf("\nVeicoli di tipo %s", ottieni_nome_tipo_veicolo(tipo));
     
-    printf(" nella posizione %s:\n", get_nome_posizione_veicolo(posizione));
+    printf(" nella posizione %s:\n", ottieni_nome_posizione_veicolo(posizione));
     
     list temp = l;
     bool trovato = false;
@@ -691,7 +691,7 @@ void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -708,7 +708,7 @@ void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile)
         return;
     }
     
-    printf("\nVeicoli di tipo %s", get_nome_tipo_veicolo(tipo));
+    printf("\nVeicoli di tipo %s", ottieni_nome_tipo_veicolo(tipo));
    
     printf(" %s:\n", disponibile ? "disponibili" : "non disponibili");
     
@@ -721,7 +721,7 @@ void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile)
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -738,7 +738,7 @@ void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool di
         return;
     }
     
-    printf("\nVeicoli nella posizione %s %s:\n", get_nome_posizione_veicolo(posizione), disponibile ? "disponibili" : "non disponibili");
+    printf("\nVeicoli nella posizione %s %s:\n", ottieni_nome_posizione_veicolo(posizione), disponibile ? "disponibili" : "non disponibili");
     list temp = l;
     bool trovato = false;
     while (temp != NULL)
@@ -748,7 +748,7 @@ void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool di
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -765,10 +765,10 @@ void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int pos
         return;
     }
     
-    printf("\nVeicoli di tipo %s", get_nome_tipo_veicolo(tipo));
+    printf("\nVeicoli di tipo %s", ottieni_nome_tipo_veicolo(tipo));
     
     
-    printf(" nella posizione %s %s:\n", get_nome_posizione_veicolo(posizione), disponibile ? "disponibili" : "non disponibili");
+    printf(" nella posizione %s %s:\n", ottieni_nome_posizione_veicolo(posizione), disponibile ? "disponibili" : "non disponibili");
     
     list temp = l;
     bool trovato = false;
@@ -779,7 +779,7 @@ void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int pos
             stampa_veicolo(temp->v);
             trovato = true;
         }
-        temp = temp->next;
+        temp = temp->successivo;
     }
     
     if (!trovato)
@@ -789,7 +789,7 @@ void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int pos
 }
 
 // Funzione per ottenere il nome del tipo di veicolo
-const char* get_nome_tipo_veicolo(int tipo) {
+const char* ottieni_nome_tipo_veicolo(int tipo) {
     switch (tipo) {
         case 0:
             return "Utilitaria";
@@ -815,10 +815,10 @@ void salva_lista_veicoli(void) {
 void pulisci_lista_veicoli(void) {
     list current = listaVeicoli;
     while (current != NULL) {
-        list next = current->next;
+        list successivo = current->successivo;
         free(current->v);
         free(current);
-        current = next;
+        current = successivo;
     }
     listaVeicoli = NULL;
 }
@@ -837,14 +837,14 @@ int carica_ultimo_id(){
     return id;
 }
 
-Veicolo get_veicolo_senza_rimuovere(list l) {
+Veicolo ottieni_veicolo_senza_rimuovere(list l) {
     if (l == NULL) {
         return NULL;
     }
     return l->v;
 }
   
-const char* get_nome_posizione_veicolo(int posizione) {
+const char* ottieni_nome_posizione_veicolo(int posizione) {
     switch (posizione) {
         case 0:
             return "Deposito";

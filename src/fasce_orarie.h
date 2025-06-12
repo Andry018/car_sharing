@@ -24,13 +24,13 @@ void visualizza_calendario(CalendarioVeicolo calendario);
 int verifica_disponibilita(CalendarioVeicolo calendario, int giorno_inizio, int ora_inizio, int giorno_fine, int ora_fine);
 
 
-int get_stato_fascia_oraria(FasciaOraria fascia);
-int get_id_prenotazione_fascia(FasciaOraria fascia);
-int get_id_veicolo_calendario(CalendarioVeicolo calendario);
-FasciaOraria get_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora);
+int ottieni_stato_fascia_oraria(FasciaOraria fascia);
+int ottieni_id_prenotazione_fascia(FasciaOraria fascia);
+int ottieni_id_veicolo_calendario(CalendarioVeicolo calendario);
+FasciaOraria ottieni_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora);
 
-void set_stato_fascia_oraria(FasciaOraria fascia, int stato);   
-void set_id_prenotazione_fascia(FasciaOraria fascia, int id_prenotazione);
-void set_id_veicolo_calendario(CalendarioVeicolo calendario, int id_veicolo);
-void set_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora, FasciaOraria fascia);
+void imposta_stato_fascia_oraria(FasciaOraria fascia, int stato);   
+void imposta_id_prenotazione_fascia(FasciaOraria fascia, int id_prenotazione);
+void imposta_id_veicolo_calendario(CalendarioVeicolo calendario, int id_veicolo);
+void imposta_fascia_oraria(CalendarioVeicolo calendario, int giorno, int ora, FasciaOraria fascia);
 #endif /* fasce_orarie_H */

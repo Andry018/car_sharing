@@ -18,7 +18,7 @@
 
 
 // Funzione per ottenere la tariffa oraria in base al tipo di veicolo
-double get_tariffa_oraria(int tipo) {
+double ottieni_tariffa_oraria(int tipo) {
     switch (tipo) {
         case 0:
             return TARIFFA_UTILITARIA;
@@ -58,7 +58,7 @@ double applica_sconto_pacchetto_ore(double tariffa_base, int ore_totali) {
 
 // Funzione per calcolare la tariffa totale dato il tipo di veicolo e le ore totali
 double calcola_tariffa(int tipo, int ore_totali) {
-    double tariffa_oraria = get_tariffa_oraria(tipo);
+    double tariffa_oraria = ottieni_tariffa_oraria(tipo);
     // Applica lo sconto pacchetto ore (1 ora gratis ogni 5 ore)
     return applica_sconto_pacchetto_ore(tariffa_oraria, ore_totali);
 }

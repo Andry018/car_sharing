@@ -79,7 +79,7 @@ int estrai_ora(int timestamp);
  * 
  * @return CodaPrenotazioni Puntatore alla coda globale delle prenotazioni
  */
-CodaPrenotazioni get_coda_prenotazioni();
+CodaPrenotazioni ottieni_coda_prenotazioni();
 
 /**
  * @brief Inizializza una nuova coda di prenotazioni
@@ -174,39 +174,39 @@ void scambia_prenotazioni(struct Prenotazione* a,struct Prenotazione *b);
  * @brief Ripristina la proprietà di heap minima risalendo
  * 
  * La funzione ripristina la proprietà di heap minima nella coda delle prenotazioni 
- * risalendo dall'indice index verso la radice, scambiando le prenotazioni per mantenere 
+ * risalendo dall'indice indice verso la radice, scambiando le prenotazioni per mantenere 
  * l'ordine di priorità.
  * 
  * @param coda Puntatore alla coda delle prenotazioni
- * @param index Indice da cui iniziare il bubble up
+ * @param indice Indice da cui iniziare il bubble up
  * 
  * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
- * @pre index deve essere un intero compreso tra 0 e la dimensione attuale della coda meno uno
+ * @pre indice deve essere un intero compreso tra 0 e la dimensione attuale della coda meno uno
  * 
- * @post La proprietà di heap minima è ristabilita dalla posizione index fino alla radice della coda
+ * @post La proprietà di heap minima è ristabilita dalla posizione indice fino alla radice della coda
  * 
  * @sideeffect Modifica l'array heap della coda, scambiando elementi tramite la funzione scambia_prenotazioni
  */
-void bubble_up(CodaPrenotazioni coda, int index);
+void bubble_up(CodaPrenotazioni coda, int indice);
 
 /**
  * @brief Ripristina la proprietà di heap minima scendendo
  * 
  * La funzione ripristina la proprietà di heap minima nella coda delle prenotazioni 
- * scendendo dall'indice index verso i figli, scambiando le prenotazioni per mantenere 
+ * scendendo dall'indice indice verso i figli, scambiando le prenotazioni per mantenere 
  * l'ordine di priorità.
  * 
  * @param coda Puntatore alla coda delle prenotazioni
- * @param index Indice da cui iniziare il bubble down
+ * @param indice Indice da cui iniziare il bubble down
  * 
  * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
- * @pre index deve essere un intero compreso tra 0 e la dimensione attuale della coda meno uno
+ * @pre indice deve essere un intero compreso tra 0 e la dimensione attuale della coda meno uno
  * 
- * @post La proprietà di heap minima è ristabilita dalla posizione index fino alle foglie della coda
+ * @post La proprietà di heap minima è ristabilita dalla posizione indice fino alle foglie della coda
  * 
  * @sideeffect Modifica l'array heap della coda, scambiando elementi tramite la funzione scambia_prenotazioni
  */
-void bubble_down(CodaPrenotazioni coda, int index);
+void bubble_down(CodaPrenotazioni coda, int indice);
 
 /**
  * @brief Aggiunge una prenotazione alla coda
@@ -559,7 +559,7 @@ int conta_prenotazioni_completate(CodaPrenotazioni coda, int id_utente);
  * 
  * @return int ID della prenotazione o -1 se p è NULL
  */
-int get_id_prenotazione(Prenotazione p);
+int ottieni_id_prenotazione(Prenotazione p);
 
 /**
  * @brief Ottiene l'ID dell'utente associato a una prenotazione
@@ -575,7 +575,7 @@ int get_id_prenotazione(Prenotazione p);
  * 
  * @return int ID dell'utente o -1 se p è NULL
  */
-int get_id_utente_prenotazione(Prenotazione p);
+int ottieni_id_utente_prenotazione(Prenotazione p);
 
 /**
  * @brief Ottiene l'ID del veicolo associato a una prenotazione
@@ -591,7 +591,7 @@ int get_id_utente_prenotazione(Prenotazione p);
  * 
  * @return int ID del veicolo o -1 se p è NULL
  */
-int get_id_veicolo_prenotazione(Prenotazione p);
+int ottieni_id_veicolo_prenotazione(Prenotazione p);
 
 /**
  * @brief Ottiene il timestamp di inizio di una prenotazione
@@ -607,7 +607,7 @@ int get_id_veicolo_prenotazione(Prenotazione p);
  * 
  * @return int Timestamp di inizio prenotazione o -1 se p è NULL
  */
-int get_giorno_ora_inizio(Prenotazione p);
+int ottieni_giorno_ora_inizio(Prenotazione p);
 
 /**
  * @brief Ottiene il timestamp di fine di una prenotazione
@@ -623,7 +623,7 @@ int get_giorno_ora_inizio(Prenotazione p);
  * 
  * @return int Timestamp di fine prenotazione o -1 se p è NULL
  */
-int get_giorno_ora_fine(Prenotazione p);
+int ottieni_giorno_ora_fine(Prenotazione p);
 
 /**
  * @brief Ottiene lo stato di una prenotazione
@@ -639,7 +639,7 @@ int get_giorno_ora_fine(Prenotazione p);
  * 
  * @return int Stato della prenotazione o -1 se p è NULL
  */
-int get_stato_prenotazione(Prenotazione p);
+int ottieni_stato_prenotazione(Prenotazione p);
 
 /**
  * @brief Ottiene la priorità di una prenotazione
@@ -655,7 +655,7 @@ int get_stato_prenotazione(Prenotazione p);
  * 
  * @return int Priorità della prenotazione o -1 se p è NULL
  */
-int get_priorita(Prenotazione p);
+int ottieni_priorita(Prenotazione p);
 
 /**
  * @brief Ottiene il giorno di inizio di una prenotazione
@@ -671,7 +671,7 @@ int get_priorita(Prenotazione p);
  * 
  * @return int Giorno di inizio prenotazione o -1 se p è NULL
  */
-int get_giorno_inizio(Prenotazione p);
+int ottieni_giorno_inizio(Prenotazione p);
 
 /**
  * @brief Ottiene l'ora di inizio di una prenotazione
@@ -687,7 +687,7 @@ int get_giorno_inizio(Prenotazione p);
  * 
  * @return int Ora di inizio prenotazione o -1 se p è NULL
  */
-int get_ora_inizio(Prenotazione p);
+int ottieni_ora_inizio(Prenotazione p);
 
 /**
  * @brief Ottiene il giorno di fine di una prenotazione
@@ -703,7 +703,7 @@ int get_ora_inizio(Prenotazione p);
  * 
  * @return int Giorno di fine prenotazione o -1 se p è NULL
  */
-int get_giorno_fine(Prenotazione p);
+int ottieni_giorno_fine(Prenotazione p);
 
 /**
  * @brief Restituisce l'ora di fine della prenotazione
@@ -719,9 +719,9 @@ int get_giorno_fine(Prenotazione p);
  * 
  * @return int L'ora di fine (0-23) o -1 se p è NULL
  */
-int get_ora_fine(Prenotazione p);
+int ottieni_ora_fine(Prenotazione p);
 
-int get_posizione_riconsegna(Prenotazione p);
+int ottieni_posizione_riconsegna(Prenotazione p);
 
 /**
  * @brief Restituisce il puntatore all'array heap della coda
@@ -737,7 +737,7 @@ int get_posizione_riconsegna(Prenotazione p);
  * 
  * @return Prenotazione Puntatore all'array heap o NULL se coda è NULL
  */
-Prenotazione get_heap_coda(CodaPrenotazioni coda);
+Prenotazione ottieni_heap_coda(CodaPrenotazioni coda);
 
 /**
  * @brief Restituisce la capacità massima della coda
@@ -753,7 +753,7 @@ Prenotazione get_heap_coda(CodaPrenotazioni coda);
  * 
  * @return int La capacità massima della coda o -1 se coda è NULL
  */
-int get_capacita_coda(CodaPrenotazioni coda);
+int ottieni_capacita_coda(CodaPrenotazioni coda);
 
 /**
  * @brief Restituisce il numero di prenotazioni nella coda
@@ -769,7 +769,7 @@ int get_capacita_coda(CodaPrenotazioni coda);
  * 
  * @return int Il numero di prenotazioni nella coda o -1 se coda è NULL
  */
-int get_dimensione_coda(CodaPrenotazioni coda);
+int ottieni_dimensione_coda(CodaPrenotazioni coda);
 
 /**
  * @brief Imposta l'ID della prenotazione
@@ -784,7 +784,7 @@ int get_dimensione_coda(CodaPrenotazioni coda);
  * 
  * @sideeffect Modifica diretta del campo id_prenotazione della struttura p
  */
-void set_id_prenotazione(int id_prenotazione, Prenotazione p);
+void imposta_id_prenotazione(int id_prenotazione, Prenotazione p);
 
 /**
  * @brief Imposta l'ID dell'utente nella prenotazione
@@ -799,7 +799,7 @@ void set_id_prenotazione(int id_prenotazione, Prenotazione p);
  * 
  * @sideeffect Modifica diretta del campo id_utente nella struttura p
  */
-void set_id_utente_prenotazione(int id_utente, Prenotazione p);
+void imposta_id_utente_prenotazione(int id_utente, Prenotazione p);
 
 /**
  * @brief Imposta l'ID del veicolo nella prenotazione
@@ -814,7 +814,7 @@ void set_id_utente_prenotazione(int id_utente, Prenotazione p);
  * 
  * @sideeffect Modifica diretta del campo id_veicolo nella struttura p
  */
-void set_id_veicolo_prenotazione(int id_veicolo, Prenotazione p);
+void imposta_id_veicolo_prenotazione(int id_veicolo, Prenotazione p);
 
 /**
  * @brief Imposta il giorno e ora di inizio della prenotazione
@@ -829,7 +829,7 @@ void set_id_veicolo_prenotazione(int id_veicolo, Prenotazione p);
  * 
  * @sideeffect Modifica diretta del campo giorno_ora_inizio nella struttura p
  */
-void set_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione p);
+void imposta_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione p);
 
 /**
  * @brief Imposta il giorno e ora di fine della prenotazione
@@ -844,7 +844,7 @@ void set_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione p);
  * 
  * @sideeffect Modifica diretta del campo giorno_ora_fine nella struttura p
  */
-void set_giorno_ora_fine(int giorno_ora_fine, Prenotazione p);
+void imposta_giorno_ora_fine(int giorno_ora_fine, Prenotazione p);
 
 /**
  * @brief Imposta lo stato della prenotazione
@@ -859,7 +859,7 @@ void set_giorno_ora_fine(int giorno_ora_fine, Prenotazione p);
  * 
  * @sideeffect Modifica diretta del campo stato nella struttura p
  */
-void set_stato_prenotazione(int stato, Prenotazione p);
+void imposta_stato_prenotazione(int stato, Prenotazione p);
 
 /**
  * @brief Imposta la priorità della prenotazione
@@ -874,7 +874,7 @@ void set_stato_prenotazione(int stato, Prenotazione p);
  * 
  * @sideeffect Modifica diretta del campo priorita nella struttura p
  */
-void set_priorita(int priorita, Prenotazione p);
+void imposta_priorita(int priorita, Prenotazione p);
 
 /**
  * @brief Conta le prenotazioni completate da un utente prima di una specifica prenotazione
@@ -918,7 +918,7 @@ int conta_prenotazioni_completate_prima_di(CodaPrenotazioni coda, int id_utente,
  * 
  * @return Prenotazione Puntatore alla prenotazione richiesta o NULL se i parametri non sono validi
  */
-Prenotazione get_prenotazione_in_coda(CodaPrenotazioni coda, int i);
+Prenotazione ottieni_prenotazione_in_coda(CodaPrenotazioni coda, int i);
 
 /**
  * @brief Rimuove tutte le prenotazioni di un utente dalla coda

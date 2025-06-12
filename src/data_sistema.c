@@ -39,7 +39,7 @@ void avanza_tempo(int ore) {
     }
 }
 
-DataSistema get_data_sistema() {
+DataSistema ottieni_data_sistema() {
     return data_corrente;
 }
 
@@ -48,7 +48,7 @@ int converti_data_in_timestamp(DataSistema data) {
 }
 
 DataSistema converti_timestamp_in_data(int timestamp) {
-    DataSistema data=get_data_sistema();
+    DataSistema data=ottieni_data_sistema();
     if (data == NULL) {
         data = (DataSistema)malloc(sizeof(struct DataSistema));
         if (data == NULL) {
@@ -78,7 +78,7 @@ int calcola_priorita_temporale(int timestamp_prenotazione) {
     return differenza;
 }
 
-const char* get_nome_giorno(int giorno) {
+const char* ottieni_nome_giorno(int giorno) {
     static const char* giorni[] = {"Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato", "Domenica"};
     if (giorno >= 0 && giorno < 7) {
         return giorni[giorno];
@@ -87,28 +87,28 @@ const char* get_nome_giorno(int giorno) {
 }
 
 // Getter functions for DataSistema struct fields
-int get_giorno_sistema(DataSistema data) {
+int ottieni_giorno_sistema(DataSistema data) {
     if (data == NULL) return -1;
     return data->giorno;
 }
 
-int get_ora_sistema(DataSistema data) {
+int ottieni_ora_sistema(DataSistema data) {
     if (data == NULL) return -1;
     return data->ora;
 }
 
 // Helper function to get current system day
-int get_giorno_corrente() {
+int ottieni_giorno_corrente() {
     return data_corrente->giorno;
 }
 
 // Helper function to get current system hour
-int get_ora_corrente() {
+int ottieni_ora_corrente() {
     return data_corrente->ora;
 }
 
 // Helper function to get current system timestamp
-int get_timestamp_corrente() {
+int ottieni_timestamp_corrente() {
     return converti_data_in_timestamp(data_corrente);
 } 
 

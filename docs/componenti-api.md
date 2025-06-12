@@ -7,15 +7,15 @@
 // Strutture dati
 typedef struct {
     int id;
-    char username[50];
+    char nome_utente[50];
     char nome[50];
     char cognome[50];
     bool is_admin;
 } Utente;
 
 // API principali
-Utente* registra_utente(char* username, char* nome, char* cognome);
-bool login_utente(char* username);
+Utente* registra_utente(char* nome_utente, char* nome, char* cognome);
+bool login_utente(char* nome_utente);
 void logout_utente();
 bool is_admin(Utente* utente);
 ```

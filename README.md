@@ -47,9 +47,9 @@ Per maggiori dettagli, consultare la [Guida Utente](docs/guida-utente.md).
 - **Registrazione utenti**
   - Creazione nuovo account
   - Assegnazione automatica ID
-  - Gestione nome completo e username
+  - Gestione nome completo e nome_utente
 - **Sistema di accesso**
-  - Login con username
+  - Login con nome_utente
   - Supporto per ruoli (admin/utente standard)
   - Gestione sessione utente
 
@@ -255,7 +255,7 @@ car_sharing.exe
 #### 3. Hash Table per Utenti
 - **Motivazione**: Ottimale per la gestione utenti perché:
   - Accesso O(1) per login
-  - Efficiente verifica duplicati username
+  - Efficiente verifica duplicati nome_utente
   - Bilanciamento tra memoria e velocità
   - Scalabile per grandi numeri di utenti
 

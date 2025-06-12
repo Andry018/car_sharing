@@ -13,17 +13,17 @@
 
 // Function declarations
 int compara_file(const char* file1, const char* file2);
-list get_lista_veicoli_test(void);
-CodaPrenotazioni get_coda_test(void);
+list ottieni_lista_veicoli_test(void);
+CodaPrenotazioni ottieni_coda_test(void);
 list aggiungi_veicolo_senza_menu(list, Veicolo);
 
 // Variabili globali per i test
 static CodaPrenotazioni coda_test = NULL;
 
-// Definizione della struttura node per la lista veicoli
-struct node {
+// Definizione della struttura nodo per la lista veicoli
+struct nodo {
     Veicolo veicolo;
-    struct node* next;
+    struct nodo* successivo;
 };
 
 // Funzioni di utilità per i test
@@ -48,7 +48,7 @@ bool verifica_utente_esistente(int id_utente, FILE* f_output, const char* output
 }
 
 bool verifica_veicolo_esistente(int id_veicolo, FILE* f_output, const char* output_fname, const char* oracle_fname) {
-    list veicoli = get_lista_veicoli();
+    list veicoli = ottieni_lista_veicoli();
     Veicolo veicolo = cerca_veicolo(veicoli, id_veicolo);
     if (veicolo == NULL) {
         fprintf(f_output, "ERRORE_VEICOLO_NON_TROVATO\n");
@@ -103,7 +103,7 @@ int leggi_input_test(const char* filename, char lines[][M], int max_lines) {
     if (!f) return 0;
     int count = 0;
     while (count < max_lines && fgets(lines[count], M, f)) {
-        // Rimuovi newline finale
+        // Rimuovi nuova linea finale
         lines[count][strcspn(lines[count], "\r\n")] = 0;
         count++;
     }
@@ -235,14 +235,14 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
    
     // Output in formato spazio-separato usando i valori convertiti
     fprintf(f_output, "%d %d %d %d %d %d %d %d\n", 
-            get_id_prenotazione(p),
-            get_id_utente_prenotazione(p),
-            get_id_veicolo_prenotazione(p),
-            get_giorno_ora_inizio(p),
-            get_giorno_ora_fine(p),
-            get_stato_prenotazione(p),
-            get_priorita(p),  // Usa la priorità calcolata automaticamente
-            get_posizione_riconsegna(p));
+            ottieni_id_prenotazione(p),
+            ottieni_id_utente_prenotazione(p),
+            ottieni_id_veicolo_prenotazione(p),
+            ottieni_giorno_ora_inizio(p),
+            ottieni_giorno_ora_fine(p),
+            ottieni_stato_prenotazione(p),
+            ottieni_priorita(p),  // Usa la priorità calcolata automaticamente
+            ottieni_posizione_riconsegna(p));
 
     fclose(f_output);
     int cmp = compara_file(output_fname, oracle_fname);
@@ -279,16 +279,16 @@ void test_costo_noleggio(const char* input_fname, const char* output_fname, cons
     }
 
     // Ottieni il tipo di veicolo
-    list veicoli = get_lista_veicoli();
+    list veicoli = ottieni_lista_veicoli();
     list temp = veicoli;
     int tipo_veicolo = -1;
     while (temp != NULL) {
-        Veicolo v = get_veicolo_senza_rimuovere(temp);
-        if (v && get_id_veicolo(v) == id_veicolo) {
-            tipo_veicolo = get_tipo_veicolo(v);
+        Veicolo v = ottieni_veicolo_senza_rimuovere(temp);
+        if (v && ottieni_id_veicolo(v) == id_veicolo) {
+            tipo_veicolo = ottieni_tipo_veicolo(v);
             break;
         }
-        temp = get_next_node(temp);
+        temp = ottieni_successivo_nodo(temp);
     }
 
     // Calcola il costo del noleggio
@@ -328,13 +328,13 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
     
 
     // Avanza la data di sistema fino al periodo richiesto
-    int ore_da_avanzare = (giorno_inizio * 24 + ora_inizio) - (get_giorno_corrente() * 24 + get_ora_corrente());
+    int ore_da_avanzare = (giorno_inizio * 24 + ora_inizio) - (ottieni_giorno_corrente() * 24 + ottieni_ora_corrente());
     if (ore_da_avanzare > 0) {
         avanza_tempo(ore_da_avanzare);
     }
 
     // Ottieni la lista veicoli simulata
-    list veicoli = get_lista_veicoli();
+    list veicoli = ottieni_lista_veicoli();
 
     FILE* f_output = fopen(output_fname, "w");
     if (!f_output) {
@@ -346,24 +346,24 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
     // Per ogni veicolo, verifica la disponibilità nell'intervallo richiesto
     list temp = veicoli;
     while (temp != NULL) {
-        Veicolo v = get_veicolo_senza_rimuovere(temp);
+        Veicolo v = ottieni_veicolo_senza_rimuovere(temp);
 
-        CalendarioVeicolo calendario = inizializza_calendario(get_id_veicolo(v));
-        CodaPrenotazioni coda = get_coda_prenotazioni();
+        CalendarioVeicolo calendario = inizializza_calendario(ottieni_id_veicolo(v));
+        CodaPrenotazioni coda = ottieni_coda_prenotazioni();
         CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, coda);
         free(nuovo_calendario);
-        if (v && get_disponibilita_veicolo(v)) {
-            CalendarioVeicolo calendario = inizializza_calendario(get_id_veicolo(v));
-            CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, get_coda_test());
+        if (v && ottieni_disponibilita_veicolo(v)) {
+            CalendarioVeicolo calendario = inizializza_calendario(ottieni_id_veicolo(v));
+            CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, ottieni_coda_test());
             if (nuovo_calendario && verifica_disponibilita(nuovo_calendario, giorno_inizio, ora_inizio, giorno_fine, ora_fine)) {
                 fprintf(f_output, "%d %s %s\n",
-                        get_id_veicolo(v),
-                        get_modello_veicolo(v),
-                        get_nome_posizione_veicolo(get_posizione_veicolo(v)));
+                        ottieni_id_veicolo(v),
+                        ottieni_modello_veicolo(v),
+                        ottieni_nome_posizione_veicolo(ottieni_posizione_veicolo(v)));
             }
             free(nuovo_calendario);
         }
-        temp = get_next_node(temp);
+        temp = ottieni_successivo_nodo(temp);
     }
 
     fclose(f_output);
@@ -393,24 +393,24 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
         return;
     }
 
-    CodaPrenotazioni coda = get_coda_test();
+    CodaPrenotazioni coda = ottieni_coda_test();
     if (!verifica_utente_esistente(id_utente, f_output, output_fname, oracle_fname)) {
         fclose(f_output);
         return;
     }
-    for (int i = 0; i < get_dimensione_coda(coda); i++) {
-        Prenotazione p = get_prenotazione_in_coda(coda, i);
+    for (int i = 0; i < ottieni_dimensione_coda(coda); i++) {
+        Prenotazione p = ottieni_prenotazione_in_coda(coda, i);
         if (!p) continue;
-        if (get_id_utente_prenotazione(p) == id_utente) {
+        if (ottieni_id_utente_prenotazione(p) == id_utente) {
             fprintf(f_output, "%d %d %d %d %d %d %d %d\n",
-                    get_id_prenotazione(p),
-                    get_id_utente_prenotazione(p),
-                    get_id_veicolo_prenotazione(p),
-                    get_giorno_ora_inizio(p),
-                    get_giorno_ora_fine(p),
-                    get_stato_prenotazione(p),
-                    get_priorita(p),
-                    get_posizione_riconsegna(p));
+                    ottieni_id_prenotazione(p),
+                    ottieni_id_utente_prenotazione(p),
+                    ottieni_id_veicolo_prenotazione(p),
+                    ottieni_giorno_ora_inizio(p),
+                    ottieni_giorno_ora_fine(p),
+                    ottieni_stato_prenotazione(p),
+                    ottieni_priorita(p),
+                    ottieni_posizione_riconsegna(p));
         }
     }
     fclose(f_output);
@@ -439,7 +439,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Inizializziamo la lista veicoli vuota per i test
-    set_lista_veicoli(NULL);  // Usa la lista globale
+    imposta_lista_veicoli(NULL);  // Usa la lista globale
     
     // Aggiungiamo alcuni veicoli di test
     Veicolo v1 = crea_veicolo(); 
@@ -447,29 +447,29 @@ int main(int argc, char *argv[]) {
         printf("Errore nella creazione del veicolo di test 1\n");
         return 1;
     }
-    set_id_veicolo(v1, 1);
-    set_tipo_veicolo(v1, 0);
-    set_modello_veicolo(v1, "JeepRenegade");
-    set_targa_veicolo(v1, "AA000BB");
-    set_posizione_veicolo(v1, 0);
-    set_disponibilita_veicolo(v1, 1);      // Changed from 0 to 1
+    imposta_id_veicolo(v1, 1);
+    imposta_tipo_veicolo(v1, 0);
+    imposta_modello_veicolo(v1, "JeepRenegade");
+    imposta_targa_veicolo(v1, "AA000BB");
+    imposta_posizione_veicolo(v1, 0);
+    imposta_disponibilita_veicolo(v1, 1);      // Changed from 0 to 1
     
     Veicolo v2 = crea_veicolo();
     if (!v2) {
         printf("Errore nella creazione del veicolo di test 2\n");
         return 1;
     }
-    set_id_veicolo(v2, 2);
-    set_tipo_veicolo(v2, 3);
-    set_modello_veicolo(v2, "HondaCBR");
-    set_targa_veicolo(v2, "CC111DD");
-    set_posizione_veicolo(v2, 1);
-    set_disponibilita_veicolo(v2, 1);      // Changed from 0 to 1
+    imposta_id_veicolo(v2, 2);
+    imposta_tipo_veicolo(v2, 3);
+    imposta_modello_veicolo(v2, "HondaCBR");
+    imposta_targa_veicolo(v2, "CC111DD");
+    imposta_posizione_veicolo(v2, 1);
+    imposta_disponibilita_veicolo(v2, 1);      // Changed from 0 to 1
     
-    list veicoli = get_lista_veicoli();
+    list veicoli = ottieni_lista_veicoli();
     veicoli = aggiungi_veicolo_senza_menu(veicoli, v1);
     veicoli = aggiungi_veicolo_senza_menu(veicoli, v2);
-    set_lista_veicoli(veicoli);
+    imposta_lista_veicoli(veicoli);
 
     // Inizializziamo la hash table utenti vuota per i test
     Utente tabella_utenti[TABLE_SIZE];
@@ -481,7 +481,7 @@ int main(int argc, char *argv[]) {
 
     // Aggiungiamo alcune prenotazioni di test
     Prenotazione p1 = crea_prenotazione(1, 1, 1, 10, 1, 12, 0, 1);  // utente 1, veicolo 1, giorno 1, 10-12
-    set_stato_prenotazione(1,p1);
+    imposta_stato_prenotazione(1,p1);
     Prenotazione p2 = crea_prenotazione(2, 2, 2, 14, 2, 16, 0, 0);  // utente 2, veicolo 2, giorno 2, 14-16
     aggiungi_prenotazione(coda_test, p1);
     aggiungi_prenotazione(coda_test, p2);
@@ -508,18 +508,18 @@ list aggiungi_veicolo_senza_menu(list veicoli, Veicolo v) {
     }
     
     // Crea un nuovo nodo
-    list nuovo = (list)malloc(sizeof(struct node));
+    list nuovo = (list)malloc(sizeof(struct nodo));
     if (nuovo == NULL) {
         return veicoli;
     }
     
     // Imposta il veicolo nel nodo
     nuovo->veicolo = v;
-    nuovo->next = veicoli;
+    nuovo->successivo = veicoli;
     
     return nuovo;
 }
 
-CodaPrenotazioni get_coda_test(void) {
+CodaPrenotazioni ottieni_coda_test(void) {
     return coda_test;
 }
