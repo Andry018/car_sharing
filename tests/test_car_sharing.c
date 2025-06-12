@@ -238,8 +238,8 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
             get_id_prenotazione(p),
             get_id_utente_prenotazione(p),
             get_id_veicolo_prenotazione(p),
-            timestamp_inizio,
-            timestamp_fine,
+            get_giorno_ora_inizio(p),
+            get_giorno_ora_fine(p),
             get_stato_prenotazione(p),
             get_priorita(p),  // Usa la priorità calcolata automaticamente
             get_posizione_riconsegna(p));
@@ -324,6 +324,8 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
     int ora_inizio = atoi(input[1]);
     int giorno_fine = atoi(input[2]);
     int ora_fine = atoi(input[3]);
+
+    
 
     // Avanza la data di sistema fino al periodo richiesto
     int ore_da_avanzare = (giorno_inizio * 24 + ora_inizio) - (get_giorno_corrente() * 24 + get_ora_corrente());

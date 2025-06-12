@@ -3,3 +3,4 @@ TC02 creazione_prenotazione
 TC03 costo_noleggio
 TC04 costo_noleggio
 TC05 visualizza_disponibilita
+TC06 storico_prenotazioni

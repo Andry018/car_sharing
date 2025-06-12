@@ -128,4 +128,17 @@ Input: 6 argomenti
   1. Mostrare correttamente solo i veicoli disponibili nel periodo richiesto
   2. Escludere i veicoli con prenotazioni confermate nel periodo
   3. Considerare correttamente lo stato delle prenotazioni (confermate vs non confermate)
-  4. Gestire correttamente l'aggiornamento della disponibilità dei veicoli in base al calendario 
+  4. Gestire correttamente l'aggiornamento della disponibilità dei veicoli in base al calendario
+
+## TC06: Visualizzazione Storico Prenotazioni
+- **Input**: 
+  - id_utente: 1
+- **Setup**:
+  - Utente 1: ha una prenotazione confermata per il veicolo 1 (giorno 1, 10-12)
+  - Utente 2: ha una prenotazione confermata per il veicolo 2 (giorno 2, 14-16)
+- **Output Atteso**: Solo la prenotazione dell'utente 1 dovrebbe essere mostrata
+- **Verifica**: Il sistema deve:
+  1. Mostrare correttamente tutte le prenotazioni dell'utente specificato
+  2. Non mostrare le prenotazioni di altri utenti
+  3. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
+  4. Gestire correttamente il formato di output per ogni prenotazione 

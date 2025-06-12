@@ -3,3 +3,4 @@ TC02 - creazione_prenotazione - PASS
 TC03 - costo_noleggio - PASS
 TC04 - costo_noleggio - PASS
 TC05 - visualizza_disponibilita - PASS
+TC06 - storico_prenotazioni - PASS
