@@ -44,6 +44,14 @@ Generato quando:
 - L'ID veicolo specificato non esiste nel sistema
 - Esempio: tentativo di prenotazione con id_veicolo = 999 quando non esiste
 
+## Errori di posizione non valida
+```
+ERRORE_POSIZIONE_RICONSEGNA
+```
+Generato quando:
+- La posizioni di riconsegna non è una di quelle esistenti
+- Esempio: tentativo di prenotazione con posizione_riconsenga = 999 quando non esiste
+
 # Test Crea Prenotazione
 ## Formato Input 
 Ogni test case accetta 8 valori in input:
