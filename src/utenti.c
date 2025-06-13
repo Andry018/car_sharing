@@ -385,32 +385,6 @@ const char* ottieni_nome_completo_utente(Utente u) {
 }
 
 /**
- * @brief Restituisce il nome utente.
- * @param u Puntatore all'utente.
- * @return Nome utente, oppure NULL se non valido.
- * @pre u != NULL
- */
-const char* ottieni_nome_utente(Utente u) {
-    if (u == NULL) {
-        return NULL;  // Utente non valido
-    }
-    return u->nome_utente;  // Restituisce il nome_utente dell'utente
-}
-
-/**
- * @brief Restituisce la password hashata dell'utente dato il nome utente.
- * @param nome_utente Nome utente.
- * @return Password hashata, oppure NULL se utente non trovato.
- */
-const char* ottieni_password_utente(const char* nome_utente) {
-    Utente utente = cerca_utente(nome_utente);
-    if (utente != NULL) {
-        return utente->password;
-    }
-    return NULL;  // Utente non trovato
-}
-
-/**
  * @brief Restituisce lo stato di amministratore dell'utente.
  * @param u Puntatore all'utente.
  * @return 1 se amministratore, 0 se normale, -1 se non valido.
@@ -421,75 +395,6 @@ int ottieni_isamministratore_utente(Utente u) {
         return -1;  // Utente non valido
     }
     return u->isamministratore;  // Restituisce lo stato di amministratore dell'utente
-}
-
-/**
- * @brief Imposta l'ID dell'utente.
- * @param id Nuovo ID.
- * @param u Puntatore all'utente.
- * @pre u != NULL
- * @note Side Effect: Modifica il campo id dell'utente.
- */
-void imposta_id_utente(int id, Utente u) {
-    if (u == NULL) {
-        printf("Utente non valido!\n");
-        return;
-    }
-    u->id = id;  // Imposta l'ID dell'utente     
-}
-
-/**
- * @brief Imposta il nome completo dell'utente.
- * @param nome_completo Nuovo nome completo.
- * @param u Puntatore all'utente.
- * @pre u != NULL
- * @note Side Effect: Modifica il campo nome_completo dell'utente.
- */
-void imposta_nome_completo_utente(const char* nome_completo, Utente u) {
-    if (u == NULL) {
-        printf("Utente non valido!\n");
-        return;
-    }
-    strncpy(u->nome_completo, nome_completo, sizeof(u->nome_completo) - 1);
-    u->nome_completo[sizeof(u->nome_completo) - 1] = '\0';
-}
-
-/**
- * @brief Imposta il nome utente dell'utente.
- * @param nuovo_nome_utente Nuovo nome utente.
- * @param u Puntatore all'utente.
- * @pre u != NULL
- * @note Side Effect: Modifica il campo nome_utente dell'utente.
- * @warning Se il nome utente esiste già, la funzione non modifica nulla.
- */
-void imposta_nome_utente(const char* nuovo_nome_utente, Utente u) {
-    if (u == NULL) {
-        printf("Utente non valido!\n");
-        return;
-    }
-    if (cerca_utente(nuovo_nome_utente) != NULL) {
-        printf("Nome Utente già esistente!\n");
-        return;  // nome utente già in uso
-    }
-    strcpy(u->nome_utente, nuovo_nome_utente);
-}
-
-/**
- * @brief Imposta la password hashata dell'utente.
- * @param nome_utente Nome utente (usato per hashare la password).
- * @param u Puntatore all'utente.
- * @pre u != NULL
- * @note Side Effect: Modifica il campo password dell'utente.
- */
-void imposta_password_utente(const char* nome_utente, Utente u) {
-    if (u == NULL) {
-        printf("Utente non valido!\n");
-        return;
-    }
-    char hashed_password[MAX_PASSWORD_LENGTH];
-    hash_password(nome_utente, hashed_password);
-    strncpy(u->password, hashed_password, sizeof(u->password) - 1);
-    u->password[sizeof(u->password) - 1] = '\0';
 }
 
 /**

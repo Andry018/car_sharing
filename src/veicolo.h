@@ -331,24 +331,6 @@ const char* ottieni_modello_veicolo(Veicolo v);
 
 //------------------------------------------------------------------------------
 /**
- * @brief Restituisce la targa del veicolo
- * 
- * Restituisce una stringa costante contenente la targa del veicolo v.
- * 
- * @param v Il veicolo di cui ottenere la targa
- * 
- * @pre v è un puntatore valido a una struttura Veicolo
- * 
- * @post targa = v->targa
- * 
- * @note Side Effect: Nessuno
- * 
- * @return const char* La targa del veicolo
- */
-const char* ottieni_targa_veicolo(Veicolo v);
-
-//------------------------------------------------------------------------------
-/**
  * @brief Restituisce la posizione del veicolo
  * 
  * Restituisce una stringa con la posizione attuale del veicolo v.
@@ -514,28 +496,6 @@ void imposta_disponibilita_veicolo(Veicolo v, int disponibilita);
  */
 Veicolo cerca_veicolo(list l, int id);
 
-//------------------------------------------------------------------------------
-/**
- * @brief Modifica i dati di un veicolo
- * 
- * Cerca un veicolo con l'id fornito nella lista l e consente di modificarne i campi
- * (tipo, modello, targa, posizione) tramite input da tastiera.
- * 
- * @param l La lista dei veicoli
- * @param id L'identificatore del veicolo da modificare
- * 
- * @pre l è una lista valida di veicoli
- * @pre id è l'identificatore del veicolo da modificare
- * @pre L'input dell'utente deve essere conforme alle attese (intero per tipo, stringhe per gli altri)
- * 
- * @post Se il veicolo con id è presente nella lista, i suoi campi vengono aggiornati con i nuovi valori
- * @post Se il veicolo non esiste, stampa un messaggio di errore e non modifica nulla
- * 
- * @note Side Effect: Modifica i dati di un veicolo nella lista
- * @note Side Effect: Stampa messaggi e legge input da console
- */
-void modifica_veicolo(list l, int id);
-
 // Funzioni di stampa
 //------------------------------------------------------------------------------
 /**
@@ -554,41 +514,6 @@ void modifica_veicolo(list l, int id);
  */
 void stampa_lista_veicoli(list l);
 
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli disponibili
- * 
- * Stampa a video solo i veicoli disponibili (disponibilita == true) presenti nella lista l.
- * 
- * @param l La lista dei veicoli
- * 
- * @pre l è una lista valida
- * 
- * @post Se la lista è vuota, stampa che non ci sono veicoli
- * @post Se ci sono veicoli disponibili, li stampa
- * @post Se nessun veicolo è disponibile, stampa un messaggio specifico
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_disponibili(list l);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli non disponibili
- * 
- * Stampa tutti i veicoli non disponibili (disponibilita == false) presenti nella lista l.
- * 
- * @param l La lista dei veicoli
- * 
- * @pre l è una lista valida (può anche essere NULL)
- * 
- * @post Se la lista è vuota, stampa un messaggio che lo indica
- * @post Se ci sono veicoli non disponibili, li stampa tramite stampa_veicolo
- * @post Se tutti i veicoli sono disponibili, stampa un messaggio specifico
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_non_disponibili(list l);
 
 //------------------------------------------------------------------------------
 /**
@@ -609,183 +534,6 @@ void stampa_veicoli_non_disponibili(list l);
  * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_tipo(list l, int tipo);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli in una posizione specifica
- * 
- * Stampa tutti i veicoli presenti nella posizione indicata dall'intero posizione.
- * 
- * @param l La lista dei veicoli
- * @param posizione La posizione da cercare (0=Deposito, 1=Posizione B, 2=Posizione C, 3=Posizione D)
- * 
- * @pre l è una lista valida
- * @pre posizione è un intero compreso tra 0 e 3 (inclusi)
- * 
- * @post Se la lista è vuota, stampa un messaggio che lo indica
- * @post Se ci sono veicoli con v->posizione == posizione, vengono stampati
- * @post Se non ci sono veicoli in quella posizione, stampa un messaggio specifico
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_per_posizione(list l, int posizione);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli di un modello specifico
- * 
- * Stampa i veicoli della lista l il cui modello è esattamente uguale alla stringa modello.
- * 
- * @param l La lista dei veicoli
- * @param modello Il modello da cercare
- * 
- * @pre l è una lista valida (può anche essere NULL)
- * @pre modello è una stringa valida e non NULL
- * 
- * @post Se la lista è vuota, stampa un messaggio che lo indica
- * @post Se ci sono veicoli con strcmp(v->modello, modello) == 0, li stampa
- * @post Se non ci sono corrispondenze, stampa un messaggio specifico
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_per_modello(list l, const char* modello);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli con una targa specifica
- * 
- * Stampa i veicoli della lista l la cui targa corrisponde esattamente alla stringa targa.
- * 
- * @param l La lista dei veicoli
- * @param targa La targa da cercare
- * 
- * @pre l è una lista valida
- * @pre targa è una stringa valida e non NULL
- * 
- * @post Se la lista è vuota, stampa un messaggio che lo indica
- * @post Se ci sono veicoli con strcmp(v->targa, targa) == 0, li stampa
- * @post Se non ci sono corrispondenze, stampa un messaggio specifico
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_per_targa(list l, const char* targa);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa un veicolo specifico per ID
- * 
- * Stampa il veicolo della lista l il cui id è uguale al valore intero specificato.
- * 
- * @param l La lista dei veicoli
- * @param id L'ID del veicolo da cercare
- * 
- * @pre l è una lista valida
- * 
- * @post Se la lista è vuota, stampa un messaggio che lo indica
- * @post Se c'è un veicolo con v->id == id, lo stampa
- * @post Se non ci sono veicoli con quell'id, stampa un messaggio specifico
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_per_id(list l, int id);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli per tipo e posizione
- * 
- * Stampa i veicoli della lista l che sono contemporaneamente del tipo specificato (tipo)
- * e si trovano nella posizione specificata (posizione).
- * 
- * @param l La lista dei veicoli
- * @param tipo Il tipo di veicolo da cercare
- * @param posizione La posizione da cercare (0=Deposito, 1=Posizione B, 2=Posizione C, 3=Posizione D)
- * 
- * @pre l è una lista valida (può anche essere NULL)
- * @pre tipo è un intero compreso tra 0 e 3 (inclusi), rappresentante il tipo di veicolo
- * @pre posizione è un intero compreso tra 0 e 3 (inclusi)
- * 
- * @post Se la lista è vuota, stampa un messaggio che lo indica
- * @post Se ci sono veicoli con v->tipo == tipo e v->posizione == posizione, li stampa
- * @post Se non ci sono corrispondenze, stampa un messaggio specifico
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli per tipo e disponibilità
- * 
- * Stampa i veicoli della lista l che sono di un certo tipo (tipo) e che sono disponibili
- * o meno, a seconda del valore di disponibile.
- * 
- * @param l La lista dei veicoli
- * @param tipo Il tipo di veicolo da cercare
- * @param disponibile Lo stato di disponibilità da cercare
- * 
- * @pre l è una lista valida
- * @pre tipo è un intero valido (0-3)
- * @pre disponibile è un booleano: true per cercare veicoli disponibili, false per quelli non disponibili
- * 
- * @post Se la lista è vuota, stampa un messaggio
- * @post Se esistono veicoli con v->tipo == tipo e v->disponibilita == disponibile, li stampa
- * @post Altrimenti, stampa che non esistono veicoli di quel tipo con la disponibilità richiesta
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli per posizione e disponibilità
- * 
- * Stampa i veicoli della lista l che si trovano in una certa posizione (posizione) e che
- * sono disponibili o meno in base a disponibile.
- * 
- * @param l La lista dei veicoli
- * @param posizione La posizione da cercare (0=Deposito, 1=Posizione B, 2=Posizione C, 3=Posizione D)
- * @param disponibile Lo stato di disponibilità da cercare
- * 
- * @pre l è una lista valida
- * @pre posizione è un intero compreso tra 0 e 3 (inclusi)
- * @pre disponibile è un booleano
- * 
- * @post Se la lista è vuota, stampa un messaggio
- * @post Se esistono veicoli con v->posizione == posizione e v->disponibilita == disponibile, li stampa
- * @post Se non ci sono veicoli corrispondenti, stampa un messaggio
- * 
- * @note Side Effect: Output su standard output (console)
- */
-void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool disponibile);
-
-//------------------------------------------------------------------------------
-/**
- * @brief Stampa i veicoli per tipo, posizione e disponibilità
- * 
- * Stampa tutti i veicoli della lista l che sono:
- * - del tipo tipo
- * - si trovano nella posizione posizione
- * - hanno lo stato di disponibilità disponibile
- * 
- * @param l La lista dei veicoli
- * @param tipo Il tipo di veicolo da cercare
- * @param posizione La posizione da cercare (0=Deposito, 1=Posizione B, 2=Posizione C, 3=Posizione D)
- * @param disponibile Lo stato di disponibilità da cercare
- * 
- * @pre l è una lista valida (può anche essere NULL)
- * @pre tipo ∈ {0, 1, 2, 3} corrisponde a tipi validi: Utilitaria, SUV, Sportiva, Moto
- * @pre posizione è un intero compreso tra 0 e 3 (inclusi)
- * @pre disponibile è un booleano (true o false)
- * 
- * @post Se la lista è vuota, stampa un messaggio informativo
- * @post Se ci sono veicoli che soddisfano tutte e tre le condizioni, li stampa
- * @post Se nessun veicolo soddisfa tutte le condizioni, stampa un messaggio specifico
- * 
- * @note Side Effect: Output su standard output (console)
- * @note Side Effect: Messaggi dinamici che indicano il tipo, la posizione e la disponibilità selezionata
- */
-void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int posizione, bool disponibile);
-
 //------------------------------------------------------------------------------
 /**
  * @brief Restituisce il nome del tipo di veicolo

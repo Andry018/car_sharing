@@ -189,36 +189,6 @@ int ottieni_id_utente(Utente u);
 const char* ottieni_nome_completo_utente(Utente u);
 
 /**
- * @brief Ottiene il nome utente di un utente
- * 
- * @param u Il puntatore all'utente
- * 
- * @pre u deve essere un puntatore valido
- * 
- * @post Restituisce il nome utente dell'utente o NULL se l'utente non è valido
- * 
- * @note Side Effect: Nessuno
- * 
- * @return const char* Il nome utente dell'utente o NULL
- */
-const char* ottieni_nome_utente(Utente u);
-
-/**
- * @brief Ottiene la password di un utente
- * 
- * @param nome_utente Il nome utente dell'utente
- * 
- * @pre La tabella utenti deve essere inizializzata
- * 
- * @post Restituisce la password hashata dell'utente o NULL se l'utente non esiste
- * 
- * @note Side Effect: Nessuno
- * 
- * @return const char* La password hashata dell'utente o NULL
- */
-const char* ottieni_password_utente(const char* nome_utente);
-
-/**
  * @brief Ottiene lo stato admin di un utente
  * 
  * @param u Il puntatore all'utente
@@ -232,36 +202,6 @@ const char* ottieni_password_utente(const char* nome_utente);
  * @return int Lo stato admin dell'utente
  */
 int ottieni_isamministratore_utente(Utente u);
-
-// Setter functions
-/**
- * @brief Imposta l'ID di un utente
- * 
- * @param id Il nuovo ID da assegnare
- * @param u Il puntatore all'utente
- * 
- * @pre u deve essere un puntatore valido
- * 
- * @post L'ID dell'utente viene aggiornato
- * 
- * @note Side Effect: Modifica l'ID dell'utente
- */
-void imposta_id_utente(int id, Utente u);
-
-/**
- * @brief Imposta il nome completo di un utente
- * 
- * @param nome_completo Il nuovo nome completo
- * @param u Il puntatore all'utente
- * 
- * @pre u deve essere un puntatore valido
- * @pre nome_completo deve essere una stringa valida
- * 
- * @post Il nome completo dell'utente viene aggiornato
- * 
- * @note Side Effect: Modifica il nome completo dell'utente
- */
-void imposta_nome_completo_utente(const char* nome_completo, Utente u);
 
 /**
  * @brief Imposta il nome utente di un utente
@@ -277,21 +217,6 @@ void imposta_nome_completo_utente(const char* nome_completo, Utente u);
  * @note Side Effect: Modifica il nome utente dell'utente
  */
 void imposta_nome_utente(const char* nuovo_nome_utente, Utente u);
-
-/**
- * @brief Imposta la password di un utente
- * 
- * @param password La nuova password
- * @param u Il puntatore all'utente
- * 
- * @pre u deve essere un puntatore valido
- * @pre password deve essere una stringa valida
- * 
- * @post La password dell'utente viene aggiornata (hashata)
- * 
- * @note Side Effect: Modifica la password dell'utente
- */
-void imposta_password_utente(const char* password, Utente u);
 
 // Funzioni per validare
 /**
