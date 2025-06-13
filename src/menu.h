@@ -64,18 +64,6 @@ void prenota_auto(Utente utente_corrente);
  */
 void visualizza_prenotazioni(Utente utente_corrente);
 
-/**
- * @brief Gestisce il processo di restituzione di un veicolo
- * @details Permette all'utente di restituire un veicolo noleggiato.
- * Questa funzione è attualmente in sviluppo.
- */
-
-/**
- * @brief Gestisce il processo di restituzione di un veicolo
- * @details Permette all'utente di restituire un veicolo noleggiato.
- * Questa funzione è attualmente in sviluppo.
- */
-void restituisci_auto(void);
 
 /**
  * @brief Visualizza la disponibilità dei veicoli
