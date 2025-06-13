@@ -591,7 +591,7 @@ int main(int argc, char *argv[]) {
     Prenotazione p14 = crea_prenotazione(2, 2, 3, 1, 3, 2, 0, 0); // utente 2, veicolo 2, giorno 3, 1-2
     Prenotazione p15 = crea_prenotazione(2, 3, 3, 2, 3, 3, 0, 0); // utente 2, veicolo 2, giorno 3, 2-3
     imposta_stato_prenotazione(1, p15);  // Imposta lo stato della prenotazione p15 a "Confermata"
-    Prenotazione p16 = crea_prenotazione(2, 4, 3, 3, 3, 5, 0, 0); // utente 2, veicolo 2, giorno 3, 3-4
+    Prenotazione p16 = crea_prenotazione(2, 4, 3, 3, 3, 5, 0, 0); // utente 2, veicolo 2, giorno 3, 3-5
     imposta_stato_prenotazione(1, p16);  // Imposta lo stato della prenotazione p16 a "Confermata"
 
     Prenotazione p17 = crea_prenotazione(2, 1, 3, 4, 3, 5, 0, 0); // utente 2, veicolo 2, giorno 3, 4-5
