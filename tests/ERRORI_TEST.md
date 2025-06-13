@@ -181,6 +181,17 @@ Input: 6 argomenti
 5. giorno_fine (int)
 6. ora_fine (int)
 
+### Test Visualizza Disponibilita (TC29, TC38)
+Input: 4 argomenti
+1. giorno_inizio (int)
+2. ora_inizio (int)
+3. giorno_fine (int)
+4. ora_fine (int)
+
+### Test Storico Prenotazioni (TC39, TC42)
+Input: 1 argomento
+1. id_utente (int)
+
 ## Test Case
 
 ## TC01: Creazione Prenotazione Valida

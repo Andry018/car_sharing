@@ -949,38 +949,6 @@ void visualizza_prenotazioni(Utente utente_corrente) {
 }
 
 /**
- * @brief Gestisce il processo di restituzione di un veicolo.
- * @details Permette all'utente di restituire un veicolo noleggiato.
- * Questa funzione è attualmente in sviluppo.
- */
-void restituisci_auto(void) {
-    pulisci_schermo();
-    stampa_bordo_superiore();
-    
-    imposta_colore(13); // Magenta
-    printf("         RESTITUISCI AUTO\n");
-    
-    stampa_separatore();
-    
-    // Mostra la data di sistema corrente
-    imposta_colore(14); // Giallo
-    printf("         DATA DI SISTEMA\n");
-    imposta_colore(7); // Bianco
-    stampa_data_sistema();
-    
-    stampa_separatore();
-    
-    // TODO: Implementare la logica di restituzione
-    imposta_colore(12); // Rosso
-    printf("  Funzionalita' in sviluppo...\n");
-    imposta_colore(7); // Bianco
-    
-    stampa_bordo_inferiore();
-    printf("Premi INVIO per continuare...");
-    svuota_buffer();
-}
-
-/**
  * @brief Visualizza la disponibilità dei veicoli.
  * @details Mostra lo stato di disponibilità di tutti i veicoli nel sistema e permette di visualizzare il calendario di un veicolo specifico.
  */
