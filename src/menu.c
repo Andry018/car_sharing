@@ -248,7 +248,6 @@ void gestione_veicoli() {
                 printf("Premi INVIO per continuare...");
                 svuota_buffer();
                 free(temp);
-                svuota_buffer();
                 break;
             }
             case 0:{

@@ -68,23 +68,6 @@ DataSistema ottieni_data_sistema(void);
 int converti_data_in_timestamp(DataSistema data);
 
 /**
- * @brief Converte un timestamp in data
- * 
- * Converte un timestamp numerico in una struttura DataSistema
- * 
- * @param timestamp Il timestamp da convertire
- * 
- * @pre timestamp deve essere un intero non negativo
- * 
- * @post Restituisce una nuova struttura DataSistema con la data convertita
- * 
- * @note Side Effect: Alloca memoria per la nuova struttura DataSistema
- * 
- * @return DataSistema La data convertita
- */
-DataSistema converti_timestamp_in_data(int timestamp);
-
-/**
  * @brief Calcola la priorità temporale di una prenotazione
  * 
  * Calcola la priorità di una prenotazione basata sulla differenza
@@ -173,30 +156,5 @@ int ottieni_ora_corrente(void);
  * @return int Il giorno corrente
  */
 int ottieni_giorno_corrente(void);
-
-/**
- * @brief Ottiene il timestamp corrente del sistema
- * 
- * @pre La data di sistema deve essere inizializzata
- * 
- * @post Restituisce il timestamp corrente (giorno*24 + ora)
- * 
- * @note Side Effect: Nessuno
- * 
- * @return int Il timestamp corrente
- */
-int ottieni_timestamp_corrente(void);
-
-/**
- * @brief Libera la memoria allocata per la data di sistema
- * 
- * @pre La data di sistema deve essere inizializzata
- * 
- * @post La memoria viene liberata
- * @post Il puntatore alla data di sistema viene impostato a NULL
- * 
- * @note Side Effect: Libera la memoria allocata
- */
-void distruggi_data_sistema(void);
 
 #endif /* DATA_SISTEMA_H */ 

@@ -84,33 +84,6 @@ int converti_data_in_timestamp(DataSistema data) {
 }
 
 /**
- * @brief Converte un timestamp in una struttura DataSistema.
- * @param timestamp Il timestamp da convertire.
- * @return Puntatore alla struttura DataSistema corrispondente.
- */
-DataSistema converti_timestamp_in_data(int timestamp) {
-    // Validazione input
-    if (timestamp < 0) {
-        fprintf(stderr, "Errore: il timestamp deve essere non negativo\n");
-        return NULL;
-    }
-
-    DataSistema data = ottieni_data_sistema();
-    if (data == NULL) {
-        data = (DataSistema)malloc(sizeof(struct DataSistema));
-        if (data == NULL) {
-            fprintf(stderr, "Errore nell'allocazione della memoria per DataSistema.\n");
-            exit(EXIT_FAILURE);
-        }
-    }
-    
-    data->giorno = timestamp / 24;
-    data->ora = timestamp % 24;
-    
-    return data;
-}
-
-/**
  * @brief Calcola la priorità temporale di una prenotazione rispetto alla data di sistema.
  * @param timestamp_prenotazione Il timestamp della prenotazione.
  * @return La priorità (0 per prenotazioni nel passato, valore crescente per prenotazioni future).
@@ -177,23 +150,4 @@ int ottieni_giorno_corrente() {
  */
 int ottieni_ora_corrente() {
     return data_corrente->ora;
-}
-
-/**
- * @brief Restituisce il timestamp corrente del sistema (giorno*24 + ora).
- * @return Il timestamp corrente.
- */
-int ottieni_timestamp_corrente() {
-    return converti_data_in_timestamp(data_corrente);
-} 
-
-/**
- * @brief Libera la memoria allocata per la data di sistema.
- * @note Side Effect: Libera la memoria e imposta il puntatore a NULL.
- */
-void distruggi_data_sistema() {
-    if (data_corrente != NULL) {
-        free(data_corrente);
-        data_corrente = NULL;  // Imposta a NULL per evitare dangling pointer
-    }
 }

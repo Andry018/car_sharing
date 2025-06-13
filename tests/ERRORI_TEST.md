@@ -630,7 +630,7 @@ applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
 - **Output Atteso**: ERRORE_FASCIA_ORARIA
 - **Verifica**: Il sistema deve gestire orari non validi
 
-  ## TC36: Visualizzazione Disponibilità con stessa ora
+  ## TC38: Visualizzazione Disponibilità con stessa ora
   - giorno_inizio: 2
   - ora_inizio: 4
   - giorno_fine: 2
@@ -638,7 +638,7 @@ applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
 - **Output Atteso**: ERRORE_FASCIA_ORARIA
 - **Verifica**: Il sistema deve gestire orari non validi
 
-  ## TC44: Visualizzazione Storico Prenotazioni
+  ## TC39: Visualizzazione Storico Prenotazioni
   **Input**
     id_utente: 1
   **Output Atteso**: Tutte le prenotazioni dell'utente con id_utente 1, vengono stampate
@@ -648,7 +648,7 @@ applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
   3. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
   4. Gestire correttamente il formato di output per ogni prenotazione
 
-  ## TC45: Visualizzazione Storico Prenotazioni
+  ## TC40: Visualizzazione Storico Prenotazioni
   **Input**
     id_utente: 2
   **Output Atteso**: Tutte le prenotazioni dell'utente con id_utente 2, vengono stampate
@@ -658,13 +658,13 @@ applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
   3. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
   4. Gestire correttamente il formato di output per ogni prenotazione
 
-  ## TC46: Visualizzazione Storico Prenotazioni
+  ## TC41: Visualizzazione Storico Prenotazioni
   **Input**
     id_utente: 999
   **Output Atteso**: "ERRORE_UTENTE_NON_TROVATO"
   - **Verifica**: Il sistema deve stampare un messaggio di errore 
 
-## TC47: Visualizzazione Storico Prenotazioni
+## TC42: Visualizzazione Storico Prenotazioni
 - **Input**: 
   - id_utente: 0
 - **Output Atteso**: Tutte le prenotazioni degli utenti registrati, vengono stampate
