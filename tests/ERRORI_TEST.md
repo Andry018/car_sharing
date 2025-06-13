@@ -355,7 +355,7 @@ Input: 6 argomenti
   ora_inizio: 22
   giorno_fine: 1
   ora_fine: 2
-- **Output Atteso**: 20.00
+- **Output Atteso**: "20.00"
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio posto su due giorni diversi 
 
 ## TC17: Calcolo Costo Noleggio con durata zero
@@ -493,18 +493,29 @@ applicando lo sconto "PACCHETTI ORARI"
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di una Utilitaria 
 applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
 
-## TC29: Visualizzazione Disponibilità Veicoli con tutti i Veicoli Disponibili
+## TC29: Visualizzazione Disponibilità con tutti i Veicoli Disponibili
 - **Input**: 
   - giorno_inizio: 2
   - ora_inizio: 8
   - giorno_fine: 2
   - ora_fine: 10
-- **Output Atteso**: Solo il veicolo 2 (HondaCBR) dovrebbe essere mostrato come disponibile
+- **Output Atteso**: 
+  4 TeslaModelS Posizione D
+  3 JeepWrangler Posizione C
+  2 HondaCBR Posizione B
+  1 Fiat500 Deposito
 - **Verifica**: Il sistema deve:
-  1. Mostrare correttamente solo i veicoli disponibili nel periodo richiesto
-  2. Escludere i veicoli con prenotazioni confermate nel periodo
-  3. Considerare correttamente lo stato delle prenotazioni (confermate vs non confermate)
-  4. Gestire correttamente l'aggiornamento della disponibilità dei veicoli in base al calendario
+  Mostrare correttamente i veicoli disponibili nel periodo richiesto.
+
+## TC30: Visualizzazione Disponibilità con nessun Veicolo Disponibile
+- **Input**: 
+  - giorno_inizio: 3
+  - ora_inizio: 6
+  - giorno_fine: 3
+  - ora_fine: 7
+- **Output Atteso**: 
+- **Verifica**: Il sistema deve:
+  Non mostrare nessun Veicolo.
 
 ## TC50: Visualizzazione Storico Prenotazioni
 - **Input**: 

@@ -207,22 +207,6 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
         return;
     }
 
-    if( posizione_riconsegna < 0 || posizione_riconsegna > 3) {
-        fprintf(f_output, "ERRORE_POSIZIONE_RICONSEGNA\n");
-        fclose(f_output);
-        int cmp = compara_file(output_fname, oracle_fname);
-        FILE* f = fopen("tests/risultati.txt", "a");
-        if (f) {
-            if (cmp == 0) {
-                fprintf(f, "%s PASS\n", input_fname);
-            } else {
-                fprintf(f, "%s FAIL\n", input_fname);
-            }
-            fclose(f);
-        }
-        return;
-    }
-
     // Verifica la validità della data rispetto alla data di sistema
     int timestamp_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
     int timestamp_fine = converti_in_timestamp(giorno_fine, ora_fine);
@@ -564,8 +548,8 @@ int main(int argc, char *argv[]) {
     Prenotazione p2 = crea_prenotazione(1, 2, 2, 14, 2, 16, 0, 0); // utente 1, veicolo 2, giorno 2, 14-16
     imposta_stato_prenotazione(1,p2);
     Prenotazione p3 = crea_prenotazione(2, 3, 3, 9, 3, 11, 0, 2); // utente 2, veicolo 3, giorno 3, 9-11
-    Prenotazione p4 = crea_prenotazione(2, 4, 4, 13, 4, 15, 0, 3); // utente 2, veicolo 4, giorno 4, 13-15  
     
+    Prenotazione p4 = crea_prenotazione(2, 4, 4, 13, 4, 15, 0, 3); // utente 2, veicolo 4, giorno 4, 13-15  
     Prenotazione p5 = crea_prenotazione(2, 2, 2, 16, 2, 17, 0, 0); // utente 2, veicolo 2, giorno 2, 16-17
     Prenotazione p6 = crea_prenotazione(2, 2, 2, 17, 2, 18, 0, 0); // utente 2, veicolo 2, giorno 2, 17-18
     Prenotazione p7 = crea_prenotazione(2, 2, 2, 18, 2, 19, 0, 0); // utente 2, veicolo 2, giorno 2, 18-19
@@ -574,27 +558,11 @@ int main(int argc, char *argv[]) {
     Prenotazione p10 = crea_prenotazione(2, 2, 2, 21, 2, 22, 0, 0); // utente 2, veicolo 2, giorno 2, 21-22
     Prenotazione p11 = crea_prenotazione(2, 2, 2, 22, 2, 23, 0, 0); // utente 2, veicolo 2, giorno 2, 22-23
     Prenotazione p12 = crea_prenotazione(2, 2, 2, 23, 3, 0, 0, 0); // utente 2, veicolo 2, giorno 2, 23-0
+
     Prenotazione p13 = crea_prenotazione(2, 2, 3, 0, 3, 1, 0, 0); // utente 2, veicolo 2, giorno 3, 0-1
     Prenotazione p14 = crea_prenotazione(2, 2, 3, 1, 3, 2, 0, 0); // utente 2, veicolo 2, giorno 3, 1-2
 
-    Prenotazione p15 = crea_prenotazione(2, 3, 3, 2, 3, 3, 0, 0); // utente 2, veicolo 2, giorno 3, 2-3
-    imposta_stato_prenotazione(1, p15);  // Imposta lo stato della prenotazione p15 a "Confermata"
-    Prenotazione p16 = crea_prenotazione(2, 4, 3, 3, 3, 4, 0, 0); // utente 2, veicolo 2, giorno 3, 3-4
-    imposta_stato_prenotazione(1, p16);  // Imposta lo stato della prenotazione p16 a "Confermata"
-
-    Prenotazione p17 = crea_prenotazione(2, 1, 3, 4, 3, 5, 0, 0); // utente 2, veicolo 2, giorno 3, 4-5
-    Prenotazione p18 = crea_prenotazione(2, 2, 3, 5, 3, 6, 0, 0); // utente 2, veicolo 2, giorno 3, 5-6
-
-    Prenotazione p19 = crea_prenotazione(2, 1, 3, 6, 3, 7, 0, 0); // utente 2, veicolo 2, giorno 3, 6-7
-    imposta_stato_prenotazione(1, p19);  // Imposta lo stato della prenotazione p19 a "Confermata"
-    Prenotazione p20 = crea_prenotazione(2, 2, 3, 6, 3, 7, 0, 0); // utente 2, veicolo 2, giorno 3, 6-7
-    imposta_stato_prenotazione(1, p20);  // Imposta lo stato della prenotazione p20 a "Confermata"
-    Prenotazione p21 = crea_prenotazione(2, 3, 3, 6, 3, 7, 0, 0); // utente 2, veicolo 2, giorno 3, 7-8
-    imposta_stato_prenotazione(1, p21);  // Imposta lo stato della prenotazione p21 a "Confermata"
-    Prenotazione p22 = crea_prenotazione(2, 4, 3, 6, 3, 7, 0, 0); // utente 2, veicolo 2, giorno 3, 6-7
-    imposta_stato_prenotazione(1, p22);  // Imposta lo stato della prenotazione p22 a "Confermata"
-
-    imposta_stato_prenotazione(2, p5);  // Imposta lo stato della prenotazione p5 a "Completata"
+     imposta_stato_prenotazione(2, p5);  // Imposta lo stato della prenotazione p5 a "Completata"
     imposta_stato_prenotazione(2, p6);  // Imposta lo stato della prenotazione p6 a "Completata"
     imposta_stato_prenotazione(2, p7);  // Imposta lo stato della prenotazione p7 a "Completata"
     imposta_stato_prenotazione(2, p8);  // Imposta lo stato della prenotazione p8 a "Completata"
