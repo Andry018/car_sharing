@@ -233,28 +233,6 @@ void bubble_down(CodaPrenotazioni coda, int indice);
 int aggiungi_prenotazione(CodaPrenotazioni coda, Prenotazione prenotazione);
 
 /**
- * @brief Rimuove una prenotazione dalla coda
- * 
- * La funzione rimuove una prenotazione specifica dalla coda delle prenotazioni
- * in base al suo ID. Se la prenotazione viene trovata, viene rimossa e la coda
- * viene riorganizzata per mantenere la proprietà di heap.
- * 
- * @param id_prenotazione ID della prenotazione da rimuovere
- * @param coda Puntatore alla coda delle prenotazioni
- * 
- * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
- * @pre id_prenotazione deve essere un intero positivo
- * 
- * @post Se la prenotazione viene trovata, viene rimossa dalla coda e la struttura heap viene riorganizzata
- * @post Se la prenotazione non viene trovata, la coda rimane invariata
- * 
- * @note Side Effect: Modifica la struttura della coda rimuovendo la prenotazione e riorganizzando l'heap
- * 
- * @return CodaPrenotazioni La coda modificata dopo la rimozione della prenotazione
- */
-CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda);
-
-/**
  * @brief Cerca una prenotazione nella coda per ID
  * 
  * La funzione cerca una prenotazione specifica nella coda delle prenotazioni
@@ -699,38 +677,6 @@ int ottieni_ora_fine(Prenotazione p);
 int ottieni_posizione_riconsegna(Prenotazione p);
 
 /**
- * @brief Restituisce il puntatore all'array heap della coda
- * 
- * @param coda Puntatore alla coda delle prenotazioni
- * 
- * @pre coda è un puntatore valido a una struttura CodaPrenotazioni, oppure NULL
- * 
- * @post Se coda è valido, viene restituito coda->heap
- * @post Se coda è NULL, viene restituito NULL
- * 
- * @note Side Effect: Nessuno
- * 
- * @return Prenotazione Puntatore all'array heap o NULL se coda è NULL
- */
-Prenotazione ottieni_heap_coda(CodaPrenotazioni coda);
-
-/**
- * @brief Restituisce la capacità massima della coda
- * 
- * @param coda Puntatore alla coda delle prenotazioni
- * 
- * @pre coda è un puntatore valido a una struttura CodaPrenotazioni, oppure NULL
- * 
- * @post Se coda è valido, viene restituito coda->capacita
- * @post Se coda è NULL, viene restituito -1
- * 
- * @note Side Effect: Nessuno
- * 
- * @return int La capacità massima della coda o -1 se coda è NULL
- */
-int ottieni_capacita_coda(CodaPrenotazioni coda);
-
-/**
  * @brief Restituisce il numero di prenotazioni nella coda
  * 
  * @param coda Puntatore alla coda delle prenotazioni
@@ -762,66 +708,6 @@ int ottieni_dimensione_coda(CodaPrenotazioni coda);
 void imposta_id_prenotazione(int id_prenotazione, Prenotazione p);
 
 /**
- * @brief Imposta l'ID dell'utente nella prenotazione
- * 
- * @param id_utente Nuovo ID dell'utente
- * @param p Puntatore alla prenotazione
- * 
- * @pre p è un puntatore valido a una struttura Prenotazione, oppure NULL
- * 
- * @post Se p è valido, p->id_utente = id_utente
- * @post Se p è NULL, non viene effettuata alcuna modifica
- * 
- * @note Side Effect: Modifica diretta del campo id_utente nella struttura p
- */
-void imposta_id_utente_prenotazione(int id_utente, Prenotazione p);
-
-/**
- * @brief Imposta l'ID del veicolo nella prenotazione
- * 
- * @param id_veicolo Nuovo ID del veicolo
- * @param p Puntatore alla prenotazione
- * 
- * @pre p è un puntatore valido a una struttura Prenotazione, oppure NULL
- * 
- * @post Se p è valido, p->id_veicolo = id_veicolo
- * @post Se p è NULL, non viene effettuata alcuna modifica
- * 
- * @note Side Effect: Modifica diretta del campo id_veicolo nella struttura p
- */
-void imposta_id_veicolo_prenotazione(int id_veicolo, Prenotazione p);
-
-/**
- * @brief Imposta il giorno e ora di inizio della prenotazione
- * 
- * @param giorno_ora_inizio Nuovo valore per giorno e ora di inizio
- * @param p Puntatore alla prenotazione
- * 
- * @pre p è un puntatore valido a una struttura Prenotazione, oppure NULL
- * 
- * @post Se p è valido, p->giorno_ora_inizio = giorno_ora_inizio
- * @post Se p è NULL, non viene effettuata alcuna modifica
- * 
- * @note Side Effect: Modifica diretta del campo giorno_ora_inizio nella struttura p
- */
-void imposta_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione p);
-
-/**
- * @brief Imposta il giorno e ora di fine della prenotazione
- * 
- * @param giorno_ora_fine Nuovo valore per giorno e ora di fine
- * @param p Puntatore alla prenotazione
- * 
- * @pre p è un puntatore valido a una struttura Prenotazione, oppure NULL
- * 
- * @post Se p è valido, p->giorno_ora_fine = giorno_ora_fine
- * @post Se p è NULL, non viene effettuata alcuna modifica
- * 
- * @note Side Effect: Modifica diretta del campo giorno_ora_fine nella struttura p
- */
-void imposta_giorno_ora_fine(int giorno_ora_fine, Prenotazione p);
-
-/**
  * @brief Imposta lo stato della prenotazione
  * 
  * @param stato Nuovo stato della prenotazione
@@ -835,21 +721,6 @@ void imposta_giorno_ora_fine(int giorno_ora_fine, Prenotazione p);
  * @note Side Effect: Modifica diretta del campo stato nella struttura p
  */
 void imposta_stato_prenotazione(int stato, Prenotazione p);
-
-/**
- * @brief Imposta la priorità della prenotazione
- * 
- * @param priorita Nuova priorità della prenotazione
- * @param p Puntatore alla prenotazione
- * 
- * @pre p è un puntatore valido a una struttura Prenotazione, oppure NULL
- * 
- * @post Se p è valido, p->priorita = priorita
- * @post Se p è NULL, non viene effettuata alcuna modifica
- * 
- * @note Side Effect: Modifica diretta del campo priorita nella struttura p
- */
-void imposta_priorita(int priorita, Prenotazione p);
 
 /**
  * @brief Conta le prenotazioni completate da un utente prima di una specifica prenotazione

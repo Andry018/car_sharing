@@ -299,62 +299,6 @@ int aggiungi_prenotazione(CodaPrenotazioni coda, Prenotazione prenotazione) {
 }
 
 /**
- * @brief Rimuove una prenotazione dalla coda dato il suo ID.
- * @param id_prenotazione ID della prenotazione da rimuovere.
- * @param coda Puntatore alla coda delle prenotazioni.
- * @return La coda modificata dopo la rimozione.
- * @note Side Effect: Modifica la struttura della coda.
- */
- CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda) {
-    if (coda == NULL || coda->dimensione == 0) {
-        printf("Coda vuota, impossibile rimuovere la prenotazione.\n");
-        return NULL;  // Coda vuota
-    }
-    // Trova l'indice della prenotazione da rimuovere
-    int indice = -1;
-    for (int i = 0; i < coda->dimensione; i++) {
-        if (coda->heap[i].id_prenotazione == id_prenotazione) {
-            indice = i;
-            break;
-        }
-    }
-    if (indice == -1) {
-        return NULL;  // Prenotazione non trovata
-    }
-    // Sostituisci la prenotazione da rimuovere con l'ultima prenotazione
-    coda->heap[indice] = coda->heap[coda->dimensione - 1];
-    coda->dimensione--;
-    // Esegui bubble down per mantenere la proprietà dell'heap
-    if (indice < coda->dimensione) {
-        bubble_down(coda, indice);
-    }
-    // Ritorna la prenotazione rimossa
-    Prenotazione prenotazione_rimossa = (Prenotazione)malloc(sizeof(struct Prenotazione));
-    if (prenotazione_rimossa == NULL) {
-        return NULL;  // Errore di allocazione
-    }
-    *prenotazione_rimossa = coda->heap[indice];
-    // Se l'heap è vuoto, ridimensiona l'array
-    if (coda->dimensione == 0) {
-        free(coda->heap);
-        coda->heap = NULL;
-        coda->capacita = 0;
-    } else if (coda->dimensione < coda->capacita / 4) {
-        int nuova_capacita = coda->capacita / 2;
-         Prenotazione nuovo_heap = ( Prenotazione)realloc(coda->heap, 
-                                                        sizeof( Prenotazione) * nuova_capacita);
-        if (nuovo_heap != NULL) {
-            coda->heap = nuovo_heap;
-            coda->capacita = nuova_capacita;
-        }
-    }
-    free(prenotazione_rimossa);  // Libera la memoria della prenotazione rimossa
-
-    return coda; 
-     
-}
-
-/**
  * @brief Cerca una prenotazione nella coda per ID.
  * @param coda Puntatore alla coda delle prenotazioni.
  * @param id_prenotazione ID della prenotazione da cercare.
@@ -826,26 +770,6 @@ int ottieni_posizione_riconsegna(Prenotazione p) {
 }
 
 /**
- * @brief Restituisce il puntatore all'array heap della coda.
- * @param coda Puntatore alla coda delle prenotazioni.
- * @return Puntatore all'array heap, oppure NULL se coda è NULL.
- */
-Prenotazione ottieni_heap_coda(CodaPrenotazioni coda) {
-    if (coda == NULL) return NULL;
-    return coda->heap;
-}
-
-/**
- * @brief Restituisce la capacità massima della coda.
- * @param coda Puntatore alla coda delle prenotazioni.
- * @return Capacità massima, oppure -1 se coda è NULL.
- */
-int ottieni_capacita_coda(CodaPrenotazioni coda) {
-    if (coda == NULL) return -1;
-    return coda->capacita;
-}
-
-/**
  * @brief Restituisce la dimensione attuale della coda.
  * @param coda Puntatore alla coda delle prenotazioni.
  * @return Dimensione attuale, oppure -1 se coda è NULL.
@@ -866,46 +790,6 @@ void imposta_id_prenotazione(int id_prenotazione, Prenotazione p) {
 }
 
 /**
- * @brief Imposta l'ID dell'utente associato alla prenotazione.
- * @param id_utente Nuovo ID utente.
- * @param p Puntatore alla prenotazione.
- */
-void imposta_id_utente_prenotazione(int id_utente, Prenotazione p) {
-    if (p == NULL) return;
-    p->id_utente = id_utente;
-}
-
-/**
- * @brief Imposta l'ID del veicolo associato alla prenotazione.
- * @param id_veicolo Nuovo ID veicolo.
- * @param p Puntatore alla prenotazione.
- */
-void imposta_id_veicolo_prenotazione(int id_veicolo, Prenotazione p) {
-    if (p == NULL) return;
-    p->id_veicolo = id_veicolo;
-}
-
-/**
- * @brief Imposta il timestamp di inizio della prenotazione.
- * @param giorno_ora_inizio Nuovo timestamp di inizio.
- * @param p Puntatore alla prenotazione.
- */
-void imposta_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione p) {
-    if (p == NULL) return;
-    p->giorno_ora_inizio = giorno_ora_inizio;
-}
-
-/**
- * @brief Imposta il timestamp di fine della prenotazione.
- * @param giorno_ora_fine Nuovo timestamp di fine.
- * @param p Puntatore alla prenotazione.
- */
-void imposta_giorno_ora_fine(int giorno_ora_fine, Prenotazione p) {
-    if (p == NULL) return;
-    p->giorno_ora_fine = giorno_ora_fine;
-}
-
-/**
  * @brief Imposta lo stato della prenotazione.
  * @param stato Nuovo stato.
  * @param p Puntatore alla prenotazione.
@@ -915,15 +799,6 @@ void imposta_stato_prenotazione(int stato, Prenotazione p) {
     p->stato = stato;
 }
 
-/**
- * @brief Imposta la priorità della prenotazione.
- * @param priorita Nuova priorità.
- * @param p Puntatore alla prenotazione.
- */
-void imposta_priorita(int priorita, Prenotazione p) {
-    if (p == NULL) return;
-    p->priorita = priorita;
-}
 
 /**
  * @brief Restituisce il puntatore alla prenotazione in posizione i nella coda.
