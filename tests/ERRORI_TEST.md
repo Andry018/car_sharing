@@ -382,7 +382,7 @@ Input: 6 argomenti
   ora_inizio: 22
   giorno_fine: 1
   ora_fine: 2
-- **Output Atteso**: 20.00
+- **Output Atteso**: "20.00"
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio posto su due giorni diversi 
 
 ## TC17: Calcolo Costo Noleggio con durata zero
@@ -520,18 +520,112 @@ applicando lo sconto "PACCHETTI ORARI"
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di una Utilitaria 
 applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
 
-## TC29: Visualizzazione Disponibilità Veicoli con tutti i Veicoli Disponibili
+## TC29: Visualizzazione Disponibilità con tutti i Veicoli Disponibili
 - **Input**: 
   - giorno_inizio: 2
   - ora_inizio: 8
   - giorno_fine: 2
   - ora_fine: 10
-- **Output Atteso**: Solo il veicolo 2 (HondaCBR) dovrebbe essere mostrato come disponibile
+- **Output Atteso**: 
+  4 TeslaModelS Posizione D
+  3 JeepWrangler Posizione C
+  2 HondaCBR Posizione B
+  1 Fiat500 Deposito
 - **Verifica**: Il sistema deve:
-  1. Mostrare correttamente solo i veicoli disponibili nel periodo richiesto
-  2. Escludere i veicoli con prenotazioni confermate nel periodo
-  3. Considerare correttamente lo stato delle prenotazioni (confermate vs non confermate)
-  4. Gestire correttamente l'aggiornamento della disponibilità dei veicoli in base al calendario
+  Mostrare correttamente i veicoli disponibili nel periodo richiesto.
+
+## TC30: Visualizzazione Disponibilità con nessun Veicolo Disponibile
+- **Input**: 
+  - giorno_inizio: 3
+  - ora_inizio: 6
+  - giorno_fine: 3
+  - ora_fine: 7
+- **Output Atteso**: 
+- **Verifica**: Il sistema deve:
+  Non mostrare nessun Veicolo.
+
+## TC31: Visualizzazione Disponibilità con 3 Veicoli Disponibili
+  - giorno_inizio: 2
+  - ora_inizio: 14
+  - giorno_fine: 2
+  - ora_fine: 16
+- **Output Atteso**: 
+  4 TeslaModelS Posizione D
+  3 JeepWrangler Posizione C
+  1 Fiat500 Deposito
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC32: Visualizzazione Disponibilità con 3 Veicoli Disponibili
+  - giorno_inizio: 1
+  - ora_inizio: 10
+  - giorno_fine: 1
+  - ora_fine: 12
+- **Output Atteso**: 
+  4 TeslaModelS Posizione D
+  3 JeepWrangler Posizione C
+  2 HondaCBR Posizione B
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC33: Visualizzazione Disponibilità con 3 Veicoli Disponibili
+  - giorno_inizio: 3
+  - ora_inizio: 3
+  - giorno_fine: 3
+  - ora_fine: 4
+- **Output Atteso**: 
+  3 JeepWrangler Posizione C
+  2 HondaCBR Posizione B
+  1 Fiat500 Deposito
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC34: Visualizzazione Disponibilità con 3 Veicoli Disponibili
+  - giorno_inizio: 3
+  - ora_inizio: 2
+  - giorno_fine: 3
+  - ora_fine: 3
+- **Output Atteso**: 
+  4 TeslaModelS Posizione D
+  2 HondaCBR Posizione B
+  1 Fiat500 Deposito
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC35: Visualizzazione Disponibilità con 2 Veicoli Disponibili
+  - giorno_inizio: 3
+  - ora_inizio: 2
+  - giorno_fine: 3
+  - ora_fine: 4
+- **Output Atteso**: 
+  2 HondaCBR Posizione B
+  1 Fiat500 Deposito
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC36: Visualizzazione Disponibilità con Giorno fuori range
+  - giorno_inizio: 7
+  - ora_inizio: 10
+  - giorno_fine: 8
+  - ora_fine: 12
+- **Output Atteso**: ERRORE_FASCIA_ORARIA
+- **Verifica**: Il sistema deve gestire orari non validi
+
+  ## TC37: Visualizzazione Disponibilità con Giorno fuori range
+  - giorno_inizio: 1
+  - ora_inizio: 24
+  - giorno_fine: 1
+  - ora_fine: 25
+- **Output Atteso**: ERRORE_FASCIA_ORARIA
+- **Verifica**: Il sistema deve gestire orari non validi
+
+  ## TC36: Visualizzazione Disponibilità con stessa ora
+  - giorno_inizio: 2
+  - ora_inizio: 4
+  - giorno_fine: 2
+  - ora_fine: 4
+- **Output Atteso**: ERRORE_FASCIA_ORARIA
+- **Verifica**: Il sistema deve gestire orari non validi
 
   ## TC44: Visualizzazione Storico Prenotazioni
   **Input**

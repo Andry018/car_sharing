@@ -1698,7 +1698,6 @@ tests/TC26/TC26_input.txt PASS
 tests/TC27/TC27_input.txt PASS
 tests/TC28/TC28_input.txt PASS
 tests/TC29/TC29_input.txt FAIL
-tests/TC44/TC44_input.txt FAIL
 tests/TC01/TC01_input.txt PASS
 tests/TC02/TC02_input.txt PASS
 tests/TC03/TC03_input.txt PASS
@@ -1727,8 +1726,8 @@ tests/TC25/TC25_input.txt PASS
 tests/TC26/TC26_input.txt PASS
 tests/TC27/TC27_input.txt PASS
 tests/TC28/TC28_input.txt PASS
-tests/TC29/TC29_input.txt FAIL
-tests/TC44/TC44_input.txt FAIL
+tests/TC29/TC29_input.txt PASS
+tests/TC30/TC30_input.txt FAIL
 tests/TC01/TC01_input.txt PASS
 tests/TC02/TC02_input.txt PASS
 tests/TC03/TC03_input.txt PASS
@@ -1757,8 +1756,8 @@ tests/TC25/TC25_input.txt PASS
 tests/TC26/TC26_input.txt PASS
 tests/TC27/TC27_input.txt PASS
 tests/TC28/TC28_input.txt PASS
-tests/TC29/TC29_input.txt FAIL
-tests/TC44/TC44_input.txt FAIL
+tests/TC29/TC29_input.txt PASS
+tests/TC30/TC30_input.txt FAIL
 tests/TC01/TC01_input.txt PASS
 tests/TC02/TC02_input.txt PASS
 tests/TC03/TC03_input.txt PASS
@@ -1787,8 +1786,8 @@ tests/TC25/TC25_input.txt PASS
 tests/TC26/TC26_input.txt PASS
 tests/TC27/TC27_input.txt PASS
 tests/TC28/TC28_input.txt PASS
-tests/TC29/TC29_input.txt FAIL
-tests/TC44/TC44_input.txt PASS
+tests/TC29/TC29_input.txt PASS
+tests/TC30/TC30_input.txt FAIL
 tests/TC01/TC01_input.txt PASS
 tests/TC02/TC02_input.txt PASS
 tests/TC03/TC03_input.txt PASS
@@ -1817,8 +1816,8 @@ tests/TC25/TC25_input.txt PASS
 tests/TC26/TC26_input.txt PASS
 tests/TC27/TC27_input.txt PASS
 tests/TC28/TC28_input.txt PASS
-tests/TC29/TC29_input.txt FAIL
-tests/TC44/TC44_input.txt PASS
+tests/TC29/TC29_input.txt PASS
+tests/TC30/TC30_input.txt FAIL
 tests/TC01/TC01_input.txt PASS
 tests/TC02/TC02_input.txt PASS
 tests/TC03/TC03_input.txt PASS
@@ -1847,9 +1846,8 @@ tests/TC25/TC25_input.txt PASS
 tests/TC26/TC26_input.txt PASS
 tests/TC27/TC27_input.txt PASS
 tests/TC28/TC28_input.txt PASS
-tests/TC29/TC29_input.txt FAIL
-tests/TC44/TC44_input.txt PASS
-tests/TC45/TC45_input.txt FAIL
+tests/TC29/TC29_input.txt PASS
+tests/TC30/TC30_input.txt FAIL
 tests/TC01/TC01_input.txt PASS
 tests/TC02/TC02_input.txt PASS
 tests/TC03/TC03_input.txt PASS
