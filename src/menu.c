@@ -1,14 +1,13 @@
 #include "menu.h"
 #include <ctype.h>
 #include "veicolo.h"  // Aggiungiamo l'include per la definizione di struct Veicolo
-
-
-
-
 #include "f_utili.h"
 
-
-
+/**
+ * @brief Gestisce le operazioni relative ai veicoli.
+ * @details Permette di aggiungere, rimuovere e visualizzare i veicoli nel sistema.
+ * Questa funzione è accessibile solo agli amministratori.
+ */
 void gestione_veicoli() {
     int scelta;
     
@@ -267,6 +266,11 @@ void gestione_veicoli() {
     } while(scelta != 0);
 }
 
+/**
+ * @brief Gestisce il processo di prenotazione di un veicolo.
+ * @param utente_corrente L'utente che effettua la prenotazione.
+ * @details Permette all'utente di selezionare un veicolo, scegliere data e ora di inizio e fine prenotazione, e confermare la prenotazione.
+ */
 void prenota_auto(Utente utente_corrente) {
     int scelta;
     CodaPrenotazioni coda_prenotazioni = ottieni_coda_prenotazioni();
@@ -505,7 +509,7 @@ void prenota_auto(Utente utente_corrente) {
                         giorno_ora_inizio = giorno_inizio * 24 + ora_inizio;
                         
                         // Valida subito se la data di inizio è nel passato
-                        int validazione_inizio = valida_data_prenotazione(giorno_ora_inizio, giorno_ora_inizio);
+                        int validazione_inizio = valida_data_prenotazione(giorno_ora_inizio, giorno_ora_fine);
                         if (validazione_inizio == -1) {
                             imposta_colore(COLORE_ROSSO);
                             printf("\nErrore: Non puoi prenotare nel passato!\n");
@@ -676,12 +680,12 @@ void prenota_auto(Utente utente_corrente) {
                 printf("Hai scelto di lasciare il veicolo in: %s\n", ottieni_nome_posizione_veicolo(posizione_riconsegna));
                 
                 if (costo_finale < costo_base) {
-                    printf("Sconto fedelta' applicato: %.2f euro\n", costo_base - costo_finale);
+                    printf("Sconto fedeltà applicato: %.2f euro\n", costo_base - costo_finale);
                     printf("Costo finale: %.2f euro\n", costo_finale);
                 }
                 
                 if (num_prenotazioni < 10) {
-                    printf("\nNota: Ti mancano %d noleggi per ottenere lo sconto fedelta'!\n", 
+                    printf("\nNota: Ti mancano %d noleggi per ottenere lo sconto fedeltà!\n", 
                            10 - num_prenotazioni);
                 }
                 
@@ -836,6 +840,11 @@ void prenota_auto(Utente utente_corrente) {
     } while(scelta != 0);
 }
 
+/**
+ * @brief Visualizza le prenotazioni dell'utente corrente.
+ * @param utente_corrente L'utente di cui visualizzare le prenotazioni.
+ * @details Mostra tutte le prenotazioni attive dell'utente, con dettagli come veicolo, date, stato e costo stimato.
+ */
 void visualizza_prenotazioni(Utente utente_corrente) {
     pulisci_schermo();
     stampa_bordo_superiore();
@@ -939,7 +948,12 @@ void visualizza_prenotazioni(Utente utente_corrente) {
     svuota_buffer();
 }
 
-void restituisci_auto() {
+/**
+ * @brief Gestisce il processo di restituzione di un veicolo.
+ * @details Permette all'utente di restituire un veicolo noleggiato.
+ * Questa funzione è attualmente in sviluppo.
+ */
+void restituisci_auto(void) {
     pulisci_schermo();
     stampa_bordo_superiore();
     
@@ -966,7 +980,11 @@ void restituisci_auto() {
     svuota_buffer();
 }
 
-void visualizza_disponibilita() {
+/**
+ * @brief Visualizza la disponibilità dei veicoli.
+ * @details Mostra lo stato di disponibilità di tutti i veicoli nel sistema e permette di visualizzare il calendario di un veicolo specifico.
+ */
+void visualizza_disponibilita(void) {
     list veicoli = ottieni_lista_veicoli();
     if (veicoli == NULL) {
         pulisci_schermo();
@@ -1173,6 +1191,11 @@ void visualizza_disponibilita() {
     svuota_buffer();
 }
 
+/**
+ * @brief Visualizza le tariffe dei veicoli e gli sconti disponibili.
+ * @param utente_corrente L'utente corrente per mostrare eventuali sconti fedeltà.
+ * @details Mostra le tariffe orarie per ogni tipo di veicolo e gli sconti disponibili. Se l'utente è loggato, mostra anche il suo stato fedeltà.
+ */
 void visualizza_tariffe(Utente utente_corrente) {
     pulisci_schermo();
     stampa_bordo_superiore();
@@ -1217,10 +1240,10 @@ void visualizza_tariffe(Utente utente_corrente) {
         printf("Noleggi completati: %d\n", noleggi_completati);
         
         if (noleggi_completati < 10) {
-            printf("Ti mancano %d noleggi per ottenere lo sconto fedelta'!\n", 10 - noleggi_completati);
+            printf("Ti mancano %d noleggi per ottenere lo sconto fedeltà!\n", 10 - noleggi_completati);
         } else {
             imposta_colore(10); // Verde
-            printf("Hai ottenuto lo sconto fedelta'!\n");
+            printf("Hai ottenuto lo sconto fedeltà!\n");
             imposta_colore(7); // Bianco
         }
     }
@@ -1232,6 +1255,11 @@ void visualizza_tariffe(Utente utente_corrente) {
 
 
 
+/**
+ * @brief Mostra il menu principale per gli utenti clienti.
+ * @param utente_corrente L'utente cliente loggato.
+ * @details Visualizza le opzioni disponibili per gli utenti clienti, inclusa la gestione delle prenotazioni e la visualizzazione delle informazioni.
+ */
 void mostra_menu_cliente(Utente utente_corrente) {
     stampa_bordo_superiore();
     
@@ -1269,6 +1297,11 @@ void mostra_menu_cliente(Utente utente_corrente) {
     stampa_bordo_inferiore();
 }
 
+/**
+ * @brief Mostra il menu principale per gli amministratori.
+ * @param utente_corrente L'amministratore loggato.
+ * @details Visualizza le opzioni disponibili per gli amministratori, inclusa la gestione di veicoli, prenotazioni e utenti.
+ */
 void mostra_menu_amministratore(Utente utente_corrente) {
     stampa_bordo_superiore();
     
@@ -1310,7 +1343,11 @@ void mostra_menu_amministratore(Utente utente_corrente) {
     stampa_bordo_inferiore();
 }
 
-void gestione_prenotazioni_amministratore() {
+/**
+ * @brief Gestisce le operazioni di amministrazione delle prenotazioni.
+ * @details Permette agli amministratori di visualizzare, filtrare e modificare le prenotazioni nel sistema.
+ */
+void gestione_prenotazioni_amministratore(void) {
     int scelta;
     CodaPrenotazioni coda_prenotazioni = ottieni_coda_prenotazioni();
     
@@ -1672,6 +1709,10 @@ void gestione_prenotazioni_amministratore() {
     } while (scelta != 0);
 }
 
+/**
+ * @brief Gestisce le operazioni di amministrazione degli utenti.
+ * @details Permette agli amministratori di visualizzare e gestire gli utenti del sistema, inclusa la possibilità di rimuovere utenti.
+ */
 void gestione_utenti_amministratore() {
     int scelta;
     do {
@@ -1753,6 +1794,10 @@ void gestione_utenti_amministratore() {
     } while(scelta != 0);
 }
 
+/**
+ * @brief Visualizza il logo ASCII del sistema.
+ * @details Stampa il logo ASCII del sistema di car sharing.
+ */
 void mostra_logo() {
     imposta_colore(14); // Giallo
     printf("\n");
@@ -1768,6 +1813,10 @@ printf("        \\/      \\/                 \\/      \\/      \\/              
     imposta_colore(7); // Bianco
 }
 
+/**
+ * @brief Mostra il menu di login.
+ * @details Visualizza le opzioni per accedere o registrarsi al sistema.
+ */
 void mostra_menu_login() {
     stampa_bordo_superiore();
     

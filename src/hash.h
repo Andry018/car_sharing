@@ -13,7 +13,7 @@
  * 
  * @post Restituisce un valore hash unsigned int
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return unsigned int Il valore hash generato
  */

@@ -1,3 +1,10 @@
+/**
+ * @file veicolo.c
+ * @brief Implementazione delle funzioni di gestione dei veicoli per il sistema di car sharing.
+ *
+ * Questo file contiene le funzioni per la creazione, modifica, ricerca e gestione dei veicoli.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +13,25 @@
 #include "tariffe.h"
 #include "f_utili.h"
 
-// Definizioni private delle strutture
+/**
+ * @struct Veicolo
+ * @brief Rappresenta un veicolo nel sistema di car sharing.
+ *
+ * Contiene tutte le informazioni necessarie per identificare e gestire un veicolo.
+ *
+ * @var Veicolo::id
+ * Identificativo univoco del veicolo.
+ * @var Veicolo::tipo
+ * Tipo del veicolo (es. utilitaria, suv, sportiva, moto).
+ * @var Veicolo::modello
+ * Modello del veicolo (stringa).
+ * @var Veicolo::targa
+ * Targa del veicolo (stringa).
+ * @var Veicolo::posizione
+ * Identificativo della posizione o stazione del veicolo.
+ * @var Veicolo::disponibilita
+ * Stato di disponibilità (1 = disponibile, 0 = non disponibile).
+ */
 struct Veicolo {
     int id;
     int tipo;
@@ -16,6 +41,17 @@ struct Veicolo {
     int disponibilita;
 };
 
+/**
+ * @struct nodo
+ * @brief Nodo di una lista collegata di veicoli.
+ *
+ * Ogni nodo contiene un veicolo e un puntatore al nodo successivo.
+ *
+ * @var nodo::v
+ * Dati del veicolo associato al nodo.
+ * @var nodo::successivo
+ * Puntatore al prossimo nodo della lista.
+ */
 typedef struct nodo {
     Veicolo v;
     struct nodo* successivo;
@@ -24,68 +60,156 @@ typedef struct nodo {
 // Variabile statica per la lista dei veicoli
 static list listaVeicoli = NULL;
 
-// Implementazione delle funzioni di accesso alla lista
+/**
+ * @brief Restituisce la lista attuale dei veicoli.
+ * @return Puntatore alla lista dei veicoli.
+ */
 list ottieni_lista_veicoli(void) {
     return listaVeicoli;
 }
 
+/**
+ * @brief Imposta la lista dei veicoli.
+ * @param nuovaLista Nuova lista da impostare.
+ * @note Side Effect: Sovrascrive la lista globale dei veicoli.
+ */
 void imposta_lista_veicoli(list nuovaLista) {
     listaVeicoli = nuovaLista;
 }
 
-// Implementazione dei getter
+/**
+ * @brief Restituisce l'ID del veicolo.
+ * @param v Puntatore al veicolo.
+ * @return ID del veicolo.
+ * @pre v != NULL
+ */
 int ottieni_id_veicolo(Veicolo v) {
     return v->id;
 }
 
+/**
+ * @brief Restituisce il tipo del veicolo.
+ * @param v Puntatore al veicolo.
+ * @return Tipo del veicolo.
+ * @pre v != NULL
+ */
 int ottieni_tipo_veicolo(Veicolo v) {
     return v->tipo;
 }
 
+/**
+ * @brief Restituisce il modello del veicolo.
+ * @param v Puntatore al veicolo.
+ * @return Modello del veicolo (stringa).
+ * @pre v != NULL
+ */
 const char* ottieni_modello_veicolo(Veicolo v) {
     return v->modello;
 }
 
+/**
+ * @brief Restituisce la targa del veicolo.
+ * @param v Puntatore al veicolo.
+ * @return Targa del veicolo (stringa).
+ * @pre v != NULL
+ */
 const char* ottieni_targa_veicolo(Veicolo v) {
     return v->targa;
 }
 
+/**
+ * @brief Restituisce la posizione del veicolo.
+ * @param v Puntatore al veicolo.
+ * @return Posizione del veicolo.
+ * @pre v != NULL
+ */
 int ottieni_posizione_veicolo(Veicolo v) {
     return v->posizione;
 }
 
+/**
+ * @brief Restituisce la disponibilità del veicolo.
+ * @param v Puntatore al veicolo.
+ * @return Disponibilità del veicolo (1 = disponibile, 0 = non disponibile).
+ * @pre v != NULL
+ */
 int ottieni_disponibilita_veicolo(Veicolo v) {
     return v->disponibilita;
 }
 
-// Implementazione dei setter
+/**
+ * @brief Imposta l'ID del veicolo.
+ * @param v Puntatore al veicolo.
+ * @param id Nuovo ID da impostare.
+ * @pre v != NULL
+ * @note Side Effect: Modifica il campo id del veicolo.
+ */
 void imposta_id_veicolo(Veicolo v, int id) {
     v->id = id;
 }
 
+/**
+ * @brief Imposta il tipo del veicolo.
+ * @param v Puntatore al veicolo.
+ * @param tipo Nuovo tipo da impostare.
+ * @pre v != NULL
+ * @note Side Effect: Modifica il campo tipo del veicolo.
+ */
 void imposta_tipo_veicolo(Veicolo v, int tipo) {
     v->tipo = tipo;
 }
 
+/**
+ * @brief Imposta il modello del veicolo.
+ * @param v Puntatore al veicolo.
+ * @param modello Nuovo modello da impostare (stringa).
+ * @pre v != NULL
+ * @note Side Effect: Modifica il campo modello del veicolo.
+ */
 void imposta_modello_veicolo(Veicolo v, const char* modello) {
     strncpy(v->modello, modello, sizeof(v->modello) - 1);
     v->modello[sizeof(v->modello) - 1] = '\0';
 }
 
+/**
+ * @brief Imposta la targa del veicolo.
+ * @param v Puntatore al veicolo.
+ * @param targa Nuova targa da impostare (stringa).
+ * @pre v != NULL
+ * @note Side Effect: Modifica il campo targa del veicolo.
+ */
 void imposta_targa_veicolo(Veicolo v, const char* targa) {
     strncpy(v->targa, targa, sizeof(v->targa) - 1);
     v->targa[sizeof(v->targa) - 1] = '\0';
 }
 
+/**
+ * @brief Imposta la posizione del veicolo.
+ * @param v Puntatore al veicolo.
+ * @param posizione Nuova posizione da impostare.
+ * @pre v != NULL
+ * @note Side Effect: Modifica il campo posizione del veicolo.
+ */
 void imposta_posizione_veicolo(Veicolo v, int posizione) {
    v->posizione = posizione;
 }
 
+/**
+ * @brief Imposta la disponibilità del veicolo.
+ * @param v Puntatore al veicolo.
+ * @param disponibilita Nuovo stato di disponibilità.
+ * @pre v != NULL
+ * @note Side Effect: Modifica il campo disponibilita del veicolo.
+ */
 void imposta_disponibilita_veicolo(Veicolo v, int disponibilita) {
     v->disponibilita = disponibilita;
 }
 
-// Funzioni di gestione veicoli
+/**
+ * @brief Crea un nuovo veicolo con valori di default.
+ * @return Puntatore al nuovo veicolo, oppure NULL in caso di errore.
+ * @note Side Effect: Alloca memoria per un nuovo veicolo.
+ */
 Veicolo crea_veicolo(void) {
     Veicolo v = malloc(sizeof(struct Veicolo));
     if (v == NULL) {
@@ -100,6 +224,12 @@ Veicolo crea_veicolo(void) {
     return v;
 }
 
+/**
+ * @brief Aggiunge un nuovo veicolo alla lista.
+ * @param l Lista dei veicoli.
+ * @return Nuova lista con il veicolo aggiunto.
+ * @note Side Effect: Alloca memoria per il nuovo veicolo e nodo.
+ */
 list aggiungi_veicolo(list l) {
     Veicolo v = crea_veicolo();
     if (v == NULL) {
@@ -234,6 +364,13 @@ list aggiungi_veicolo(list l) {
     return nuovo_nodo;
 }
 
+/**
+ * @brief Rimuove un veicolo dalla lista dato il suo ID.
+ * @param l Lista dei veicoli.
+ * @param id ID del veicolo da rimuovere.
+ * @return Nuova lista senza il veicolo rimosso.
+ * @note Side Effect: Libera la memoria del veicolo e del nodo rimosso.
+ */
 list rimuovi_veicolo(list l, int id)
 {
     if (l == NULL) return NULL;
@@ -266,6 +403,11 @@ list rimuovi_veicolo(list l, int id)
     return l;
 }
 
+/**
+ * @brief Stampa le informazioni di un veicolo.
+ * @param v Puntatore al veicolo da stampare.
+ * @pre v != NULL
+ */
 void stampa_veicolo(Veicolo v) {
     if (v == NULL) return;
     
@@ -295,6 +437,11 @@ void stampa_veicolo(Veicolo v) {
     printf("\n");
 }
 
+/**
+ * @brief Salva la lista dei veicoli su file.
+ * @param l Lista dei veicoli da salvare.
+ * @note Side Effect: Sovrascrive il file data/veicoli.txt.
+ */
 void salva_veicolo_file(list l)
 {
     FILE *fp = fopen("data/veicoli.txt", "w");
@@ -321,6 +468,12 @@ void salva_veicolo_file(list l)
     printf("Veicoli salvati nel file data/veicoli.txt\n");
 }
 
+/**
+ * @brief Carica la lista dei veicoli da file.
+ * @param l Lista dei veicoli esistente (può essere NULL).
+ * @return Lista aggiornata con i veicoli caricati.
+ * @note Side Effect: Alloca memoria per ogni veicolo e nodo caricato.
+ */
 list carica_veicolo_file(list l)
 {
     FILE *fp = fopen("data/veicoli.txt", "r");
@@ -388,10 +541,23 @@ list carica_veicolo_file(list l)
     return l;
 }
 
+/**
+ * @brief Restituisce il nodo successivo nella lista.
+ * @param l Nodo corrente.
+ * @return Nodo successivo.
+ * @pre l != NULL
+ */
 list ottieni_successivo_nodo(list l) {
     return l->successivo;
 }
 
+/**
+ * @brief Estrae il veicolo dal primo nodo della lista e libera il nodo.
+ * @param l Puntatore alla lista.
+ * @return Puntatore al veicolo estratto.
+ * @note Side Effect: La lista viene aggiornata e il nodo rimosso viene liberato.
+ * @pre *l != NULL
+ */
 Veicolo ottieni_veicolo_da_lista(list *l) {
     if (*l == NULL) {
         return NULL;
@@ -403,7 +569,12 @@ Veicolo ottieni_veicolo_da_lista(list *l) {
     return v;       // Restituisce il veicolo senza liberarlo
 }
 
-// Funzioni di ricerca
+/**
+ * @brief Cerca un veicolo nella lista tramite ID.
+ * @param l Lista dei veicoli.
+ * @param id ID del veicolo da cercare.
+ * @return Puntatore al veicolo trovato, oppure NULL.
+ */
 Veicolo cerca_veicolo(list l, int id) {
     while (l != NULL) {
         if (l->v->id == id) {
@@ -414,6 +585,12 @@ Veicolo cerca_veicolo(list l, int id) {
     return NULL;
 }
 
+/**
+ * @brief Modifica i dati di un veicolo dato il suo ID.
+ * @param l Lista dei veicoli.
+ * @param id ID del veicolo da modificare.
+ * @note Side Effect: Modifica i dati del veicolo nella lista.
+ */
 void modifica_veicolo(list l, int id) {
     Veicolo v = cerca_veicolo(l, id);
     if (v == NULL) {
@@ -447,6 +624,10 @@ void modifica_veicolo(list l, int id) {
     imposta_posizione_veicolo(v, posizione);
 }
 
+/**
+ * @brief Stampa tutti i veicoli presenti nella lista.
+ * @param l Lista dei veicoli.
+ */
 void stampa_lista_veicoli(list l)
 {
     if (l == NULL)
@@ -465,6 +646,10 @@ void stampa_lista_veicoli(list l)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli disponibili.
+ * @param l Lista dei veicoli.
+ */
 void stampa_veicoli_disponibili(list l)
 {
     if (l == NULL)
@@ -492,6 +677,10 @@ void stampa_veicoli_disponibili(list l)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli non disponibili.
+ * @param l Lista dei veicoli.
+ */
 void stampa_veicoli_non_disponibili(list l)
 {
     if (l == NULL)
@@ -519,6 +708,11 @@ void stampa_veicoli_non_disponibili(list l)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli di un certo tipo.
+ * @param l Lista dei veicoli.
+ * @param tipo Tipo di veicolo da filtrare.
+ */
 void stampa_veicoli_per_tipo(list l, int tipo)
 {
     if (l == NULL)
@@ -562,6 +756,11 @@ void stampa_veicoli_per_tipo(list l, int tipo)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli in una certa posizione.
+ * @param l Lista dei veicoli.
+ * @param posizione Posizione da filtrare.
+ */
 void stampa_veicoli_per_posizione(list l, int posizione)
 {
     if (l == NULL)
@@ -589,6 +788,11 @@ void stampa_veicoli_per_posizione(list l, int posizione)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli di un certo modello.
+ * @param l Lista dei veicoli.
+ * @param modello Modello da filtrare (stringa).
+ */
 void stampa_veicoli_per_modello(list l, const char* modello)
 {
     if (l == NULL)
@@ -616,6 +820,11 @@ void stampa_veicoli_per_modello(list l, const char* modello)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli con una certa targa.
+ * @param l Lista dei veicoli.
+ * @param targa Targa da filtrare (stringa).
+ */
 void stampa_veicoli_per_targa(list l, const char* targa)
 {
     if (l == NULL)
@@ -643,6 +852,11 @@ void stampa_veicoli_per_targa(list l, const char* targa)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli con un certo ID.
+ * @param l Lista dei veicoli.
+ * @param id ID da filtrare.
+ */
 void stampa_veicoli_per_id(list l, int id)
 {
     if (l == NULL)
@@ -670,6 +884,12 @@ void stampa_veicoli_per_id(list l, int id)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli di un certo tipo e posizione.
+ * @param l Lista dei veicoli.
+ * @param tipo Tipo di veicolo.
+ * @param posizione Posizione del veicolo.
+ */
 void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione)
 {
     if (l == NULL)
@@ -700,6 +920,12 @@ void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli di un certo tipo e disponibilità.
+ * @param l Lista dei veicoli.
+ * @param tipo Tipo di veicolo.
+ * @param disponibile Stato di disponibilità.
+ */
 void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile)
 {
     if (l == NULL)
@@ -730,6 +956,12 @@ void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile)
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli in una certa posizione e disponibilità.
+ * @param l Lista dei veicoli.
+ * @param posizione Posizione del veicolo.
+ * @param disponibile Stato di disponibilità.
+ */
 void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool disponibile)
 {
     if (l == NULL)
@@ -757,6 +989,13 @@ void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool di
     }
 }
 
+/**
+ * @brief Stampa tutti i veicoli di un certo tipo, posizione e disponibilità.
+ * @param l Lista dei veicoli.
+ * @param tipo Tipo di veicolo.
+ * @param posizione Posizione del veicolo.
+ * @param disponibile Stato di disponibilità.
+ */
 void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int posizione, bool disponibile)
 {
     if (l == NULL)
@@ -788,7 +1027,11 @@ void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int pos
     }
 }
 
-// Funzione per ottenere il nome del tipo di veicolo
+/**
+ * @brief Restituisce il nome del tipo di veicolo.
+ * @param tipo Codice numerico del tipo.
+ * @return Nome del tipo di veicolo (stringa).
+ */
 const char* ottieni_nome_tipo_veicolo(int tipo) {
     switch (tipo) {
         case 0:
@@ -804,14 +1047,26 @@ const char* ottieni_nome_tipo_veicolo(int tipo) {
     }
 }
 
+/**
+ * @brief Carica la lista dei veicoli dalla memoria di massa.
+ * @note Side Effect: Sovrascrive la lista globale dei veicoli.
+ */
 void carica_lista_veicoli(void) {
     listaVeicoli = carica_veicolo_file(listaVeicoli);
 }
 
+/**
+ * @brief Salva la lista dei veicoli sulla memoria di massa.
+ * @note Side Effect: Sovrascrive il file data/veicoli.txt.
+ */
 void salva_lista_veicoli(void) {
     salva_veicolo_file(listaVeicoli);
 }
 
+/**
+ * @brief Libera tutta la memoria occupata dalla lista dei veicoli.
+ * @note Side Effect: La lista globale viene azzerata e la memoria liberata.
+ */
 void pulisci_lista_veicoli(void) {
     list current = listaVeicoli;
     while (current != NULL) {
@@ -822,6 +1077,11 @@ void pulisci_lista_veicoli(void) {
     }
     listaVeicoli = NULL;
 }
+
+/**
+ * @brief Restituisce l'ultimo ID utilizzato per i veicoli.
+ * @return Ultimo ID utilizzato.
+ */
 int carica_ultimo_id(){
     FILE *fp = fopen("data/veicoli.txt", "r");
     if (fp == NULL) {
@@ -837,6 +1097,12 @@ int carica_ultimo_id(){
     return id;
 }
 
+/**
+ * @brief Restituisce il veicolo associato a un nodo senza rimuoverlo dalla lista.
+ * @param l Nodo della lista.
+ * @return Puntatore al veicolo.
+ * @pre l != NULL
+ */
 Veicolo ottieni_veicolo_senza_rimuovere(list l) {
     if (l == NULL) {
         return NULL;
@@ -844,6 +1110,11 @@ Veicolo ottieni_veicolo_senza_rimuovere(list l) {
     return l->v;
 }
   
+/**
+ * @brief Restituisce il nome della posizione del veicolo.
+ * @param posizione Codice numerico della posizione.
+ * @return Nome della posizione (stringa).
+ */
 const char* ottieni_nome_posizione_veicolo(int posizione) {
     switch (posizione) {
         case 0:

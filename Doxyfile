@@ -32,7 +32,7 @@ EXTRACT_LOCAL_CLASSES = YES
 
 # Output configuration
 GENERATE_HTML         = YES
-GENERATE_LATEX        = NO
+GENERATE_LATEX        = YES
 HTML_OUTPUT          = html
 HTML_FILE_EXTENSION  = .html
 HTML_HEADER          =
@@ -91,7 +91,7 @@ COLS_IN_ALPHA_INDEX = 5
 IGNORE_PREFIX      =
 
 # LaTeX configuration
-GENERATE_LATEX      = NO
+GENERATE_LATEX      = YES
 
 # RTF configuration
 GENERATE_RTF        = NO

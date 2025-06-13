@@ -8,9 +8,11 @@
 #include <string.h>
 #include <windows.h>
 
-
-
-// Funzione per impostare il colore del testo
+/**
+ * @brief Imposta il colore del testo nella console.
+ * @param colore Il codice colore da impostare.
+ * @note Side Effect: Modifica l'aspetto del testo nella console.
+ */
 void imposta_colore(int colore) {
 #ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -43,12 +45,18 @@ void imposta_colore(int colore) {
 #endif
 }
 
-// Funzione per pulire il buffer di input
+/**
+ * @brief Svuota il buffer di input.
+ * @note Side Effect: Consuma i caratteri dal buffer di input.
+ */
 void svuota_buffer() {
     while (getchar() != '\n');
 }
 
-// Funzione per pulire lo schermo in modo cross-platform
+/**
+ * @brief Pulisce lo schermo della console.
+ * @note Side Effect: Modifica l'output della console.
+ */
 void pulisci_schermo() {
 #ifdef _WIN32
     system("cls");
@@ -57,6 +65,10 @@ void pulisci_schermo() {
 #endif
 }
 
+/**
+ * @brief Salva i dati e libera la memoria.
+ * @note Side Effect: Modifica i file di salvataggio e libera la memoria allocata.
+ */
 void salvataggio() {
     // Salva i dati prima di chiudere
     salva_lista_veicoli();
@@ -67,24 +79,40 @@ void salvataggio() {
     pulisci_lista_veicoli();
 }
 
+/**
+ * @brief Stampa il bordo superiore.
+ * @note Side Effect: Modifica l'output della console.
+ */
 void stampa_bordo_superiore() {
     imposta_colore(COLORE_CIANO);  // Ciano
     printf("=====================================\n");
     imposta_colore(COLORE_BIANCO); // Bianco
 }
 
+/**
+ * @brief Stampa il bordo inferiore.
+ * @note Side Effect: Modifica l'output della console.
+ */
 void stampa_bordo_inferiore() {
     imposta_colore(COLORE_CIANO);  // Ciano
     printf("=====================================\n");
     imposta_colore(COLORE_BIANCO); // Bianco
 }
 
+/**
+ * @brief Stampa un separatore orizzontale.
+ * @note Side Effect: Modifica l'output della console.
+ */
 void stampa_separatore() {
     imposta_colore(COLORE_CIANO);  // Ciano
     printf("-------------------------------------\n");
     imposta_colore(COLORE_BIANCO); // Bianco
 }
 
+/**
+ * @brief Stampa la data e l'ora di sistema.
+ * @note Side Effect: Modifica l'output della console.
+ */
 void stampa_data_sistema() {
     DataSistema data = ottieni_data_sistema();
     int giorno = ottieni_giorno_sistema(data);

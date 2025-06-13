@@ -19,7 +19,7 @@ typedef struct Utente *Utente;
  * @post Restituisce l'id massimo tra quelli trovati nel file
  * @post Se il file non esiste, viene restituito 0
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int L'ultimo ID utilizzato o 0 se il file non esiste
  */
@@ -35,7 +35,7 @@ int carica_ultimo_id_utente();
  * 
  * @post Tutti gli elementi della tabella sono impostati a NULL
  * 
- * @sideeffect Modifica la tabella utenti globale
+ * @note Side Effect: Modifica la tabella utenti globale
  */
 void inizializza_tabella_utenti();
 
@@ -50,7 +50,7 @@ void inizializza_tabella_utenti();
  * 
  * @post I dati degli utenti vengono scritti nel file
  * 
- * @sideeffect Scrittura su file
+ * @note Side Effect: Scrittura su file
  */
 void salva_utenti_file();
 
@@ -65,7 +65,7 @@ void salva_utenti_file();
  * @post Gli utenti vengono caricati nella tabella
  * @post Se il file non esiste, viene creato con un utente admin
  * 
- * @sideeffect Lettura da file e modifica della tabella utenti
+ * @note Side Effect: Lettura da file e modifica della tabella utenti
  * 
  * @return int 1 se il caricamento è avvenuto con successo, 0 altrimenti
  */
@@ -85,7 +85,7 @@ int carica_utenti_file();
  * 
  * @post Un nuovo utente viene inserito nella tabella
  * 
- * @sideeffect Modifica la tabella utenti
+ * @note Side Effect: Modifica la tabella utenti
  * 
  * @return int 1 se l'inserimento è avvenuto con successo, 0 altrimenti
  */
@@ -102,7 +102,7 @@ int inserisci_utente(const char* nome_utente, const char* nome_completo, const c
  * 
  * @post Restituisce il puntatore all'utente se trovato, NULL altrimenti
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return Utente Il puntatore all'utente trovato o NULL
  */
@@ -119,7 +119,7 @@ Utente cerca_utente(const char* nome_utente);
  * 
  * @post Restituisce il puntatore all'utente se trovato, NULL altrimenti
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return Utente Il puntatore all'utente trovato o NULL
  */
@@ -134,7 +134,7 @@ Utente cerca_utente_per_id(int id);
  * 
  * @post Le informazioni degli utenti vengono stampate su stdout
  * 
- * @sideeffect Output su console
+ * @note Side Effect: Output su console
  */
 void stampa_utenti();
 
@@ -151,7 +151,7 @@ void stampa_utenti();
  * @post L'utente viene rimosso dalla tabella
  * @post Le prenotazioni dell'utente vengono rimosse
  * 
- * @sideeffect Modifica la tabella utenti e la coda prenotazioni
+ * @note Side Effect: Modifica la tabella utenti e la coda prenotazioni
  * 
  * @return int 1 se la rimozione è avvenuta con successo, 0 altrimenti
  */
@@ -167,7 +167,7 @@ int rimuovi_utente(int id);
  * 
  * @post Restituisce l'ID dell'utente o -1 se l'utente non è valido
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int L'ID dell'utente o -1
  */
@@ -182,7 +182,7 @@ int ottieni_id_utente(Utente u);
  * 
  * @post Restituisce il nome completo dell'utente o NULL se l'utente non è valido
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return const char* Il nome completo dell'utente o NULL
  */
@@ -197,7 +197,7 @@ const char* ottieni_nome_completo_utente(Utente u);
  * 
  * @post Restituisce il nome utente dell'utente o NULL se l'utente non è valido
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return const char* Il nome utente dell'utente o NULL
  */
@@ -212,7 +212,7 @@ const char* ottieni_nome_utente(Utente u);
  * 
  * @post Restituisce la password hashata dell'utente o NULL se l'utente non esiste
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return const char* La password hashata dell'utente o NULL
  */
@@ -227,11 +227,11 @@ const char* ottieni_password_utente(const char* nome_utente);
  * 
  * @post Restituisce 1 se l'utente è admin, 0 se non lo è, -1 se l'utente non è valido
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Lo stato admin dell'utente
  */
-int ottieni_isAdmin_utente(Utente u);
+int ottieni_isamministratore_utente(Utente u);
 
 // Setter functions
 /**
@@ -244,7 +244,7 @@ int ottieni_isAdmin_utente(Utente u);
  * 
  * @post L'ID dell'utente viene aggiornato
  * 
- * @sideeffect Modifica l'ID dell'utente
+ * @note Side Effect: Modifica l'ID dell'utente
  */
 void imposta_id_utente(int id, Utente u);
 
@@ -259,9 +259,9 @@ void imposta_id_utente(int id, Utente u);
  * 
  * @post Il nome completo dell'utente viene aggiornato
  * 
- * @sideeffect Modifica il nome completo dell'utente
+ * @note Side Effect: Modifica il nome completo dell'utente
  */
-void imposta_nome_utente(const char* nome_completo, Utente u);
+void imposta_nome_completo_utente(const char* nome_completo, Utente u);
 
 /**
  * @brief Imposta il nome utente di un utente
@@ -274,9 +274,9 @@ void imposta_nome_utente(const char* nome_completo, Utente u);
  * 
  * @post Il nome utente dell'utente viene aggiornato
  * 
- * @sideeffect Modifica il nome utente dell'utente
+ * @note Side Effect: Modifica il nome utente dell'utente
  */
-void imposta_nome_utente_utente(const char* nuovo_nome_utente, Utente u);
+void imposta_nome_utente(const char* nuovo_nome_utente, Utente u);
 
 /**
  * @brief Imposta la password di un utente
@@ -289,7 +289,7 @@ void imposta_nome_utente_utente(const char* nuovo_nome_utente, Utente u);
  * 
  * @post La password dell'utente viene aggiornata (hashata)
  * 
- * @sideeffect Modifica la password dell'utente
+ * @note Side Effect: Modifica la password dell'utente
  */
 void imposta_password_utente(const char* password, Utente u);
 
@@ -307,7 +307,7 @@ void imposta_password_utente(const char* password, Utente u);
  * 
  * @post Restituisce 1 se il nome utente è valido, 0 altrimenti
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int 1 se valido, 0 altrimenti
  */
@@ -326,7 +326,7 @@ int valida_nome_utente(const char* nome_utente);
  * 
  * @post Restituisce 1 se il nome è valido, 0 altrimenti
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int 1 se valido, 0 altrimenti
  */
@@ -345,7 +345,7 @@ int valida_nome_completo(const char* nome);
  * 
  * @post Restituisce 1 se la password è corretta, 0 altrimenti
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int 1 se la password è corretta, 0 altrimenti
  */
@@ -364,7 +364,7 @@ int verifica_password(const char* password, Utente u);
  * 
  * @post L'hash della password viene salvato in output
  * 
- * @sideeffect Modifica il buffer output
+ * @note Side Effect: Modifica il buffer output
  */
 void hash_password(const char* input, char* output);
 

@@ -1,3 +1,10 @@
+/**
+ * @file utenti.c
+ * @brief Gestione degli utenti per il sistema di car sharing.
+ *
+ * Questo file contiene le funzioni per la creazione, ricerca, modifica, validazione e rimozione degli utenti.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,18 +13,36 @@
 #include <ctype.h>
 #include "prenotazioni.h"
 
+/**
+ * @struct Utente
+ * @brief Rappresenta un utente del sistema.
+ *
+ * @var Utente::id
+ * Identificativo univoco dell'utente.
+ * @var Utente::nome_utente
+ * Nome utente per l'accesso.
+ * @var Utente::nome_completo
+ * Nome completo dell'utente.
+ * @var Utente::password
+ * Password hashata dell'utente.
+ * @var Utente::isamministratore
+ * Flag che indica se l'utente è amministratore (1) o normale (0).
+ */
 struct Utente {
     int id;
     char nome_utente[30];
     char nome_completo[50];
-    char password[MAX_PASSWORD_LENGTH];  // Campo per la password
+    char password[MAX_PASSWORD_LENGTH];
     int isamministratore;
-} ;
-
+};
 
 static Utente tabellaUtenti[TABLE_SIZE];
 static int id_counter = 1;
 
+/**
+ * @brief Carica l'ultimo ID utente dal file.
+ * @return L'ultimo ID trovato, oppure 0 se il file non esiste.
+ */
 int carica_ultimo_id_utente() {
     FILE* file = fopen("data/utenti.txt", "r");
     if (file == NULL) {
@@ -41,6 +66,10 @@ int carica_ultimo_id_utente() {
     return max_id;
 }
 
+/**
+ * @brief Inizializza la tabella degli utenti a NULL.
+ * @note Side Effect: Modifica la tabella globale degli utenti.
+ */
 void inizializza_tabella_utenti(void) {
     for (int indice = 0; indice < TABLE_SIZE; indice++) {
         tabellaUtenti[indice] = NULL;
@@ -48,6 +77,10 @@ void inizializza_tabella_utenti(void) {
     printf("Tabella utenti inizializzata.\n");
 }
 
+/**
+ * @brief Salva tutti gli utenti su file.
+ * @note Side Effect: Sovrascrive il file data/utenti.txt.
+ */
 void salva_utenti_file() {
     FILE* file = fopen("data/utenti.txt", "w");
     if (file == NULL) {
@@ -69,6 +102,11 @@ void salva_utenti_file() {
     printf("Utenti salvati nel file data/utenti.txt\n");
 }
 
+/**
+ * @brief Carica gli utenti dal file e li inserisce nella tabella.
+ * @return 1 se il caricamento è riuscito, 0 altrimenti.
+ * @note Side Effect: Modifica la tabella globale degli utenti.
+ */
 int carica_utenti_file() {
     int max_id = carica_ultimo_id_utente();
     printf("Tentativo di apertura del file utenti.txt...\n");
@@ -242,6 +280,14 @@ int carica_utenti_file() {
     return success;
 }
 
+/**
+ * @brief Inserisce un nuovo utente nella tabella.
+ * @param nome_utente Nome utente.
+ * @param nome_completo Nome completo dell'utente.
+ * @param password Password hashata.
+ * @return 1 se inserimento riuscito, 0 altrimenti.
+ * @note Side Effect: Modifica la tabella globale degli utenti.
+ */
 int inserisci_utente(const char* nome_utente, const char* nome_completo, const char* password) {
     int idx = hash_djb2(nome_utente) % TABLE_SIZE;
     if (tabellaUtenti[idx] == NULL) {
@@ -264,6 +310,11 @@ int inserisci_utente(const char* nome_utente, const char* nome_completo, const c
     return 1;
 }
 
+/**
+ * @brief Cerca un utente tramite nome utente.
+ * @param nome_utente Nome utente da cercare.
+ * @return Puntatore all'utente trovato, oppure NULL.
+ */
 Utente cerca_utente(const char* nome_utente) {
     unsigned int indice = hash_djb2(nome_utente) % TABLE_SIZE;
 
@@ -278,7 +329,11 @@ Utente cerca_utente(const char* nome_utente) {
     return NULL;
 }
 
-// Funzione per cercare un utente per ID
+/**
+ * @brief Cerca un utente tramite ID.
+ * @param id ID da cercare.
+ * @return Puntatore all'utente trovato, oppure NULL.
+ */
 Utente cerca_utente_per_id(int id) {
     for (int i = 0; i < TABLE_SIZE; i++) {
         if (tabellaUtenti[i] != NULL && tabellaUtenti[i]->id == id) {
@@ -288,6 +343,9 @@ Utente cerca_utente_per_id(int id) {
     return NULL;
 }
 
+/**
+ * @brief Stampa tutti gli utenti presenti nella tabella.
+ */
 void stampa_utenti() {
     for (int i = 0; i < TABLE_SIZE; i++) {
         if (tabellaUtenti[i] != NULL) {
@@ -300,6 +358,12 @@ void stampa_utenti() {
     }
 }
 
+/**
+ * @brief Restituisce l'ID dell'utente.
+ * @param u Puntatore all'utente.
+ * @return ID dell'utente, oppure -1 se non valido.
+ * @pre u != NULL
+ */
 int ottieni_id_utente(Utente u) {
     if (u == NULL) {
         return -1;  // Utente non valido
@@ -307,6 +371,12 @@ int ottieni_id_utente(Utente u) {
     return u->id;  // Restituisce l'ID dell'utente
 }
 
+/**
+ * @brief Restituisce il nome completo dell'utente.
+ * @param u Puntatore all'utente.
+ * @return Nome completo, oppure NULL se non valido.
+ * @pre u != NULL
+ */
 const char* ottieni_nome_completo_utente(Utente u) {
     if (u == NULL) {
         return NULL;  // Utente non valido
@@ -314,28 +384,52 @@ const char* ottieni_nome_completo_utente(Utente u) {
     return u->nome_completo;  // Restituisce il nome completo dell'utente
 }
 
+/**
+ * @brief Restituisce il nome utente.
+ * @param u Puntatore all'utente.
+ * @return Nome utente, oppure NULL se non valido.
+ * @pre u != NULL
+ */
 const char* ottieni_nome_utente(Utente u) {
     if (u == NULL) {
         return NULL;  // Utente non valido
     }
     return u->nome_utente;  // Restituisce il nome_utente dell'utente
-}   
+}
 
+/**
+ * @brief Restituisce la password hashata dell'utente dato il nome utente.
+ * @param nome_utente Nome utente.
+ * @return Password hashata, oppure NULL se utente non trovato.
+ */
 const char* ottieni_password_utente(const char* nome_utente) {
     Utente utente = cerca_utente(nome_utente);
     if (utente != NULL) {
         return utente->password;
     }
     return NULL;  // Utente non trovato
-}   
+}
 
+/**
+ * @brief Restituisce lo stato di amministratore dell'utente.
+ * @param u Puntatore all'utente.
+ * @return 1 se amministratore, 0 se normale, -1 se non valido.
+ * @pre u != NULL
+ */
 int ottieni_isamministratore_utente(Utente u) {
     if (u == NULL) {
         return -1;  // Utente non valido
     }
     return u->isamministratore;  // Restituisce lo stato di amministratore dell'utente
-}   
+}
 
+/**
+ * @brief Imposta l'ID dell'utente.
+ * @param id Nuovo ID.
+ * @param u Puntatore all'utente.
+ * @pre u != NULL
+ * @note Side Effect: Modifica il campo id dell'utente.
+ */
 void imposta_id_utente(int id, Utente u) {
     if (u == NULL) {
         printf("Utente non valido!\n");
@@ -344,16 +438,31 @@ void imposta_id_utente(int id, Utente u) {
     u->id = id;  // Imposta l'ID dell'utente     
 }
 
-void imposta_nome_utente(const char* nome_completo, Utente u) {
+/**
+ * @brief Imposta il nome completo dell'utente.
+ * @param nome_completo Nuovo nome completo.
+ * @param u Puntatore all'utente.
+ * @pre u != NULL
+ * @note Side Effect: Modifica il campo nome_completo dell'utente.
+ */
+void imposta_nome_completo_utente(const char* nome_completo, Utente u) {
     if (u == NULL) {
         printf("Utente non valido!\n");
         return;
     }
     strncpy(u->nome_completo, nome_completo, sizeof(u->nome_completo) - 1);
-    u->nome_completo[sizeof(u->nome_completo) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
+    u->nome_completo[sizeof(u->nome_completo) - 1] = '\0';
 }
 
-void imposta_nome_utente_utente(const char* nuovo_nome_utente, Utente u) {
+/**
+ * @brief Imposta il nome utente dell'utente.
+ * @param nuovo_nome_utente Nuovo nome utente.
+ * @param u Puntatore all'utente.
+ * @pre u != NULL
+ * @note Side Effect: Modifica il campo nome_utente dell'utente.
+ * @warning Se il nome utente esiste già, la funzione non modifica nulla.
+ */
+void imposta_nome_utente(const char* nuovo_nome_utente, Utente u) {
     if (u == NULL) {
         printf("Utente non valido!\n");
         return;
@@ -362,25 +471,34 @@ void imposta_nome_utente_utente(const char* nuovo_nome_utente, Utente u) {
         printf("Nome Utente già esistente!\n");
         return;  // nome utente già in uso
     }
-    strcpy(u->nome_utente, nuovo_nome_utente);  // Imposta il nuovo nome utente
-    
-   
+    strcpy(u->nome_utente, nuovo_nome_utente);
 }
 
+/**
+ * @brief Imposta la password hashata dell'utente.
+ * @param nome_utente Nome utente (usato per hashare la password).
+ * @param u Puntatore all'utente.
+ * @pre u != NULL
+ * @note Side Effect: Modifica il campo password dell'utente.
+ */
 void imposta_password_utente(const char* nome_utente, Utente u) {
     if (u == NULL) {
         printf("Utente non valido!\n");
         return;
     }
-    
     char hashed_password[MAX_PASSWORD_LENGTH];
     hash_password(nome_utente, hashed_password);
-    
-    // Imposta la password hashata
     strncpy(u->password, hashed_password, sizeof(u->password) - 1);
-    u->password[sizeof(u->password) - 1] = '\0';  // Assicura che la stringa sia terminata correttamente
+    u->password[sizeof(u->password) - 1] = '\0';
 }
- 
+
+/**
+ * @brief Verifica se la password fornita corrisponde a quella dell'utente.
+ * @param password Password in chiaro da verificare.
+ * @param u Puntatore all'utente.
+ * @return 1 se la password è corretta, 0 altrimenti.
+ * @pre u != NULL
+ */
 int verifica_password(const char* password, Utente u) {
     if (u == NULL) {
         return 0;  // Utente non valido
@@ -397,12 +515,21 @@ int verifica_password(const char* password, Utente u) {
     return 0;  // Password errata
 }
 
+/**
+ * @brief Calcola l'hash della password.
+ * @param input Stringa di input.
+ * @param output Buffer di output per l'hash.
+ */
 void hash_password(const char* input, char* output) {
-    hash_djb2(input);
     unsigned long hash = hash_djb2(input);
     snprintf(output, MAX_PASSWORD_LENGTH, "%lu", hash);
 }
 
+/**
+ * @brief Valida il nome utente.
+ * @param nome_utente Nome utente da validare.
+ * @return 1 se valido, 0 altrimenti.
+ */
 int valida_nome_utente(const char* nome_utente) {
     if (strlen(nome_utente) < 3 || strlen(nome_utente) > 29) {
         return 0;
@@ -417,6 +544,11 @@ int valida_nome_utente(const char* nome_utente) {
     return 1;
 }
 
+/**
+ * @brief Valida il nome completo.
+ * @param nome Nome completo da validare.
+ * @return 1 se valido, 0 altrimenti.
+ */
 int valida_nome_completo(const char* nome) {
     if (strlen(nome) < 3 || strlen(nome) > 49) {
         return 0;
@@ -431,6 +563,12 @@ int valida_nome_completo(const char* nome) {
     return 1;
 }
 
+/**
+ * @brief Rimuove un utente dato il suo ID.
+ * @param id ID dell'utente da rimuovere.
+ * @return 1 se rimosso con successo, 0 altrimenti.
+ * @note Side Effect: Modifica la tabella utenti e rimuove le prenotazioni associate.
+ */
 int rimuovi_utente(int id) {
     for (int i = 0; i < TABLE_SIZE; i++) {
         if (tabellaUtenti[i] != NULL && tabellaUtenti[i]->id == id) {

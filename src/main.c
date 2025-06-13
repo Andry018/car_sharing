@@ -13,10 +13,14 @@
 #include "menu.h"
 #include "f_utili.h"
 
-
-
-
-
+/**
+ * @file main.c
+ * @brief Funzione principale del programma di car sharing.
+ *
+ * Inizializza i dati di sistema, carica le strutture dati principali e gestisce il ciclo principale del menu
+ * per login, registrazione, gestione veicoli, prenotazioni e amministrazione.
+ * @return 0 se il programma termina correttamente, altro valore in caso di errore.
+ */
 int main() {
     // Inizializza la data di sistema
     inizializza_data_sistema();

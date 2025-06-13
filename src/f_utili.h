@@ -33,7 +33,7 @@
  * 
  * @post Il colore del testo viene modificato
  * 
- * @sideeffect Modifica l'aspetto del testo nella console
+ * @note Side Effect: Modifica l'aspetto del testo nella console
  */
 void imposta_colore(int colore);
 
@@ -47,7 +47,7 @@ void imposta_colore(int colore);
  * 
  * @post Il buffer di input viene svuotato
  * 
- * @sideeffect Consuma i caratteri dal buffer di input
+ * @note Side Effect: Consuma i caratteri dal buffer di input
  */
 void svuota_buffer(void);
 
@@ -61,7 +61,7 @@ void svuota_buffer(void);
  * 
  * @post Lo schermo della console viene pulito
  * 
- * @sideeffect Modifica l'output della console
+ * @note Side Effect: Modifica l'output della console
  */
 void pulisci_schermo(void);
 
@@ -76,8 +76,8 @@ void pulisci_schermo(void);
  * @post I dati vengono salvati su file
  * @post La memoria viene liberata
  * 
- * @sideeffect Modifica i file di salvataggio
- * @sideeffect Libera la memoria allocata
+ * @note Side Effect: Modifica i file di salvataggio
+ * @note Side Effect: Libera la memoria allocata
  */
 void salvataggio(void);
 
@@ -90,7 +90,7 @@ void salvataggio(void);
  * 
  * @post Viene stampato un separatore orizzontale
  * 
- * @sideeffect Modifica l'output della console
+ * @note Side Effect: Modifica l'output della console
  */
 void stampa_separatore(void);
 
@@ -103,7 +103,7 @@ void stampa_separatore(void);
  * 
  * @post Viene stampato il bordo superiore
  * 
- * @sideeffect Modifica l'output della console
+ * @note Side Effect: Modifica l'output della console
  */
 void stampa_bordo_superiore(void);
 
@@ -116,7 +116,7 @@ void stampa_bordo_superiore(void);
  * 
  * @post Viene stampato il bordo inferiore
  * 
- * @sideeffect Modifica l'output della console
+ * @note Side Effect: Modifica l'output della console
  */
 void stampa_bordo_inferiore(void);
 
@@ -130,7 +130,7 @@ void stampa_bordo_inferiore(void);
  * 
  * @post Viene stampata la data e l'ora corrente
  * 
- * @sideeffect Modifica l'output della console
+ * @note Side Effect: Modifica l'output della console
  */
 void stampa_data_sistema(void);
 
