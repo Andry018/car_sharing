@@ -8,7 +8,7 @@
 #include "veicolo.h"
 #include "utenti.h"
 
-#define INITIAL_CAPACITY 10
+#define CAPACITA_INIZIALE 10
 
 
 // Stati possibili di una prenotazione
@@ -94,13 +94,13 @@ CodaPrenotazioni inizializza_coda(void) {
     }
     
     // Initialize heap with initial capacity
-    coda->heap = (Prenotazione)malloc(sizeof(struct Prenotazione) * INITIAL_CAPACITY);
+    coda->heap = (Prenotazione)malloc(sizeof(struct Prenotazione) * CAPACITA_INIZIALE);
     if (coda->heap == NULL) {
         free(coda);
         return NULL;
     }
     
-    coda->capacita = INITIAL_CAPACITY;
+    coda->capacita = CAPACITA_INIZIALE;
     coda->dimensione = 0;
     return coda;
 }
