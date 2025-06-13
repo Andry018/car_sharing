@@ -44,7 +44,8 @@ Generato quando:
 - L'ID veicolo specificato non esiste nel sistema
 - Esempio: tentativo di prenotazione con id_veicolo = 999 quando non esiste
 
-## Formato Input Test
+# Test Crea Prenotazione
+## Formato Input 
 Ogni test case accetta 8 valori in input:
 ```
 id_utente id_veicolo giorno_inizio ora_inizio giorno_fine ora_fine priorita posizione_riconsegna
@@ -60,7 +61,7 @@ Dove:
 - priorita: -1 per calcolo automatico, altrimenti intero positivo
 - posizione_riconsegna: intero positivo
 
-## Formato Output Test
+## Formato Output 
 In caso di successo, l'output sarà:
 ```
 id_prenotazione id_utente id_veicolo timestamp_inizio timestamp_fine stato priorita posizione_riconsegna
@@ -68,11 +69,72 @@ id_prenotazione id_utente id_veicolo timestamp_inizio timestamp_fine stato prior
 
 In caso di errore, l'output sarà uno dei messaggi di errore descritti sopra.
 
-# Test Case per la Gestione degli Errori
+# Test Costo Noleggio
+## Formato Input
+Ogni test accetta 6 valori in input:
+```
+id_prenotazione id_veicolo giorno_inizio ora_inizio giorno_fine ora_fine
+```
+Dove:
+- id_prenotazione: intero positivo
+- id_veicolo: intero positivo
+- giorno_inizio: 0-6 (Lunedì-Domenica)
+- ora_inizio: 0-23
+- giorno_fine: 0-6 (Lunedì-Domenica)
+- ora_fine: 0-23
 
-## Schema degli Input per Tipo di Test
+## Formato Output 
+In caso di successo l'output sarà:
+```
+costo
+```
+In caso di errore, l'output sarà uno dei messaggi di errore descritti sopra.
 
-### Test Creazione Prenotazione (TC01, TC02)
+# Test Visualizza Disponibilità
+## Formato Input
+Ogni Test accetta 4 valori:
+```
+giorno_inizio ora_inizio giorno_fine ora_fine
+```
+Dove:
+- giorno_inizio: 0-6 (Lunedì-Domenica)
+- ora_inizio: 0-23
+- giorno_fine: 0-6 (Lunedì-Domenica)
+- ora_fine: 0-23
+
+## Setup Veicoli
+Prenotazioni Confermate:
+
+Veicolo 1 (Fiat500, id=1)
+- giorno 1, 10-12 (martedì 10-12)
+- giorno 3, 6-7 (giovedì 6-7)
+
+Veicolo 2 (HondaCBR, id=2)
+- giorno 2, 14-16 (mercoledì 14-16)
+- giorno 3, 2-3 (giovedì 2-3)
+- giorno 3, 6-7 (giovedì 6-7)
+
+Veicolo 3 (JeepWrangler, id=3)
+- giorno 3, 2-3 (giovedì 2-3)
+- giorno 3, 6-7 (giovedì 6-7)
+
+Veicolo 4 (TeslaModelS, id=4)
+- giorno 3, 3-4 (giovedì 3-4)
+- giorno 3, 6-7 (giovedì 6-7)
+
+## Formato Output 
+In caso di successo l'output sarà:
+```
+1. Descrizione veicoli disponibili:
+id_veicolo modello posizione
+
+2. Nessun veicolo se non disponibili
+```
+In caso di errore, l'output sarà uno dei messaggi di errore descritti sopra.
+
+# Schema degli Input per Tipo di Test
+
+### Test Creazione Prenotazione (TC01, TC13)
 Input: 8 argomenti
 1. id_utente (int)
 2. id_veicolo (int)
@@ -83,7 +145,7 @@ Input: 8 argomenti
 7. tipo_prenotazione (int)
 8. id_prenotazione (int)
 
-### Test Calcolo Costo Noleggio (TC03, TC04)
+### Test Calcolo Costo Noleggio (TC14, TC28)
 Input: 6 argomenti
 1. id_prenotazione (int)
 2. id_veicolo (int)
@@ -224,9 +286,7 @@ Input: 6 argomenti
 - **Output Atteso**: "ERRORE_DATA_1" (Data inizio precedente a data sistema)
 - **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
 
-## TC11: Calcolo Costo Noleggio Valido
-- **Input**: Prenotazione valida per un'utilitaria (tipo 0) per 2 ore
-## TC11: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0)
+## TC14: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0)
 - **Input**: 
   id_utente: 1
   id_veicolo: 1
@@ -237,7 +297,7 @@ Input: 6 argomenti
 - **Output Atteso**: "10.00" (5€/ora × 2 ore)
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di un'utilitaria
 
-## TC12: Calcolo Costo Noleggio con Utente Non Esistente
+## TC15: Calcolo Costo Noleggio con Utente Non Esistente
 - **Input**: 
   id_utente: 1
   id_veicolo: 999
@@ -248,7 +308,7 @@ Input: 6 argomenti
 - **Output Atteso**: "ERRORE_UTENTE_NON_TROVATO"
 - **Verifica**: Il sistema deve gestire correttamente il caso di utente non trovato e restituire un messaggio di errore appropriato 
 
-## TC13: Calcolo Costo Noleggio su più giorni
+## TC16: Calcolo Costo Noleggio su più giorni
 - **Input**:
   id_utente: 1
   id_veicolo: 1
@@ -259,7 +319,7 @@ Input: 6 argomenti
 - **Output Atteso**: 20.00
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio posto su due giorni diversi 
 
-## TC14: Calcolo Costo Noleggio con durata zero
+## TC17: Calcolo Costo Noleggio con durata zero
 - **Input**:
   id_utente: 1
   id_veicolo: 1
@@ -270,7 +330,7 @@ Input: 6 argomenti
 - **Output Atteso**: ERRORE_FASCIA_ORARIA
 - **Verifica**: Il sistema deve gestire il caso in cui ora_inizio == ora_fine
 
-## TC15: Calcolo Costo Noleggio con ora_fine < ora_inizio nello stesso giorno
+## TC18: Calcolo Costo Noleggio con ora_fine < ora_inizio nello stesso giorno
 - **Input**:
   id_utente: 1
   id_veicolo: 1
@@ -281,7 +341,7 @@ Input: 6 argomenti
 - **Output Atteso**: ERRORE_FASCIA_ORARIA
 - **Verifica**: Il sistema deve gestire il caso in cui ora_fine < ora_inizio nello stesso giorno (caso limite)
 
-## TC16: Calcolo Costo Noleggio con giorno_fine < giorno_inizio 
+## TC19: Calcolo Costo Noleggio con giorno_fine < giorno_inizio 
 - **Input**:
   id_utente: 1
   id_veicolo: 1
@@ -292,7 +352,7 @@ Input: 6 argomenti
 - **Output Atteso**: ERRORE_FASCIA_ORARIA
 - **Verifica**: Il sistema deve gestire il caso in cui giorno_fine < giorno_inizio (caso limite)
 
-## TC17: Calcolo Costo Noleggio con veicolo non esistente
+## TC20: Calcolo Costo Noleggio con veicolo non esistente
 - **Input**:
   id_utente: 1
   id_veicolo: 999
@@ -303,7 +363,7 @@ Input: 6 argomenti
 - **Output Atteso**: ERRORE_VEICOLO_NON_TROVATO
 - **Verifica**: Il sistema deve gestire il caso di veicolo non trovato.
 
-## TC18: Calcolo Costo Noleggio con orari fuori range
+## TC21: Calcolo Costo Noleggio con orari fuori range
 - **Input**:
   id_utente: 1
   id_veicolo: 1
@@ -314,7 +374,7 @@ Input: 6 argomenti
 - **Output Atteso**: ERRORE_FASCIA_ORARIA
 - **Verifica**: Il sistema deve gestire orari non validi.
 
-## TC19: Calcolo Costo Noleggio con giorni fuori range
+## TC22: Calcolo Costo Noleggio con giorni fuori range
 - **Input**:
   id_utente: 1
   id_veicolo: 1
@@ -325,7 +385,7 @@ Input: 6 argomenti
 - **Output Atteso**: ERRORE_FASCIA_ORARIA
 - **Verifica**: Il sistema deve gestire giorni non validi.
 
-## TC20: Calcolo Costo Noleggio Valido SUV (tipo: 1)
+## TC23: Calcolo Costo Noleggio Valido SUV (tipo: 1)
 - **Input**: 
   id_utente: 1
   id_veicolo: 3
@@ -336,7 +396,7 @@ Input: 6 argomenti
 - **Output Atteso**: "40.00" (8€/ora × 5 ore)
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di un SUV
 
-## TC21: Calcolo Costo Noleggio Valido SPortiva (tipo: 2)
+## TC24: Calcolo Costo Noleggio Valido SPortiva (tipo: 2)
 - **Input**: 
   id_utente: 1
   id_veicolo: 4
@@ -347,7 +407,7 @@ Input: 6 argomenti
 - **Output Atteso**: "62.50" (12.50€/ora × 5 ore)
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di una Sportiva
 
-## TC22: Calcolo Costo Noleggio Valido Moto (tipo: 3)
+## TC25: Calcolo Costo Noleggio Valido Moto (tipo: 3)
 - **Input**: 
   id_utente: 1
   id_veicolo: 2
@@ -358,7 +418,7 @@ Input: 6 argomenti
 - **Output Atteso**: "20.00" (4€/ora × 5 ore)
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di una moto
 
-## TC23: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0) per 24 ore
+## TC26: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0) per 24 ore
 - **Input**: 
   id_utente: 1
   id_veicolo: 1
@@ -370,7 +430,7 @@ Input: 6 argomenti
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di una Utilitaria 
 applicando lo sconto "PACCHETTI ORARI"
 
-## TC24: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0) per 6 giorni
+## TC27: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0) per 6 giorni
 - **Input**: 
   id_utente: 1
   id_veicolo: 1
@@ -382,7 +442,7 @@ applicando lo sconto "PACCHETTI ORARI"
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di una Utilitaria 
 applicando lo sconto "PACCHETTI ORARI"
 
-## TC25: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0) per 6 giorni, avendo completato in precedenza già 10 noleggi
+## TC28: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0) per 6 giorni, avendo completato in precedenza già 10 noleggi
 - **Input**: 
   id_utente: 2
   id_veicolo: 1
@@ -394,15 +454,12 @@ applicando lo sconto "PACCHETTI ORARI"
 - **Verifica**: Il sistema deve calcolare correttamente il costo del noleggio di una Utilitaria 
 applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
 
-## TC26: Visualizzazione Disponibilità Veicoli
+## TC29: Visualizzazione Disponibilità Veicoli con tutti i Veicoli Disponibili
 - **Input**: 
-  - giorno_inizio: 1
-  - ora_inizio: 10
-  - giorno_fine: 1
-  - ora_fine: 12
-- **Setup**:
-  - Veicolo 1 (JeepRenegade): prenotazione confermata per giorno 1, 10-12
-  - Veicolo 2 (HondaCBR): nessuna prenotazione nel periodo
+  - giorno_inizio: 2
+  - ora_inizio: 8
+  - giorno_fine: 2
+  - ora_fine: 10
 - **Output Atteso**: Solo il veicolo 2 (HondaCBR) dovrebbe essere mostrato come disponibile
 - **Verifica**: Il sistema deve:
   1. Mostrare correttamente solo i veicoli disponibili nel periodo richiesto
@@ -410,7 +467,7 @@ applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
   3. Considerare correttamente lo stato delle prenotazioni (confermate vs non confermate)
   4. Gestire correttamente l'aggiornamento della disponibilità dei veicoli in base al calendario
 
-## TC27: Visualizzazione Storico Prenotazioni
+## TC50: Visualizzazione Storico Prenotazioni
 - **Input**: 
   - id_utente: 1
 - **Setup**:
@@ -423,7 +480,7 @@ applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
   3. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
   4. Gestire correttamente il formato di output per ogni prenotazione 
 
-  ## TC28: Visualizzazione Storico Prenotazioni
+  ## TC51: Visualizzazione Storico Prenotazioni
   **Input**
     id_utente: 0
   **Setup**
