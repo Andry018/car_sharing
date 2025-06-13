@@ -491,9 +491,7 @@ void test_storico_prenotazioni(const char* input_fname, const char* output_fname
 
 }
 
-int main(int argc, char *argv[]) {
-    (void)argc;  // Suppress unused parameter warning
-    (void)argv;  // Suppress unused parameter warning
+int main() {
     // Inizializzazione delle strutture dati vuote per i test
     coda_test = inizializza_coda();
     if (!coda_test) {
@@ -643,16 +641,13 @@ int main(int argc, char *argv[]) {
 
 
     // Eseguiamo i test
-    if (argc == 1) {
-        esegui_test_suite("tests/test_suite.txt", "tests/test_results.txt");
-    } else {
-        // ... resto del codice per i test specifici ...
-    }
 
+        esegui_test_suite("tests/test_suite.txt", "tests/test_results.txt");
+    
     // Pulizia delle strutture dati di test
     distruggi_coda(coda_test);
-    // distruggi_lista_veicoli(veicoli_test);
-    // distruggi_hash_table(utenti_test);
+   
+    
 
     printf("Tutti i test sono stati eseguiti con successo!\n");
     return 0;
