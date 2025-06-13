@@ -123,7 +123,7 @@ int carica_utenti_file() {
         // Crea l'utente amministratore
         char amministratore_password_hash[MAX_PASSWORD_LENGTH];
         hash_password("amministratore", amministratore_password_hash);
-        if (fprintf(file, "0 amministratore %s amministratoreistrator 1\n", amministratore_password_hash) < 0) {
+        if (fprintf(file, "0 amministratore %s amministratore 1\n", amministratore_password_hash) < 0) {
             printf("Errore nella scrittura del file utenti.txt\n");
             fclose(file);
             return 0;
@@ -147,7 +147,7 @@ int carica_utenti_file() {
                 char amministratore_password_hash[MAX_PASSWORD_LENGTH];
                 hash_password("amministratore", amministratore_password_hash);
                 strcpy(tabellaUtenti[indice]->password, amministratore_password_hash);   
-                strcpy(tabellaUtenti[indice]->nome_completo, "amministratoreistrator");
+                strcpy(tabellaUtenti[indice]->nome_completo, "amministratore");
                 tabellaUtenti[indice]->isamministratore = 1;
                 printf("File utenti.txt creato con l'utente amministratore.\n");
                 fclose(file);
@@ -263,7 +263,7 @@ int carica_utenti_file() {
                 tabellaUtenti[indice]->id = 0;
                 strcpy(tabellaUtenti[indice]->nome_utente, "amministratore");
                 strcpy(tabellaUtenti[indice]->password, "amministratore"); 
-                strcpy(tabellaUtenti[indice]->nome_completo, "amministratoreistrator");
+                strcpy(tabellaUtenti[indice]->nome_completo, "amministratore");
                 tabellaUtenti[indice]->isamministratore = 1;
                 salva_utenti_file();  // Salva l'amministratore nel file
                 return 1;
