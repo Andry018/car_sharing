@@ -8,7 +8,7 @@
 #include "veicolo.h"
 #include "utenti.h"
 
-#define INITIAL_CAPACITY 10
+#define CAPACITA_INIZIALE 10
 
 
 // Stati possibili di una prenotazione
@@ -94,13 +94,13 @@ CodaPrenotazioni inizializza_coda(void) {
     }
     
     // Initialize heap with initial capacity
-    coda->heap = (Prenotazione)malloc(sizeof(struct Prenotazione) * INITIAL_CAPACITY);
+    coda->heap = (Prenotazione)malloc(sizeof(struct Prenotazione) * CAPACITA_INIZIALE);
     if (coda->heap == NULL) {
         free(coda);
         return NULL;
     }
     
-    coda->capacita = INITIAL_CAPACITY;
+    coda->capacita = CAPACITA_INIZIALE;
     coda->dimensione = 0;
     return coda;
 }
@@ -367,30 +367,6 @@ int aggiungi_prenotazione(CodaPrenotazioni coda, Prenotazione prenotazione) {
     
     for (int i = 0; i < coda->dimensione; i++) {
         if (coda->heap[i].id_prenotazione == id_prenotazione) {
-            return &coda->heap[i];
-        }
-    }
-    
-    return NULL;
-}
-
-/**
- * @brief Cerca una prenotazione attiva per un determinato giorno e ora.
- * @param coda Puntatore alla coda delle prenotazioni.
- * @param giorno Giorno della settimana (0-6).
- * @param ora Ora del giorno (0-23).
- * @return Puntatore alla prenotazione trovata, o NULL se non trovata.
- */
- Prenotazione cerca_prenotazione_per_orario( CodaPrenotazioni coda, int giorno, int ora) {
-    if (coda == NULL) {
-        return NULL;
-    }
-    
-    int timestamp = converti_in_timestamp(giorno, ora);
-    
-    for (int i = 0; i < coda->dimensione; i++) {
-        if (coda->heap[i].giorno_ora_inizio <= timestamp &&
-            coda->heap[i].giorno_ora_fine > timestamp) {
             return &coda->heap[i];
         }
     }

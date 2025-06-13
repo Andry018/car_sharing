@@ -277,31 +277,6 @@ CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda
 Prenotazione cerca_prenotazione(CodaPrenotazioni coda, int id_prenotazione);
 
 /**
- * @brief Cerca una prenotazione attiva per un determinato giorno e ora
- * 
- * La funzione cerca nella coda delle prenotazioni una prenotazione attiva
- * che copre il periodo specificato dal giorno e ora forniti. Una prenotazione
- * è considerata attiva se il timestamp specificato cade all'interno del suo
- * intervallo temporale.
- * 
- * @param coda Puntatore alla coda delle prenotazioni
- * @param giorno Giorno della settimana (0-6)
- * @param ora Ora del giorno (0-23)
- * 
- * @pre coda deve essere un puntatore valido a una struttura CodaPrenotazioni inizializzata
- * @pre giorno deve essere un intero compreso tra 0 e 6
- * @pre ora deve essere un intero compreso tra 0 e 23
- * 
- * @post Se viene trovata una prenotazione attiva per il periodo specificato, viene restituito un puntatore ad essa
- * @post Se non viene trovata alcuna prenotazione attiva o la coda è NULL, viene restituito NULL
- * 
- * @note Side Effect: Nessuno
- * 
- * @return Prenotazione Puntatore alla prenotazione trovata, o NULL se non trovata
- */
-Prenotazione cerca_prenotazione_per_orario(CodaPrenotazioni coda, int giorno, int ora);
-
-/**
  * @brief Modifica lo stato di una prenotazione
  * 
  * La funzione modifica lo stato di una prenotazione specifica nella coda.
