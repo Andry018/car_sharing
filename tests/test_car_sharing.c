@@ -619,6 +619,15 @@ int main(int argc, char *argv[]) {
     aggiungi_prenotazione(coda_test, p12);
     aggiungi_prenotazione(coda_test, p13);
     aggiungi_prenotazione(coda_test, p14);
+    aggiungi_prenotazione(coda_test, p15);
+    aggiungi_prenotazione(coda_test, p16); 
+    aggiungi_prenotazione(coda_test, p17);
+    aggiungi_prenotazione(coda_test, p18);
+    aggiungi_prenotazione(coda_test, p19);
+    aggiungi_prenotazione(coda_test, p20);
+    aggiungi_prenotazione(coda_test, p21);
+    aggiungi_prenotazione(coda_test, p22);
+
 
     // Eseguiamo i test
     if (argc == 1) {
