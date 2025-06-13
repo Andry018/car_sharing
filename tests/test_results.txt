@@ -8,9 +8,6 @@ TC07 - creazione_prenotazione - PASS
 TC08 - creazione_prenotazione - PASS
 TC09 - creazione_prenotazione - PASS
 TC10 - creazione_prenotazione - PASS
-TC11 - costo_noleggio - PASS
-TC12 - costo_noleggio - PASS
-TC13 - costo_noleggio - PASS
 TC14 - costo_noleggio - PASS
 TC15 - costo_noleggio - PASS
 TC16 - costo_noleggio - PASS
@@ -23,6 +20,9 @@ TC22 - costo_noleggio - PASS
 TC23 - costo_noleggio - PASS
 TC24 - costo_noleggio - PASS
 TC25 - costo_noleggio - PASS
-TC26 - visualizza_disponibilita - FAIL
-TC27 - storico_prenotazioni - FAIL
-TC28 - storico_prenotazioni - FAIL
+TC26 - costo_noleggio - PASS
+TC27 - costo_noleggio - PASS
+TC28 - costo_noleggio - PASS
+TC29 - visualizza_disponibilita - FAIL
+TC40 - storico_prenotazioni - FAIL
+TC41 - storico_prenotazioni - FAIL
