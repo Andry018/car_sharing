@@ -27,7 +27,7 @@ typedef struct CalendarioVeicolo *CalendarioVeicolo;
  * @post Se l'allocazione ha successo, viene restituito un puntatore a un nuovo calendario inizializzato
  * @post Se l'allocazione fallisce, il programma termina con errore
  * 
- * @sideeffect Alloca memoria per la struttura CalendarioVeicolo
+ * @note Side Effect: Alloca memoria per la struttura CalendarioVeicolo
  * 
  * @return CalendarioVeicolo Puntatore al nuovo calendario inizializzato
  */
@@ -45,8 +45,8 @@ CalendarioVeicolo inizializza_calendario(int id_veicolo);
  * @post Il calendario viene aggiornato con le prenotazioni attive
  * @post La disponibilità del veicolo viene aggiornata in base allo stato attuale
  * 
- * @sideeffect Modifica il contenuto del calendario
- * @sideeffect Libera la memoria del vecchio calendario
+ * @note Side Effect: Modifica il contenuto del calendario
+ * @note Side Effect: Libera la memoria del vecchio calendario
  * 
  * @return CalendarioVeicolo Puntatore al calendario aggiornato
  */
@@ -61,7 +61,7 @@ CalendarioVeicolo aggiorna_calendario(CalendarioVeicolo calendario, CodaPrenotaz
  * 
  * @post Il calendario viene stampato su stdout in formato tabellare
  * 
- * @sideeffect Scrive su stdout
+ * @note Side Effect: Scrive su stdout
  */
 void visualizza_calendario(CalendarioVeicolo calendario);
 

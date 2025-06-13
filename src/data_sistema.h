@@ -15,7 +15,7 @@ typedef struct DataSistema *DataSistema;
  * @post La data di sistema è inizializzata
  * @post Se l'allocazione fallisce, il programma termina
  * 
- * @sideeffect Alloca memoria per la struttura DataSistema
+ * @note Side Effect: Alloca memoria per la struttura DataSistema
  */
 void inizializza_data_sistema(void);
 
@@ -33,7 +33,7 @@ void inizializza_data_sistema(void);
  * @post Il tempo di sistema viene avanzato di 'ore' ore
  * @post Il giorno viene aggiornato se necessario (riporto dopo 24 ore)
  * 
- * @sideeffect Modifica la data di sistema
+ * @note Side Effect: Modifica la data di sistema
  */
 void avanza_tempo(int ore);
 
@@ -44,7 +44,7 @@ void avanza_tempo(int ore);
  * 
  * @post Restituisce il puntatore alla struttura DataSistema corrente
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return DataSistema Il puntatore alla data di sistema
  */
@@ -61,7 +61,7 @@ DataSistema ottieni_data_sistema(void);
  * 
  * @post Restituisce il timestamp corrispondente alla data
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il timestamp (giorno*24 + ora)
  */
@@ -78,7 +78,7 @@ int converti_data_in_timestamp(DataSistema data);
  * 
  * @post Restituisce una nuova struttura DataSistema con la data convertita
  * 
- * @sideeffect Alloca memoria per la nuova struttura DataSistema
+ * @note Side Effect: Alloca memoria per la nuova struttura DataSistema
  * 
  * @return DataSistema La data convertita
  */
@@ -97,7 +97,7 @@ DataSistema converti_timestamp_in_data(int timestamp);
  * @post Restituisce la priorità (0 per prenotazioni nel passato,
  *       valore crescente per prenotazioni future)
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int La priorità della prenotazione
  */
@@ -112,7 +112,7 @@ int calcola_priorita_temporale(int timestamp_prenotazione);
  * 
  * @post Restituisce il nome del giorno o "Giorno non valido"
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return const char* Il nome del giorno
  */
@@ -127,7 +127,7 @@ const char* ottieni_nome_giorno(int giorno);
  * 
  * @post Restituisce il giorno (0-6) o -1 se data è NULL
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il giorno della settimana
  */
@@ -142,7 +142,7 @@ int ottieni_giorno_sistema(DataSistema data);
  * 
  * @post Restituisce l'ora (0-23) o -1 se data è NULL
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int L'ora del giorno
  */
@@ -155,7 +155,7 @@ int ottieni_ora_sistema(DataSistema data);
  * 
  * @post Restituisce l'ora corrente (0-23)
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int L'ora corrente
  */
@@ -168,7 +168,7 @@ int ottieni_ora_corrente(void);
  * 
  * @post Restituisce il giorno corrente (0-6)
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il giorno corrente
  */
@@ -181,7 +181,7 @@ int ottieni_giorno_corrente(void);
  * 
  * @post Restituisce il timestamp corrente (giorno*24 + ora)
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il timestamp corrente
  */
@@ -195,7 +195,7 @@ int ottieni_timestamp_corrente(void);
  * @post La memoria viene liberata
  * @post Il puntatore alla data di sistema viene impostato a NULL
  * 
- * @sideeffect Libera la memoria allocata
+ * @note Side Effect: Libera la memoria allocata
  */
 void distruggi_data_sistema(void);
 

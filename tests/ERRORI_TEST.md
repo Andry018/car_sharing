@@ -286,6 +286,45 @@ Input: 6 argomenti
 - **Output Atteso**: "ERRORE_DATA_1" (Data inizio precedente a data sistema)
 - **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
 
+## TC11: Creazione Prenotazione con durata zero
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 2
+  ora_inizio: 15
+  giorno_fine: 2
+  ora_fine: 15
+  priorità: -1
+  posizione_riconsegna: 0
+- **Output Atteso**: "ERRORE_FASCIA_ORARIA" 
+- **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
+
+## TC12: Creazione Prenotazione con posizione riconsegna diversa
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 3
+  ora_inizio: 8
+  giorno_fine: 3
+  ora_fine: 10
+  priorità: -1
+  posizione_riconsegna: 2
+- **Output Atteso**: 18 1 2 80 82 0 72 2
+- **Verifica**: Il sistema deve creare correttamente la prenotazione, con la posizione di riconsegna nuova
+
+## TC13: Creazione Prenotazione con posizione riconsegna non esistente
+- **Input**: 
+  id_utente: 1
+  id_veicolo: 2
+  giorno_inizio: 3
+  ora_inizio: 8
+  giorno_fine: 3
+  ora_fine: 10
+  priorità: -1
+  posizione_riconsegna: 999
+- **Output Atteso**: ERRORE_POSIZIONE_RICONSEGNA
+- **Verifica**: Il sistema deve rifiutare la prenotazione e restituire un messaggio di errore appropriato
+
 ## TC14: Calcolo Costo Noleggio Valido Utilitaria (tipo: 0)
 - **Input**: 
   id_utente: 1

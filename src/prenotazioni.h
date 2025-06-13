@@ -23,7 +23,7 @@ typedef struct CodaPrenotazioni *CodaPrenotazioni;
  * 
  * @post Viene restituito un valore intero non negativo pari a giorno * 24 + ora
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il timestamp calcolato
  */
@@ -41,7 +41,7 @@ int converti_in_timestamp(int giorno, int ora);
  * 
  * @post Viene restituito un intero compreso tra 0 e 6, corrispondente al giorno della settimana
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il giorno della settimana (0-6)
  */
@@ -59,7 +59,7 @@ int estrai_giorno(int timestamp);
  * 
  * @post Viene restituito un intero compreso tra 0 e 23, calcolato come timestamp % 24
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int L'ora del giorno (0-23)
  */
@@ -75,7 +75,7 @@ int estrai_ora(int timestamp);
  * 
  * @post Restituisce il puntatore alla coda globale delle prenotazioni
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return CodaPrenotazioni Puntatore alla coda globale delle prenotazioni
  */
@@ -92,7 +92,7 @@ CodaPrenotazioni ottieni_coda_prenotazioni();
  * @post Se l'allocazione ha successo, viene restituito un puntatore a una nuova coda inizializzata
  * @post Se l'allocazione fallisce, viene restituito NULL
  * 
- * @sideeffect Alloca memoria per la struttura CodaPrenotazioni e per l'array heap
+ * @note Side Effect: Alloca memoria per la struttura CodaPrenotazioni e per l'array heap
  * 
  * @return CodaPrenotazioni Puntatore alla nuova coda inizializzata, o NULL in caso di errore
  */
@@ -120,7 +120,7 @@ CodaPrenotazioni inizializza_coda(void);
  * @post Se l'allocazione ha successo, viene restituito un puntatore a una nuova prenotazione inizializzata
  * @post Se l'allocazione fallisce, viene restituito NULL
  * 
- * @sideeffect Alloca memoria per la struttura Prenotazione
+ * @note Side Effect: Alloca memoria per la struttura Prenotazione
  * 
  * @return Prenotazione Puntatore alla nuova prenotazione creata, o NULL in caso di errore
  */
@@ -148,7 +148,7 @@ Prenotazione crea_prenotazione(int id_utente, int id_veicolo,
  *       - il timestamp calcolato per inizio è strettamente minore di quello di fine
  *       Viene restituito 0 in caso contrario
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int 1 se l'intervallo è valido, 0 altrimenti
  */
@@ -166,7 +166,7 @@ int verifica_fascia_oraria(int giorno_inizio, int ora_inizio, int giorno_fine, i
  * 
  * @post I contenuti delle strutture puntate da a e b risultano scambiati
  * 
- * @sideeffect Modifica i dati delle strutture puntate da a e b
+ * @note Side Effect: Modifica i dati delle strutture puntate da a e b
  */
 void scambia_prenotazioni(struct Prenotazione* a,struct Prenotazione *b);
 
@@ -185,7 +185,7 @@ void scambia_prenotazioni(struct Prenotazione* a,struct Prenotazione *b);
  * 
  * @post La proprietà di heap minima è ristabilita dalla posizione indice fino alla radice della coda
  * 
- * @sideeffect Modifica l'array heap della coda, scambiando elementi tramite la funzione scambia_prenotazioni
+ * @note Side Effect: Modifica l'array heap della coda, scambiando elementi tramite la funzione scambia_prenotazioni
  */
 void bubble_up(CodaPrenotazioni coda, int indice);
 
@@ -204,7 +204,7 @@ void bubble_up(CodaPrenotazioni coda, int indice);
  * 
  * @post La proprietà di heap minima è ristabilita dalla posizione indice fino alle foglie della coda
  * 
- * @sideeffect Modifica l'array heap della coda, scambiando elementi tramite la funzione scambia_prenotazioni
+ * @note Side Effect: Modifica l'array heap della coda, scambiando elementi tramite la funzione scambia_prenotazioni
  */
 void bubble_down(CodaPrenotazioni coda, int indice);
 
@@ -225,8 +225,8 @@ void bubble_down(CodaPrenotazioni coda, int indice);
  * @post Se l'array era pieno, viene riallocato con capacità raddoppiata
  * @post In caso di errore, la coda rimane invariata e viene restituito un codice di errore
  * 
- * @sideeffect Potenziale riallocazione dinamica dell'array heap della coda
- * @sideeffect Modifica dell'array heap con l'inserimento e la riorganizzazione della nuova prenotazione
+ * @note Side Effect: Potenziale riallocazione dinamica dell'array heap della coda
+ * @note Side Effect: Modifica dell'array heap con l'inserimento e la riorganizzazione della nuova prenotazione
  * 
  * @return int 0 se l'operazione è riuscita, -1 in caso di errore generico, -2 se la fascia oraria non è valida
  */
@@ -248,7 +248,7 @@ int aggiungi_prenotazione(CodaPrenotazioni coda, Prenotazione prenotazione);
  * @post Se la prenotazione viene trovata, viene rimossa dalla coda e la struttura heap viene riorganizzata
  * @post Se la prenotazione non viene trovata, la coda rimane invariata
  * 
- * @sideeffect Modifica la struttura della coda rimuovendo la prenotazione e riorganizzando l'heap
+ * @note Side Effect: Modifica la struttura della coda rimuovendo la prenotazione e riorganizzando l'heap
  * 
  * @return CodaPrenotazioni La coda modificata dopo la rimozione della prenotazione
  */
@@ -270,7 +270,7 @@ CodaPrenotazioni rimuovi_prenotazione(int id_prenotazione, CodaPrenotazioni coda
  * @post Se la prenotazione viene trovata, viene restituito un puntatore alla prenotazione
  * @post Se la prenotazione non viene trovata o la coda è NULL, viene restituito NULL
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return Prenotazione Puntatore alla prenotazione trovata, o NULL se non trovata
  */
@@ -295,7 +295,7 @@ Prenotazione cerca_prenotazione(CodaPrenotazioni coda, int id_prenotazione);
  * @post Se viene trovata una prenotazione attiva per il periodo specificato, viene restituito un puntatore ad essa
  * @post Se non viene trovata alcuna prenotazione attiva o la coda è NULL, viene restituito NULL
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return Prenotazione Puntatore alla prenotazione trovata, o NULL se non trovata
  */
@@ -320,7 +320,7 @@ Prenotazione cerca_prenotazione_per_orario(CodaPrenotazioni coda, int giorno, in
  * @post Se la prenotazione viene completata, la posizione del veicolo viene aggiornata
  * @post Se la prenotazione non viene trovata, la funzione restituisce -1
  * 
- * @sideeffect Modifica lo stato della prenotazione e, se completata, la posizione del veicolo associato
+ * @note Side Effect: Modifica lo stato della prenotazione e, se completata, la posizione del veicolo associato
  * 
  * @return int 0 se l'operazione è riuscita, -1 se la prenotazione non è stata trovata
  */
@@ -338,7 +338,7 @@ int modifica_stato_prenotazione(CodaPrenotazioni coda, int id_prenotazione, int 
  * 
  * @post Le informazioni della prenotazione vengono stampate su stdout
  * 
- * @sideeffect Scrive su stdout
+ * @note Side Effect: Scrive su stdout
  */
 void stampa_prenotazione(Prenotazione prenotazione);
 
@@ -356,7 +356,7 @@ void stampa_prenotazione(Prenotazione prenotazione);
  * @post Tutte le prenotazioni vengono salvate su file
  * @post Se il file esiste già, viene sovrascritto
  * 
- * @sideeffect Crea o sovrascrive un file sul filesystem
+ * @note Side Effect: Crea o sovrascrive un file sul filesystem
  */
 void salva_prenotazioni_su_file(CodaPrenotazioni coda);
 
@@ -376,9 +376,9 @@ void salva_prenotazioni_su_file(CodaPrenotazioni coda);
  * @post Le prenotazioni lette correttamente vengono aggiunte alla coda
  * @post Il valore della variabile globale id_counter viene aggiornato se vengono trovati id_prenotazione maggiori di quello attuale
  * 
- * @sideeffect Lettura da file "data/prenotazioni.txt"
- * @sideeffect Modifica del contenuto della struttura coda
- * @sideeffect Possibile modifica della variabile globale id_counter
+ * @note Side Effect: Lettura da file "data/prenotazioni.txt"
+ * @note Side Effect: Modifica del contenuto della struttura coda
+ * @note Side Effect: Possibile modifica della variabile globale id_counter
  * 
  * @return int 0 se il caricamento è avvenuto con successo, -1 in caso di errore
  */
@@ -396,9 +396,9 @@ int carica_prenotazioni_da_file(CodaPrenotazioni coda);
  * @post Se la coda esiste già, viene svuotata tramite pulisci_coda
  * @post Le prenotazioni salvate precedentemente su file vengono caricate nella coda
  * 
- * @sideeffect Possibile stampa su standard output
- * @sideeffect Modifica della variabile globale coda_globale, che può essere allocata o svuotata
- * @sideeffect Lettura da file di prenotazioni
+ * @note Side Effect: Possibile stampa su standard output
+ * @note Side Effect: Modifica della variabile globale coda_globale, che può essere allocata o svuotata
+ * @note Side Effect: Lettura da file di prenotazioni
  */
 void carica_prenotazioni();
 
@@ -416,7 +416,7 @@ void carica_prenotazioni();
  * @post La coda indicata avrà dimensione pari a 0
  * @post Le prenotazioni precedentemente contenute non sono più considerate valide dalla coda
  * 
- * @sideeffect Modifica dello stato interno della struttura coda, in particolare del campo dimensione
+ * @note Side Effect: Modifica dello stato interno della struttura coda, in particolare del campo dimensione
  */
 void pulisci_coda(CodaPrenotazioni coda);
 
@@ -433,7 +433,7 @@ void pulisci_coda(CodaPrenotazioni coda);
  * 
  * @post Tutta la memoria associata alla coda viene liberata
  * 
- * @sideeffect Deallocazione della memoria associata alla struttura CodaPrenotazioni e al suo campo heap
+ * @note Side Effect: Deallocazione della memoria associata alla struttura CodaPrenotazioni e al suo campo heap
  */
 void distruggi_coda(CodaPrenotazioni coda);
 
@@ -452,7 +452,7 @@ void distruggi_coda(CodaPrenotazioni coda);
  *       coerentemente alla data di sistema
  * @post L'heap rispetterà nuovamente la struttura di max-heap (o min-heap, a seconda della definizione nel progetto)
  * 
- * @sideeffect Modifica il contenuto della struttura coda, aggiornando i campi priorita delle prenotazioni
+ * @note Side Effect: Modifica il contenuto della struttura coda, aggiornando i campi priorita delle prenotazioni
  *             e riorganizzando la struttura heap
  */
 void aggiorna_priorita_prenotazioni(CodaPrenotazioni coda);
@@ -472,7 +472,7 @@ void aggiorna_priorita_prenotazioni(CodaPrenotazioni coda);
  * @post Ogni prenotazione scaduta nella coda, cioè con giorno_ora_fine < timestamp_corrente e stato diverso 
  *       da COMPLETATA o CANCELLATA, verrà modificata ponendo stato = COMPLETATA.
  * 
- * @sideeffect Modifica il campo stato di alcune prenotazioni presenti nella struttura heap di coda.
+ * @note Side Effect: Modifica il campo stato di alcune prenotazioni presenti nella struttura heap di coda.
  */
 void rimuovi_prenotazioni_scadute(CodaPrenotazioni coda);
 
@@ -492,7 +492,7 @@ void rimuovi_prenotazioni_scadute(CodaPrenotazioni coda);
  *       -2: data di fine precedente o uguale alla data di inizio
  *       0: data valida
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Codice di validità dell'intervallo (-1, -2, o 0)
  */
@@ -518,7 +518,7 @@ int valida_data_prenotazione(int giorno_ora_inizio, int giorno_ora_fine);
  *       1 se esiste una sovrapposizione con una prenotazione attiva dello stesso veicolo
  *       0 altrimenti
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Codice indicante la presenza di sovrapposizioni (-1, 0, o 1)
  */
@@ -539,7 +539,7 @@ int verifica_sovrapposizioni(CodaPrenotazioni coda, int id_veicolo, int giorno_o
  * @post Se la coda è nulla, viene restituito 0
  * @post Altrimenti, viene restituito il numero di prenotazioni completate dall'utente specificato
  * 
- * @sideeffect Nessuno. La coda non viene modificata
+ * @note Side Effect: Nessuno. La coda non viene modificata
  * 
  * @return int Numero di prenotazioni completate dall'utente
  */
@@ -555,7 +555,7 @@ int conta_prenotazioni_completate(CodaPrenotazioni coda, int id_utente);
  * @post Se p è valido, restituisce p->id_prenotazione
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int ID della prenotazione o -1 se p è NULL
  */
@@ -571,7 +571,7 @@ int ottieni_id_prenotazione(Prenotazione p);
  * @post Se p è valido, restituisce p->id_utente
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int ID dell'utente o -1 se p è NULL
  */
@@ -587,7 +587,7 @@ int ottieni_id_utente_prenotazione(Prenotazione p);
  * @post Se p è valido, restituisce p->id_veicolo
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int ID del veicolo o -1 se p è NULL
  */
@@ -603,7 +603,7 @@ int ottieni_id_veicolo_prenotazione(Prenotazione p);
  * @post Se p è valido, restituisce p->giorno_ora_inizio
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Timestamp di inizio prenotazione o -1 se p è NULL
  */
@@ -619,7 +619,7 @@ int ottieni_giorno_ora_inizio(Prenotazione p);
  * @post Se p è valido, restituisce p->giorno_ora_fine
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Timestamp di fine prenotazione o -1 se p è NULL
  */
@@ -635,7 +635,7 @@ int ottieni_giorno_ora_fine(Prenotazione p);
  * @post Se p è valido, restituisce p->stato
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Stato della prenotazione o -1 se p è NULL
  */
@@ -651,7 +651,7 @@ int ottieni_stato_prenotazione(Prenotazione p);
  * @post Se p è valido, restituisce p->priorita
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Priorità della prenotazione o -1 se p è NULL
  */
@@ -667,7 +667,7 @@ int ottieni_priorita(Prenotazione p);
  * @post Se p è valido, restituisce estrai_giorno(p->giorno_ora_inizio)
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Giorno di inizio prenotazione o -1 se p è NULL
  */
@@ -683,7 +683,7 @@ int ottieni_giorno_inizio(Prenotazione p);
  * @post Se p è valido, restituisce estrai_ora(p->giorno_ora_inizio)
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Ora di inizio prenotazione o -1 se p è NULL
  */
@@ -699,7 +699,7 @@ int ottieni_ora_inizio(Prenotazione p);
  * @post Se p è valido, restituisce estrai_giorno(p->giorno_ora_fine)
  * @post Se p è NULL, restituisce -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Giorno di fine prenotazione o -1 se p è NULL
  */
@@ -715,7 +715,7 @@ int ottieni_giorno_fine(Prenotazione p);
  * @post Se p è valido, viene restituito estrai_ora(p->giorno_ora_fine)
  * @post Se p è NULL, viene restituito -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int L'ora di fine (0-23) o -1 se p è NULL
  */
@@ -733,7 +733,7 @@ int ottieni_posizione_riconsegna(Prenotazione p);
  * @post Se coda è valido, viene restituito coda->heap
  * @post Se coda è NULL, viene restituito NULL
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return Prenotazione Puntatore all'array heap o NULL se coda è NULL
  */
@@ -749,7 +749,7 @@ Prenotazione ottieni_heap_coda(CodaPrenotazioni coda);
  * @post Se coda è valido, viene restituito coda->capacita
  * @post Se coda è NULL, viene restituito -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int La capacità massima della coda o -1 se coda è NULL
  */
@@ -765,7 +765,7 @@ int ottieni_capacita_coda(CodaPrenotazioni coda);
  * @post Se coda è valido, viene restituito coda->dimensione
  * @post Se coda è NULL, viene restituito -1
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il numero di prenotazioni nella coda o -1 se coda è NULL
  */
@@ -782,7 +782,7 @@ int ottieni_dimensione_coda(CodaPrenotazioni coda);
  * @post Se p è valido, p->id_prenotazione = id_prenotazione
  * @post Se p è NULL, non viene effettuata alcuna modifica
  * 
- * @sideeffect Modifica diretta del campo id_prenotazione della struttura p
+ * @note Side Effect: Modifica diretta del campo id_prenotazione della struttura p
  */
 void imposta_id_prenotazione(int id_prenotazione, Prenotazione p);
 
@@ -797,7 +797,7 @@ void imposta_id_prenotazione(int id_prenotazione, Prenotazione p);
  * @post Se p è valido, p->id_utente = id_utente
  * @post Se p è NULL, non viene effettuata alcuna modifica
  * 
- * @sideeffect Modifica diretta del campo id_utente nella struttura p
+ * @note Side Effect: Modifica diretta del campo id_utente nella struttura p
  */
 void imposta_id_utente_prenotazione(int id_utente, Prenotazione p);
 
@@ -812,7 +812,7 @@ void imposta_id_utente_prenotazione(int id_utente, Prenotazione p);
  * @post Se p è valido, p->id_veicolo = id_veicolo
  * @post Se p è NULL, non viene effettuata alcuna modifica
  * 
- * @sideeffect Modifica diretta del campo id_veicolo nella struttura p
+ * @note Side Effect: Modifica diretta del campo id_veicolo nella struttura p
  */
 void imposta_id_veicolo_prenotazione(int id_veicolo, Prenotazione p);
 
@@ -827,7 +827,7 @@ void imposta_id_veicolo_prenotazione(int id_veicolo, Prenotazione p);
  * @post Se p è valido, p->giorno_ora_inizio = giorno_ora_inizio
  * @post Se p è NULL, non viene effettuata alcuna modifica
  * 
- * @sideeffect Modifica diretta del campo giorno_ora_inizio nella struttura p
+ * @note Side Effect: Modifica diretta del campo giorno_ora_inizio nella struttura p
  */
 void imposta_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione p);
 
@@ -842,7 +842,7 @@ void imposta_giorno_ora_inizio(int giorno_ora_inizio, Prenotazione p);
  * @post Se p è valido, p->giorno_ora_fine = giorno_ora_fine
  * @post Se p è NULL, non viene effettuata alcuna modifica
  * 
- * @sideeffect Modifica diretta del campo giorno_ora_fine nella struttura p
+ * @note Side Effect: Modifica diretta del campo giorno_ora_fine nella struttura p
  */
 void imposta_giorno_ora_fine(int giorno_ora_fine, Prenotazione p);
 
@@ -857,7 +857,7 @@ void imposta_giorno_ora_fine(int giorno_ora_fine, Prenotazione p);
  * @post Se p è valido, p->stato = stato
  * @post Se p è NULL, non viene effettuata alcuna modifica
  * 
- * @sideeffect Modifica diretta del campo stato nella struttura p
+ * @note Side Effect: Modifica diretta del campo stato nella struttura p
  */
 void imposta_stato_prenotazione(int stato, Prenotazione p);
 
@@ -872,7 +872,7 @@ void imposta_stato_prenotazione(int stato, Prenotazione p);
  * @post Se p è valido, p->priorita = priorita
  * @post Se p è NULL, non viene effettuata alcuna modifica
  * 
- * @sideeffect Modifica diretta del campo priorita nella struttura p
+ * @note Side Effect: Modifica diretta del campo priorita nella struttura p
  */
 void imposta_priorita(int priorita, Prenotazione p);
 
@@ -893,7 +893,7 @@ void imposta_priorita(int priorita, Prenotazione p);
  * 
  * @post Viene restituito il numero di prenotazioni completate dall'utente con ID minore di id_prenotazione_corrente
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Numero di prenotazioni completate dall'utente prima della prenotazione specificata
  */
@@ -914,7 +914,7 @@ int conta_prenotazioni_completate_prima_di(CodaPrenotazioni coda, int id_utente,
  * @post Se i parametri sono validi, viene restituito il puntatore alla prenotazione richiesta
  * @post Se i parametri non sono validi, viene restituito NULL
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return Prenotazione Puntatore alla prenotazione richiesta o NULL se i parametri non sono validi
  */
@@ -935,7 +935,7 @@ Prenotazione ottieni_prenotazione_in_coda(CodaPrenotazioni coda, int i);
  * @post Tutte le prenotazioni dell'utente specificato vengono rimosse dalla coda
  * @post La struttura dell'heap viene mantenuta valida dopo ogni rimozione
  * 
- * @sideeffect Modifica la struttura della coda rimuovendo le prenotazioni dell'utente
+ * @note Side Effect: Modifica la struttura della coda rimuovendo le prenotazioni dell'utente
  */
 void rimuovi_prenotazioni_utente(CodaPrenotazioni coda, int id_utente);
 

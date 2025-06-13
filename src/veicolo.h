@@ -21,7 +21,7 @@ typedef struct nodo* list;
  * @post La funzione restituisce un riferimento alla lista dei veicoli attualmente memorizzata nel sistema
  * @post Nessuna modifica viene effettuata su listaVeicoli o su altri dati del programma
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @note Questa funzione è di sola lettura e non modifica lo stato del sistema
  */
@@ -39,7 +39,7 @@ list ottieni_lista_veicoli(void);
  * @post La variabile listaVeicoli assume il valore nuovaLista
  * @post Eventuali riferimenti precedenti a listaVeicoli non sono più validi, a meno che non siano stati gestiti
  * 
- * @sideeffect Modifica lo stato globale: aggiorna la variabile listaVeicoli
+ * @note Side Effect: Modifica lo stato globale: aggiorna la variabile listaVeicoli
  */
 void imposta_lista_veicoli(list nuovaLista);
 
@@ -52,7 +52,7 @@ void imposta_lista_veicoli(list nuovaLista);
  * 
  * @post I dati contenuti in listaVeicoli vengono scritti su un file, in un formato stabilito da salva_veicolo_file
  * 
- * @sideeffect Scrittura su file tramite salva_veicolo_file
+ * @note Side Effect: Scrittura su file tramite salva_veicolo_file
  */
 void salva_lista_veicoli(void);
 
@@ -72,8 +72,8 @@ void salva_lista_veicoli(void);
  * @post La variabile globale listaVeicoli punta a una nuova lista allocata dinamicamente e popolata con i dati letti dal file
  * @post La lista precedente viene eventualmente persa se non gestita
  * 
- * @sideeffect Lettura da file tramite carica_veicolo_file
- * @sideeffect Modifica della variabile listaVeicoli
+ * @note Side Effect: Lettura da file tramite carica_veicolo_file
+ * @note Side Effect: Modifica della variabile listaVeicoli
  */
 void carica_lista_veicoli(void);
 
@@ -91,9 +91,9 @@ void carica_lista_veicoli(void);
  * @post Tutta la memoria dinamica associata a listaVeicoli viene liberata
  * @post La variabile listaVeicoli risulta vuota, ovvero NULL
  * 
- * @sideeffect Deallocazione della memoria dinamica associata alla lista
- * @sideeffect Modifica della variabile globale listaVeicoli
- * @sideeffect Dopo la chiamata, ogni puntatore precedentemente ottenuto da listaVeicoli sarà dangling (non più valido)
+ * @note Side Effect: Deallocazione della memoria dinamica associata alla lista
+ * @note Side Effect: Modifica della variabile globale listaVeicoli
+ * @note Side Effect: Dopo la chiamata, ogni puntatore precedentemente ottenuto da listaVeicoli sarà dangling (non più valido)
  */
 void pulisci_lista_veicoli(void);
 
@@ -118,7 +118,7 @@ void pulisci_lista_veicoli(void);
  * @post L'ID del veicolo è univoco e crescente
  * @post Il veicolo ha tipo, modello, targa e posizione correttamente assegnati
  * 
- * @sideeffect Modifica di una variabile static int id interna, che mantiene stato tra chiamate successive
+ * @note Side Effect: Modifica di una variabile static int id interna, che mantiene stato tra chiamate successive
  * 
  * @return Veicolo Il nuovo veicolo creato
  */
@@ -145,7 +145,7 @@ Veicolo crea_veicolo(void);
  * @post Restituisce un nuovo puntatore alla lista, con il nuovo nodo in testa
  * @post Se malloc fallisce, la lista originale viene restituita invariata
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return list La nuova lista con il veicolo aggiunto
  */
@@ -173,7 +173,7 @@ list aggiungi_veicolo(list l);
  * @post Se non esiste, la lista resta invariata e viene mostrato un messaggio di errore
  * @post La lista restituita è valida e coerente
  * 
- * @sideeffect Libera memoria con free() se trova l'elemento
+ * @note Side Effect: Libera memoria con free() se trova l'elemento
  * 
  * @return list La nuova lista con il veicolo rimosso
  */
@@ -203,7 +203,7 @@ list rimuovi_veicolo(list l, int id);
  * @post Le informazioni del veicolo sono stampate a schermo in formato leggibile e con evidenziazione a colorei
  * @post Lo stato del programma non viene modificato
  * 
- * @sideeffect Output su console
+ * @note Side Effect: Output su console
  */
 void stampa_veicolo(Veicolo v);
 
@@ -225,9 +225,9 @@ void stampa_veicolo(Veicolo v);
  * @post Il file è chiuso correttamente al termine
  * @post Un messaggio di conferma viene stampato su console in caso di successo
  * 
- * @sideeffect Scrittura su file: data/veicoli.txt
- * @sideeffect Apertura e chiusura file
- * @sideeffect Output su console con printf
+ * @note Side Effect: Scrittura su file: data/veicoli.txt
+ * @note Side Effect: Apertura e chiusura file
+ * @note Side Effect: Output su console con printf
  */
 void salva_veicolo_file(list l);
 
@@ -250,8 +250,8 @@ void salva_veicolo_file(list l);
  * @post I nuovi elementi vengono aggiunti in testa alla lista l
  * @post La lista risultante viene restituita
  * 
- * @sideeffect Lettura da file: data/veicoli.txt
- * @sideeffect Allocazione dinamica per ogni nodo veicolo (malloc)
+ * @note Side Effect: Lettura da file: data/veicoli.txt
+ * @note Side Effect: Allocazione dinamica per ogni nodo veicolo (malloc)
  * 
  * @return list La lista con i veicoli caricati dal file
  */
@@ -271,7 +271,7 @@ list carica_veicolo_file(list l);
  * @post Restituisce l'id massimo tra quelli trovati nel file
  * @post Se il file non esiste, viene restituito 0
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int L'ultimo ID utilizzato o 0 se il file non esiste
  */
@@ -287,7 +287,7 @@ int carica_ultimo_id(void);
  * 
  * @post id = v->id
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int L'ID del veicolo
  */
@@ -305,7 +305,7 @@ int ottieni_id_veicolo(Veicolo v);
  * 
  * @post tipo = v->tipo
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il tipo del veicolo
  */
@@ -323,7 +323,7 @@ int ottieni_tipo_veicolo(Veicolo v);
  * 
  * @post modello = v->modello
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return const char* Il modello del veicolo
  */
@@ -341,7 +341,7 @@ const char* ottieni_modello_veicolo(Veicolo v);
  * 
  * @post targa = v->targa
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return const char* La targa del veicolo
  */
@@ -359,7 +359,7 @@ const char* ottieni_targa_veicolo(Veicolo v);
  * 
  * @post posizione = v->posizione
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int La posizione del veicolo
  */
@@ -377,7 +377,7 @@ int ottieni_posizione_veicolo(Veicolo v);
  * 
  * @post disponibilita = v->disponibilita
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int La disponibilità del veicolo (1 = disponibile, 0 = non disponibile)
  */
@@ -397,7 +397,7 @@ int ottieni_disponibilita_veicolo(Veicolo v);
  * 
  * @post v->id = id
  * 
- * @sideeffect Modifica diretta del campo id nella struttura
+ * @note Side Effect: Modifica diretta del campo id nella struttura
  */
 void imposta_id_veicolo(Veicolo v, int id);
 
@@ -415,7 +415,7 @@ void imposta_id_veicolo(Veicolo v, int id);
  * 
  * @post v->tipo = tipo
  * 
- * @sideeffect Modifica diretta del campo tipo nella struttura
+ * @note Side Effect: Modifica diretta del campo tipo nella struttura
  */
 void imposta_tipo_veicolo(Veicolo v, int tipo);
 
@@ -434,7 +434,7 @@ void imposta_tipo_veicolo(Veicolo v, int tipo);
  * @post Il campo v->modello conterrà una copia sicura di modello, troncata se necessario
  *       alla dimensione massima consentita
  * 
- * @sideeffect Scrive su v->modello
+ * @note Side Effect: Scrive su v->modello
  */
 void imposta_modello_veicolo(Veicolo v, const char* modello);
 
@@ -452,7 +452,7 @@ void imposta_modello_veicolo(Veicolo v, const char* modello);
  * 
  * @post Il campo v->targa conterrà una copia sicura di targa, troncata se necessario
  * 
- * @sideeffect Scrive su v->targa
+ * @note Side Effect: Scrive su v->targa
  */
 void imposta_targa_veicolo(Veicolo v, const char* targa);
 
@@ -470,7 +470,7 @@ void imposta_targa_veicolo(Veicolo v, const char* targa);
  * 
  * @post Il campo v->posizione conterrà una copia sicura di posizione, troncata se necessario
  * 
- * @sideeffect Scrive su v->posizione
+ * @note Side Effect: Scrive su v->posizione
  */
 void imposta_posizione_veicolo(Veicolo v, int posizione);
 
@@ -488,7 +488,7 @@ void imposta_posizione_veicolo(Veicolo v, int posizione);
  * 
  * @post v->disponibilita = disponibilita
  * 
- * @sideeffect Modifica il campo disponibilita della struttura
+ * @note Side Effect: Modifica il campo disponibilita della struttura
  */
 void imposta_disponibilita_veicolo(Veicolo v, int disponibilita);
 
@@ -508,7 +508,7 @@ void imposta_disponibilita_veicolo(Veicolo v, int disponibilita);
  * @post Se esiste un nodo nella lista con v->id == id, viene restituito quel Veicolo
  * @post Altrimenti, viene restituito NULL
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return Veicolo Il veicolo trovato o NULL se non esiste
  */
@@ -531,8 +531,8 @@ Veicolo cerca_veicolo(list l, int id);
  * @post Se il veicolo con id è presente nella lista, i suoi campi vengono aggiornati con i nuovi valori
  * @post Se il veicolo non esiste, stampa un messaggio di errore e non modifica nulla
  * 
- * @sideeffect Modifica i dati di un veicolo nella lista
- * @sideeffect Stampa messaggi e legge input da console
+ * @note Side Effect: Modifica i dati di un veicolo nella lista
+ * @note Side Effect: Stampa messaggi e legge input da console
  */
 void modifica_veicolo(list l, int id);
 
@@ -550,7 +550,7 @@ void modifica_veicolo(list l, int id);
  * @post Se la lista è vuota, stampa un messaggio corrispondente
  * @post Se contiene elementi, stampa ciascun veicolo con stampa_veicolo
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_lista_veicoli(list l);
 
@@ -568,7 +568,7 @@ void stampa_lista_veicoli(list l);
  * @post Se ci sono veicoli disponibili, li stampa
  * @post Se nessun veicolo è disponibile, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_disponibili(list l);
 
@@ -586,7 +586,7 @@ void stampa_veicoli_disponibili(list l);
  * @post Se ci sono veicoli non disponibili, li stampa tramite stampa_veicolo
  * @post Se tutti i veicoli sono disponibili, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_non_disponibili(list l);
 
@@ -606,7 +606,7 @@ void stampa_veicoli_non_disponibili(list l);
  * @post Se ci sono veicoli con v->tipo == tipo, vengono stampati
  * @post Se non ci sono veicoli del tipo richiesto, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_tipo(list l, int tipo);
 
@@ -626,7 +626,7 @@ void stampa_veicoli_per_tipo(list l, int tipo);
  * @post Se ci sono veicoli con v->posizione == posizione, vengono stampati
  * @post Se non ci sono veicoli in quella posizione, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_posizione(list l, int posizione);
 
@@ -646,7 +646,7 @@ void stampa_veicoli_per_posizione(list l, int posizione);
  * @post Se ci sono veicoli con strcmp(v->modello, modello) == 0, li stampa
  * @post Se non ci sono corrispondenze, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_modello(list l, const char* modello);
 
@@ -666,7 +666,7 @@ void stampa_veicoli_per_modello(list l, const char* modello);
  * @post Se ci sono veicoli con strcmp(v->targa, targa) == 0, li stampa
  * @post Se non ci sono corrispondenze, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_targa(list l, const char* targa);
 
@@ -685,7 +685,7 @@ void stampa_veicoli_per_targa(list l, const char* targa);
  * @post Se c'è un veicolo con v->id == id, lo stampa
  * @post Se non ci sono veicoli con quell'id, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_id(list l, int id);
 
@@ -708,7 +708,7 @@ void stampa_veicoli_per_id(list l, int id);
  * @post Se ci sono veicoli con v->tipo == tipo e v->posizione == posizione, li stampa
  * @post Se non ci sono corrispondenze, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione);
 
@@ -731,7 +731,7 @@ void stampa_veicoli_per_tipo_e_posizione(list l, int tipo, int posizione);
  * @post Se esistono veicoli con v->tipo == tipo e v->disponibilita == disponibile, li stampa
  * @post Altrimenti, stampa che non esistono veicoli di quel tipo con la disponibilità richiesta
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile);
 
@@ -754,7 +754,7 @@ void stampa_veicoli_per_tipo_e_disponibilita(list l, int tipo, bool disponibile)
  * @post Se esistono veicoli con v->posizione == posizione e v->disponibilita == disponibile, li stampa
  * @post Se non ci sono veicoli corrispondenti, stampa un messaggio
  * 
- * @sideeffect Output su standard output (console)
+ * @note Side Effect: Output su standard output (console)
  */
 void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool disponibile);
 
@@ -781,8 +781,8 @@ void stampa_veicoli_per_posizione_e_disponibilita(list l, int posizione, bool di
  * @post Se ci sono veicoli che soddisfano tutte e tre le condizioni, li stampa
  * @post Se nessun veicolo soddisfa tutte le condizioni, stampa un messaggio specifico
  * 
- * @sideeffect Output su standard output (console)
- * @sideeffect Messaggi dinamici che indicano il tipo, la posizione e la disponibilità selezionata
+ * @note Side Effect: Output su standard output (console)
+ * @note Side Effect: Messaggi dinamici che indicano il tipo, la posizione e la disponibilità selezionata
  */
 void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int posizione, bool disponibile);
 
@@ -805,7 +805,7 @@ void stampa_veicoli_per_tipo_posizione_e_disponibilita(list l, int tipo, int pos
  * @post Restituisce un puntatore a una stringa costante che rappresenta il tipo del veicolo
  * @post Non alloca memoria dinamica
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return const char* Il nome del tipo di veicolo
  */
@@ -830,7 +830,7 @@ const char* ottieni_nome_tipo_veicolo(int tipo);
  * @post Restituisce un puntatore a una stringa costante che rappresenta la posizione del veicolo
  * @post Non alloca memoria dinamica
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return const char* Il nome della posizione del veicolo
  */

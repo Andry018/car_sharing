@@ -16,9 +16,11 @@
 #define NOLEGGI_PER_SCONTO 10  // Numero di noleggi necessari per lo sconto fedeltà
 #define ORE_PER_PACCHETTO 5  // Numero di ore dopo le quali si ottiene un'ora gratuita
 
-
-
-// Funzione per ottenere la tariffa oraria in base al tipo di veicolo
+/**
+ * @brief Ottiene la tariffa oraria base per un tipo di veicolo.
+ * @param tipo Il tipo di veicolo (0=Utilitaria, 1=SUV, 2=Sportiva, 3=Moto)
+ * @return La tariffa oraria in euro per il tipo di veicolo, 0.0 se tipo non valido.
+ */
 double ottieni_tariffa_oraria(int tipo) {
     switch (tipo) {
         case 0:
@@ -34,9 +36,13 @@ double ottieni_tariffa_oraria(int tipo) {
     }
 }
 
-
-
-// Funzione per applicare lo sconto fedeltà
+/**
+ * @brief Applica lo sconto fedeltà a una tariffa.
+ * Applica uno sconto del 10% se l'utente ha completato 10 noleggi.
+ * @param tariffa_base La tariffa base a cui applicare lo sconto.
+ * @param noleggi_completati Il numero di noleggi completati dall'utente.
+ * @return La tariffa con lo sconto applicato se applicabile.
+ */
 double applica_sconto_fedelta(double tariffa_base, int noleggi_completati) {
     if (noleggi_completati == NOLEGGI_PER_SCONTO) {
         return tariffa_base * (1.0 - SCONTO_FEDELTA);
@@ -45,26 +51,54 @@ double applica_sconto_fedelta(double tariffa_base, int noleggi_completati) {
     }
 }
 
-// Funzione per calcolare il numero di ore gratuite
+/**
+ * @brief Calcola il numero di ore gratuite per un pacchetto.
+ * Calcola quante ore gratuite spettano in base al numero totale di ore noleggiate.
+ * @param ore_totali Il numero totale di ore di noleggio.
+ * @return Il numero di ore gratuite (1 ogni 5 ore).
+ */
 int calcola_ore_gratuite(int ore_totali) {
     return ore_totali / (ORE_PER_PACCHETTO + 1); // Una ora gratis ogni 5 ore
 }
 
-// Funzione per applicare lo sconto pacchetto ore
+/**
+ * @brief Applica lo sconto pacchetto ore a una tariffa.
+ * Applica lo sconto "1 ora gratis ogni 5 ore" alla tariffa base.
+ * @param tariffa_base La tariffa oraria base.
+ * @param ore_totali Il numero totale di ore di noleggio.
+ * @return La tariffa con lo sconto pacchetto ore applicato.
+ */
 double applica_sconto_pacchetto_ore(double tariffa_base, int ore_totali) {
     int ore_gratuite = calcola_ore_gratuite(ore_totali);
     int ore_da_pagare = ore_totali - ore_gratuite;
     return tariffa_base * ore_da_pagare;
 }
 
-// Funzione per calcolare la tariffa totale dato il tipo di veicolo e le ore totali
+/**
+ * @brief Calcola la tariffa totale per un noleggio.
+ * Calcola la tariffa totale in base al tipo di veicolo e al numero di ore di noleggio,
+ * applicando gli sconti per pacchetti orari (1 ora gratis ogni 5 ore).
+ * @param tipo Il tipo di veicolo (0=Utilitaria, 1=SUV, 2=Sportiva, 3=Moto)
+ * @param ore_totali Il numero totale di ore di noleggio
+ * @return La tariffa totale in euro
+ */
 double calcola_tariffa(int tipo, int ore_totali) {
     double tariffa_oraria = ottieni_tariffa_oraria(tipo);
     // Applica lo sconto pacchetto ore (1 ora gratis ogni 5 ore)
     return applica_sconto_pacchetto_ore(tariffa_oraria, ore_totali);
 }
 
-// Funzione per calcolare la tariffa di una prenotazione
+/**
+ * @brief Calcola la tariffa per una prenotazione specifica.
+ * Calcola la tariffa totale per una prenotazione considerando il tipo di veicolo
+ * e l'intervallo di tempo tra inizio e fine prenotazione.
+ * @param coda La coda delle prenotazioni.
+ * @param tipo Il tipo di veicolo (0=Utilitaria, 1=SUV, 2=Sportiva, 3=Moto)
+ * @param giorno_ora_inizio L'ora di inizio prenotazione (formato: giorno*100 + ora)
+ * @param giorno_ora_fine L'ora di fine prenotazione (formato: giorno*100 + ora)
+ * @param id_utente ID dell'utente che effettua la prenotazione.
+ * @return La tariffa totale in euro.
+ */
 double calcola_tariffa_prenotazione(CodaPrenotazioni coda, int tipo, int giorno_ora_inizio, int giorno_ora_fine, int id_utente) {
     // Estrai il giorno e l'ora dall'intero che li rappresenta
     int giorno_inizio = estrai_giorno(giorno_ora_inizio);
@@ -99,7 +133,12 @@ double calcola_tariffa_prenotazione(CodaPrenotazioni coda, int tipo, int giorno_
     return tariffa_finale;
 }
 
-// Funzione per stampare le informazioni sugli sconti disponibili
+/**
+ * @brief Stampa le informazioni sugli sconti disponibili.
+ * Stampa a video le informazioni dettagliate sugli sconti disponibili:
+ * - Sconto fedeltà (10% dopo 10 noleggi)
+ * - Pacchetti orari (1 ora gratis ogni 5 ore)
+ */
 void stampa_info_sconti(void) {
     printf("\nSconti disponibili:\n");
     printf("1. Sconto fedelta':\n");

@@ -17,7 +17,7 @@
  * 
  * @post Restituisce la tariffa totale calcolata in euro
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return double La tariffa totale in euro
  */
@@ -39,7 +39,7 @@ double calcola_tariffa(int tipo, int ore_totali);
  * 
  * @post Restituisce la tariffa totale calcolata in euro
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return double La tariffa totale in euro
  */
@@ -56,7 +56,7 @@ double calcola_tariffa_prenotazione(CodaPrenotazioni coda, int tipo, int giorno_
  * 
  * @post Restituisce la tariffa oraria in euro per il tipo di veicolo
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return double La tariffa oraria in euro
  */
@@ -75,7 +75,7 @@ double ottieni_tariffa_oraria(int tipo);
  * 
  * @post Restituisce la tariffa con lo sconto applicato se applicabile
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return double La tariffa con lo sconto applicato
  */
@@ -94,7 +94,7 @@ double applica_sconto_fedelta(double tariffa_base, int noleggi_completati);
  * 
  * @post Restituisce la tariffa con lo sconto pacchetto ore applicato
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return double La tariffa con lo sconto applicato
  */
@@ -111,7 +111,7 @@ double applica_sconto_pacchetto_ore(double tariffa_base, int ore_totali);
  * 
  * @post Restituisce il numero di ore gratuite (1 ogni 5 ore)
  * 
- * @sideeffect Nessuno
+ * @note Side Effect: Nessuno
  * 
  * @return int Il numero di ore gratuite
  */
@@ -128,7 +128,7 @@ int calcola_ore_gratuite(int ore_totali);
  * 
  * @post Le informazioni sugli sconti vengono stampate su stdout
  * 
- * @sideeffect Output su console
+ * @note Side Effect: Output su console
  */
 void stampa_info_sconti(void);
 
