@@ -306,7 +306,6 @@ void prenota_auto(Utente utente_corrente) {
         printf("1. Nuova prenotazione\n");
         printf("2. Visualizza prenotazioni\n");
         printf("3. Cancella prenotazione\n");
-        //printf("4. Modifica stato prenotazione\n");
         
         stampa_separatore();
         
@@ -752,6 +751,7 @@ void prenota_auto(Utente utente_corrente) {
             }
             case 2: {
                 printf("\nPrenotazioni attive:\n");
+               
                 for (int i = 0; i < ottieni_dimensione_coda(coda_prenotazioni); i++) {
                     Prenotazione p = ottieni_prenotazione_in_coda(coda_prenotazioni, i);
                     stampa_prenotazione(p);
@@ -771,6 +771,13 @@ void prenota_auto(Utente utente_corrente) {
                         temp = ottieni_successivo_nodo(temp);
                     }
                     printf("-------------------\n");
+                } if (ottieni_dimensione_coda(coda_prenotazioni) == 0) {
+                    imposta_colore(12); // Rosso
+                    printf("Nessuna prenotazione attiva.\n");
+                    imposta_colore(7); // Bianco
+                    printf("Premi INVIO per continuare...");
+                    svuota_buffer();
+                    break;
                 }
                 printf("Premi INVIO per continuare...");
                 svuota_buffer();
@@ -778,6 +785,10 @@ void prenota_auto(Utente utente_corrente) {
             }
             case 3: {
                 int id_prenotazione;
+                visualizza_prenotazioni(utente_corrente);
+                if (ottieni_dimensione_coda(coda_prenotazioni) == 0) {
+                    break;
+                }
                 printf("\nInserisci l'ID della prenotazione da cancellare: ");
                 scanf("%d", &id_prenotazione);
                 svuota_buffer();

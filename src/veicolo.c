@@ -658,10 +658,12 @@ int carica_ultimo_id(){
         printf("Il file non esiste.\n");
         return 0; // Se il file non esiste, ritorna 0
     }
-    int id = 0;
+    int id = 0, tmp;
     char line[256];
     while (fgets(line, sizeof(line), fp) != NULL) {
-        id++;
+                if (sscanf(line, "%d", &tmp) == 1) {
+            id = tmp;
+        }
     }
     fclose(fp);
     return id;

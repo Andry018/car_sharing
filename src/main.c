@@ -25,9 +25,20 @@ int main() {
     // Inizializza la data di sistema
     inizializza_data_sistema();
     
+    // Carica i veicoli all'avvio
+    carica_lista_veicoli();
+    
+    // Inizializza e carica gli utenti
+    inizializza_tabella_utenti();
+    if (!carica_utenti_file()) {
+        printf("Errore nel caricamento degli utenti. Il programma potrebbe non funzionare correttamente.\n");
+        printf("Premi INVIO per continuare...");
+        svuota_buffer();
+    }
+    
     // Inizializza la coda delle prenotazioni
     carica_prenotazioni();
-    
+
     // Aggiorna le prenotazioni scadute
     CodaPrenotazioni coda = ottieni_coda_prenotazioni();
     if (coda != NULL) {
@@ -40,16 +51,9 @@ int main() {
     int stato = 0; // momentaneo
     char utente_corrente[30] = "";
     
-    // Carica i veicoli all'avvio
-    carica_lista_veicoli();
+
     
-    // Inizializza e carica gli utenti
-    inizializza_tabella_utenti();
-    if (!carica_utenti_file()) {
-        printf("Errore nel caricamento degli utenti. Il programma potrebbe non funzionare correttamente.\n");
-        printf("Premi INVIO per continuare...");
-        svuota_buffer();
-    }
+
 
     while (1) {
         pulisci_schermo();
