@@ -241,6 +241,7 @@ void gestione_veicoli() {
                             printf("Tariffa oraria: %.2f euro\n", ottieni_tariffa_oraria(tipo));
                         }
                         temp = ottieni_successivo_nodo(temp);
+                        stampa_separatore();
                     }
                 }
                 
@@ -678,12 +679,12 @@ void prenota_auto(Utente utente_corrente) {
                 printf("Hai scelto di lasciare il veicolo in: %s\n", ottieni_nome_posizione_veicolo(posizione_riconsegna));
                 
                 if (costo_finale < costo_base) {
-                    printf("Sconto fedeltà applicato: %.2f euro\n", costo_base - costo_finale);
+                    printf("Sconto fedelta' applicato: %.2f euro\n", costo_base - costo_finale);
                     printf("Costo finale: %.2f euro\n", costo_finale);
                 }
                 
                 if (num_prenotazioni < 10) {
-                    printf("\nNota: Ti mancano %d noleggi per ottenere lo sconto fedeltà!\n", 
+                    printf("\nNota: Ti mancano %d noleggi per ottenere lo sconto fedelta'!\n", 
                            10 - num_prenotazioni);
                 }
                 
@@ -1218,10 +1219,10 @@ void visualizza_tariffe(Utente utente_corrente) {
         printf("Noleggi completati: %d\n", noleggi_completati);
         
         if (noleggi_completati < 10) {
-            printf("Ti mancano %d noleggi per ottenere lo sconto fedeltà!\n", 10 - noleggi_completati);
+            printf("Ti mancano %d noleggi per ottenere lo sconto fedelta'!\n", 10 - noleggi_completati);
         } else {
             imposta_colore(10); // Verde
-            printf("Hai ottenuto lo sconto fedeltà!\n");
+            printf("Hai ottenuto lo sconto fedelta'!\n");
             imposta_colore(7); // Bianco
         }
     }
