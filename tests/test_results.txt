@@ -27,5 +27,7 @@ TC26 - costo_noleggio - PASS
 TC27 - costo_noleggio - PASS
 TC28 - costo_noleggio - PASS
 TC29 - visualizza_disponibilita - FAIL
-TC44 - storico_prenotazioni - PASS
-TC45 - storico_prenotazioni - FAIL
+TC39 - storico_prenotazioni - PASS
+TC40 - storico_prenotazioni - PASS
+TC41 - storico_prenotazioni - PASS
+TC42 - storico_prenotazioni - PASS

@@ -207,7 +207,7 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
         return;
     }
 
-    if( posizione_riconsegna < 0 || posizione_riconsegna > 3) {
+    if(posizione_riconsegna < 0 || posizione_riconsegna > 3) {
         fprintf(f_output, "ERRORE_POSIZIONE_RICONSEGNA\n");
         fclose(f_output);
         int cmp = compara_file(output_fname, oracle_fname);

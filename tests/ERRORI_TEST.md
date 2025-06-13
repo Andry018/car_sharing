@@ -140,6 +140,25 @@ id_veicolo modello posizione
 ```
 In caso di errore, l'output sarà uno dei messaggi di errore descritti sopra.
 
+## Test Storico Prenotazioni
+ ## Formato Input
+Ogni test accetta 1 valore in input:
+```
+id_utente
+```
+dove:
+id_utente = intero positivo
+
+## Formato Output 
+In caso di successo l'output sarà:
+```
+id_prenotazione id_utente id_veicolo timestamp_inizio timestamp_fine stato priorita posizione_riconsegna
+id_prenotazione id_utente id_veicolo timestamp_inizio timestamp_fine stato priorita posizione_riconsegna
+ecc...
+
+```
+In caso di errore, l'output sarà uno dei messaggi di errore descritti sopra.
+
 # Schema degli Input per Tipo di Test
 
 ### Test Creazione Prenotazione (TC01, TC13)
@@ -514,29 +533,37 @@ applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
   3. Considerare correttamente lo stato delle prenotazioni (confermate vs non confermate)
   4. Gestire correttamente l'aggiornamento della disponibilità dei veicoli in base al calendario
 
-## TC50: Visualizzazione Storico Prenotazioni
-- **Input**: 
-  - id_utente: 1
-- **Setup**:
-  - Utente 1: ha una prenotazione confermata per il veicolo 1 (giorno 1, 10-12)
-  - Utente 2: ha una prenotazione confermata per il veicolo 2 (giorno 2, 14-16)
-- **Output Atteso**: Solo la prenotazione dell'utente 1 dovrebbe essere mostrata
-- **Verifica**: Il sistema deve:
-  1. Mostrare correttamente tutte le prenotazioni dell'utente specificato
+  ## TC44: Visualizzazione Storico Prenotazioni
+  **Input**
+    id_utente: 1
+  **Output Atteso**: Tutte le prenotazioni dell'utente con id_utente 1, vengono stampate
+  - **Verifica**: Il sistema deve:
+  1. Mostrare correttamente tutte le prenotazioni dell'utente con id_utente 1
   2. Non mostrare le prenotazioni di altri utenti
   3. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
-  4. Gestire correttamente il formato di output per ogni prenotazione 
+  4. Gestire correttamente il formato di output per ogni prenotazione
 
-  ## TC51: Visualizzazione Storico Prenotazioni
+  ## TC45: Visualizzazione Storico Prenotazioni
   **Input**
-    id_utente: 0
-  **Setup**
-    Utente 1: ha una prenotazione confermata per il veicolo 1(giorno 1, 10-12)
-              ha una prenotazione non confermata per il veicolo 2(giorno 2, 14-16)
-    Utente 2: ha una prenotazione confermata per il veicolo 3(giorno 3, 9-11)
-              ha una prenotazione non confermata per il veicolo 4(giorno 4, 13-15)
-  **Output Atteso**: Tutte le prenotazioni di tutti gli utenti dovrebbero essere mostrate
+    id_utente: 2
+  **Output Atteso**: Tutte le prenotazioni dell'utente con id_utente 2, vengono stampate
   - **Verifica**: Il sistema deve:
-  1. Mostrare correttamente tutte le prenotazioni di tutti gli utenti
+  1. Mostrare correttamente tutte le prenotazioni dell'utente con id_utente 2
+  2. Non mostrare le prenotazioni di altri utenti
+  3. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
+  4. Gestire correttamente il formato di output per ogni prenotazione
+
+  ## TC46: Visualizzazione Storico Prenotazioni
+  **Input**
+    id_utente: 999
+  **Output Atteso**: "ERRORE_UTENTE_NON_TROVATO"
+  - **Verifica**: Il sistema deve stampare un messaggio di errore 
+
+## TC47: Visualizzazione Storico Prenotazioni
+- **Input**: 
+  - id_utente: 0
+- **Output Atteso**: Tutte le prenotazioni degli utenti registrati, vengono stampate
+- **Verifica**: Il sistema deve:
+  1. Mostrare correttamente tutte le prenotazioni degli utenti registrati
   2. Includere tutti i dettagli della prenotazione (id, veicolo, date, stato, priorità, posizione)
   3. Gestire correttamente il formato di output per ogni prenotazione 
