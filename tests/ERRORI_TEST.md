@@ -525,6 +525,89 @@ applicando lo sconto "PACCHETTI ORARI" e "SCONTO FEDELTA'"
 - **Verifica**: Il sistema deve:
   Non mostrare nessun Veicolo.
 
+## TC31: Visualizzazione Disponibilità con 3 Veicoli Disponibili
+  - giorno_inizio: 2
+  - ora_inizio: 14
+  - giorno_fine: 2
+  - ora_fine: 16
+- **Output Atteso**: 
+  4 TeslaModelS Posizione D
+  3 JeepWrangler Posizione C
+  1 Fiat500 Deposito
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC32: Visualizzazione Disponibilità con 3 Veicoli Disponibili
+  - giorno_inizio: 1
+  - ora_inizio: 10
+  - giorno_fine: 1
+  - ora_fine: 12
+- **Output Atteso**: 
+  4 TeslaModelS Posizione D
+  3 JeepWrangler Posizione C
+  2 HondaCBR Posizione B
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC33: Visualizzazione Disponibilità con 3 Veicoli Disponibili
+  - giorno_inizio: 3
+  - ora_inizio: 3
+  - giorno_fine: 3
+  - ora_fine: 4
+- **Output Atteso**: 
+  3 JeepWrangler Posizione C
+  2 HondaCBR Posizione B
+  1 Fiat500 Deposito
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC34: Visualizzazione Disponibilità con 3 Veicoli Disponibili
+  - giorno_inizio: 3
+  - ora_inizio: 2
+  - giorno_fine: 3
+  - ora_fine: 3
+- **Output Atteso**: 
+  4 TeslaModelS Posizione D
+  2 HondaCBR Posizione B
+  1 Fiat500 Deposito
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC35: Visualizzazione Disponibilità con 2 Veicoli Disponibili
+  - giorno_inizio: 3
+  - ora_inizio: 2
+  - giorno_fine: 3
+  - ora_fine: 4
+- **Output Atteso**: 
+  2 HondaCBR Posizione B
+  1 Fiat500 Deposito
+- **Verifica**: Il sistema deve:
+  Mostrare correttamente i veicolo disponibili nel periodo richiesto
+
+  ## TC36: Visualizzazione Disponibilità con Giorno fuori range
+  - giorno_inizio: 7
+  - ora_inizio: 10
+  - giorno_fine: 8
+  - ora_fine: 12
+- **Output Atteso**: ERRORE_FASCIA_ORARIA
+- **Verifica**: Il sistema deve gestire orari non validi
+
+  ## TC37: Visualizzazione Disponibilità con Giorno fuori range
+  - giorno_inizio: 1
+  - ora_inizio: 24
+  - giorno_fine: 1
+  - ora_fine: 25
+- **Output Atteso**: ERRORE_FASCIA_ORARIA
+- **Verifica**: Il sistema deve gestire orari non validi
+
+  ## TC36: Visualizzazione Disponibilità con stessa ora
+  - giorno_inizio: 2
+  - ora_inizio: 4
+  - giorno_fine: 2
+  - ora_fine: 4
+- **Output Atteso**: ERRORE_FASCIA_ORARIA
+- **Verifica**: Il sistema deve gestire orari non validi
+
 ## TC50: Visualizzazione Storico Prenotazioni
 - **Input**: 
   - id_utente: 1

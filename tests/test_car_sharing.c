@@ -344,7 +344,28 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
     int giorno_fine = atoi(input[2]);
     int ora_fine = atoi(input[3]);
 
-    
+     FILE* f_output = fopen(output_fname, "w");
+    if (!f_output){
+        printf("Errore apertura file di output: %s\n", output_fname);
+        return;
+    }
+
+     // Verifica la validità della fascia oraria
+    if (!verifica_fascia_oraria(giorno_inizio, ora_inizio, giorno_fine, ora_fine)) {
+        fprintf(f_output, "ERRORE_FASCIA_ORARIA\n");
+        fclose(f_output);
+        int cmp = compara_file(output_fname, oracle_fname);
+        FILE* f = fopen("tests/risultati.txt", "a");
+        if (f) {
+            if (cmp == 0) {
+                fprintf(f, "%s PASS\n", input_fname);
+            } else {
+                fprintf(f, "%s FAIL\n", input_fname);
+            }
+            fclose(f);
+        }
+        return;
+    }
 
     // Avanza la data di sistema fino al periodo richiesto
     int ore_da_avanzare = (giorno_inizio * 24 + ora_inizio) - (ottieni_giorno_corrente() * 24 + ottieni_ora_corrente());
@@ -355,23 +376,14 @@ void test_visualizza_disponibilita(const char* input_fname, const char* output_f
     // Ottieni la lista veicoli simulata
     list veicoli = ottieni_lista_veicoli();
 
-    FILE* f_output = fopen(output_fname, "w");
-    if (!f_output) {
-        printf("Errore apertura file di output: %s\n", output_fname);
-        return;
-    }
-    
 
     // Per ogni veicolo, verifica la disponibilità nell'intervallo richiesto
     list temp = veicoli;
     while (temp != NULL) {
         Veicolo v = ottieni_veicolo_senza_rimuovere(temp);
 
-        CalendarioVeicolo calendario = inizializza_calendario(ottieni_id_veicolo(v));
-        CodaPrenotazioni coda = ottieni_coda_prenotazioni();
-        CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, coda);
-        free(nuovo_calendario);
-        if (v && ottieni_disponibilita_veicolo(v)) {
+       
+        if (v) {
             CalendarioVeicolo calendario = inizializza_calendario(ottieni_id_veicolo(v));
             CalendarioVeicolo nuovo_calendario = aggiorna_calendario(calendario, ottieni_coda_test());
             if (nuovo_calendario && verifica_disponibilita(nuovo_calendario, giorno_inizio, ora_inizio, giorno_fine, ora_fine)) {
@@ -561,6 +573,23 @@ int main(int argc, char *argv[]) {
 
     Prenotazione p13 = crea_prenotazione(2, 2, 3, 0, 3, 1, 0, 0); // utente 2, veicolo 2, giorno 3, 0-1
     Prenotazione p14 = crea_prenotazione(2, 2, 3, 1, 3, 2, 0, 0); // utente 2, veicolo 2, giorno 3, 1-2
+    Prenotazione p15 = crea_prenotazione(2, 3, 3, 2, 3, 3, 0, 0); // utente 2, veicolo 2, giorno 3, 2-3
+    imposta_stato_prenotazione(1, p15);  // Imposta lo stato della prenotazione p15 a "Confermata"
+    Prenotazione p16 = crea_prenotazione(2, 4, 3, 3, 3, 5, 0, 0); // utente 2, veicolo 2, giorno 3, 3-4
+    imposta_stato_prenotazione(1, p16);  // Imposta lo stato della prenotazione p16 a "Confermata"
+
+    Prenotazione p17 = crea_prenotazione(2, 1, 3, 4, 3, 5, 0, 0); // utente 2, veicolo 2, giorno 3, 4-5
+    Prenotazione p18 = crea_prenotazione(2, 2, 3, 5, 3, 6, 0, 0); // utente 2, veicolo 2, giorno 3, 5-6
+
+    Prenotazione p19 = crea_prenotazione(2, 1, 3, 6, 3, 7, 0, 0); // utente 2, veicolo 2, giorno 3, 6-7
+    imposta_stato_prenotazione(1, p19);  // Imposta lo stato della prenotazione p19 a "Confermata"
+    Prenotazione p20 = crea_prenotazione(2, 2, 3, 6, 3, 7, 0, 0); // utente 2, veicolo 2, giorno 3, 6-7
+    imposta_stato_prenotazione(1, p20);  // Imposta lo stato della prenotazione p20 a "Confermata"
+    Prenotazione p21 = crea_prenotazione(2, 3, 3, 6, 3, 7, 0, 0); // utente 2, veicolo 2, giorno 3, 7-8
+    imposta_stato_prenotazione(1, p21);  // Imposta lo stato della prenotazione p21 a "Confermata"
+    Prenotazione p22 = crea_prenotazione(2, 4, 3, 6, 3, 7, 0, 0); // utente 2, veicolo 2, giorno 3, 6-7
+    imposta_stato_prenotazione(1, p22);  // Imposta lo stato della prenotazione p22 a "Confermata"
+
 
      imposta_stato_prenotazione(2, p5);  // Imposta lo stato della prenotazione p5 a "Completata"
     imposta_stato_prenotazione(2, p6);  // Imposta lo stato della prenotazione p6 a "Completata"

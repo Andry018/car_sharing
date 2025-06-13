@@ -28,5 +28,13 @@ TC27 costo_noleggio
 TC28 costo_noleggio
 TC29 visualizza_disponibilita
 TC30 visualizza_disponibilita
+TC31 visualizza_disponibilita
+TC32 visualizza_disponibilita
+TC33 visualizza_disponibilita
+TC34 visualizza_disponibilita
+TC35 visualizza_disponibilita
+TC36 visualizza_disponibilita
+TC37 visualizza_disponibilita
+TC38 visualizza_disponibilita
 TC50 storico_prenotazioni
 TC51 storico_prenotazioni
