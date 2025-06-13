@@ -207,6 +207,22 @@ void test_creazione_prenotazione(const char* input_fname, const char* output_fna
         return;
     }
 
+    if( posizione_riconsegna < 0 || posizione_riconsegna > 3) {
+        fprintf(f_output, "ERRORE_POSIZIONE_RICONSEGNA\n");
+        fclose(f_output);
+        int cmp = compara_file(output_fname, oracle_fname);
+        FILE* f = fopen("tests/risultati.txt", "a");
+        if (f) {
+            if (cmp == 0) {
+                fprintf(f, "%s PASS\n", input_fname);
+            } else {
+                fprintf(f, "%s FAIL\n", input_fname);
+            }
+            fclose(f);
+        }
+        return;
+    }
+
     // Verifica la validità della data rispetto alla data di sistema
     int timestamp_inizio = converti_in_timestamp(giorno_inizio, ora_inizio);
     int timestamp_fine = converti_in_timestamp(giorno_fine, ora_fine);

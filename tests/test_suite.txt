@@ -8,6 +8,9 @@ TC07 creazione_prenotazione
 TC08 creazione_prenotazione
 TC09 creazione_prenotazione
 TC10 creazione_prenotazione
+TC11 creazione_prenotazione
+TC12 creazione_prenotazione
+TC13 creazione_prenotazione
 TC14 costo_noleggio
 TC15 costo_noleggio
 TC16 costo_noleggio

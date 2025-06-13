@@ -8,6 +8,9 @@ TC07 - creazione_prenotazione - PASS
 TC08 - creazione_prenotazione - PASS
 TC09 - creazione_prenotazione - PASS
 TC10 - creazione_prenotazione - PASS
+TC11 - creazione_prenotazione - PASS
+TC12 - creazione_prenotazione - PASS
+TC13 - creazione_prenotazione - PASS
 TC14 - costo_noleggio - PASS
 TC15 - costo_noleggio - PASS
 TC16 - costo_noleggio - PASS
